@@ -17,7 +17,6 @@ export default ({ config, db }) => {
             res.status(STATUS_UNAUTHORIZED).send('Wrong password or login')
         }
         else{
-            console.log(process.env)
             httpReq.post(process.env.LOGGI_API_V2)
                 .query({query:'mutation { login(input:{email: \"' + login + '\", password: \"' + password + '\" }) { user { apiKey } } }'})
                 .end((err, apiRes) => {
