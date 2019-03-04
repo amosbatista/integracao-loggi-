@@ -1,23 +1,21 @@
 import { Router } from 'express';
 import facets from './facets';
-import httpReq from 'superagent';
+import login from './login';
 
 export default ({ config, db }) => {
 	let api = Router();
+	const noResponseCode = 501
 
-	// mount the facets resource
 	api.use('/facets', facets({ config, db }));
+	api.use('/login', login({ config, db }));
 
 	// perhaps expose some API metadata at the root
+	api.post('/', (req, res) => {
+		res.status(noResponseCode).send()
+	});
+
 	api.get('/', (req, res) => {
-		httpReq.post('https://staging.loggi.com/public-graphql/')
-			.query({query:'mutation { login(input:{email: \"amos.silva@gmail.com\", password: \"iunarihs45@\" }) { user { apiKey } } }'})
-			.end((err, apiRes) => {
-				if(err){
-					res.send(err)
-				}
-				res.send(apiRes)
-			});
+		res.status(noResponseCode).send()
 	});
 
 	return api;
