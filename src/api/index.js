@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import facets from './facets';
 import login from './login';
+import newRequest from './newRequest/index';
 
 export default ({ config, db }) => {
 	let api = Router();
 	const noResponseCode = 501
 
-	api.use('/facets', facets({ config, db }));
 	api.use('/login', login({ config, db }));
+	api.use('/newRequest', newRequest({ config, db }));
 
 	// perhaps expose some API metadata at the root
 	api.post('/', (req, res) => {
