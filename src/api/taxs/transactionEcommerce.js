@@ -1,7 +1,11 @@
+const taxValue = 2.40
+
 const tax = (transactionValue) => {
+  const valuePostTax = parseFloat(transactionValue) + taxValue
   return {
-    taxValue: 2.40,
-    description: 'Taxa E-commerce'
+    taxValue,
+    description: 'Taxa E-commerce',
+    calculedValue: valuePostTax
   }
 }
 
