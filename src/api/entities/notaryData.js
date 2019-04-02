@@ -6,6 +6,6 @@ const notaryData = {
   state: 'São Paulo',
   country: 'Brazil',
   countryShortName: 'BR',
-  postalCode: '04534-013'
+  postalCode: '04534013'
 }
 export default notaryData
