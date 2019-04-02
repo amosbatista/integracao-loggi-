@@ -3,7 +3,7 @@ import chai from 'chai'
 
 let expect = chai.expect
 
-describe('Purchase confirmation address component test', () => {
+describe('Purchase service test', () => {
 
   it('should be a function that receives address parameters and returns a string with its data', () => {
     expect(addressComponent).to.be.a('function')
