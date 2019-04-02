@@ -1,5 +1,6 @@
 import { Router } from 'express'
-import service from './service'
+import purchaseService from './service'
+import authService from '../../login/service'
 import ecommerceTax from '../../taxs/transactionEcommerce'
 
 export default ({ config, db }) => {
@@ -10,33 +11,33 @@ export default ({ config, db }) => {
     const STATUS_UNAUTHORIZED = 401
     const STATUS_SERVER_ERROR = 500
 
-    service(req).then((apiRes) => {
+    authService().then( (authData) => {
+      purchaseService(req, authData.toString())
+      .then((apiRes) => {
 
-      const servicesSum = req.body.servicesData.services.reduce( (total, current ) => {
-        return total + (current.value * current.amount) 
-      }, 0)
+        const servicesSum = req.body.servicesData.services.reduce( (total, current ) => {
+          return total + (current.value * current.amount) 
+        }, 0)
 
-      const taxsSum = ecommerceTax(servicesSum)
-      const totalPurchase = servicesSum + taxsSum
+        const taxsSum = ecommerceTax(servicesSum)
+        const totalPurchase = servicesSum + taxsSum
 
-      res.json({
-        purchaseId: apiRes.body,
-        serviceSum,
-        taxsSum,
-        totalPurchase
+        res.json({
+          purchaseId: apiRes.body,
+          serviceSum,
+          taxsSum,
+          totalPurchase
+        })
+        res.end()
       })
-      res.end()
-    })
-
-    .catch((error) => {
-
-      if(error.message == 'Unauthorized'){
-        res.status(STATUS_UNAUTHORIZED).send('Unauthenticated')
-      } 
-      else {
+      .catch((error) => {
         res.status(STATUS_SERVER_ERROR).send(error.message)
         console.log(error.message, error.object)
-      }
+        res.end()
+      })
+
+    }).catch( (err) => {
+      res.status(STATUS_UNAUTHORIZED).send(error.message)
       res.end()
     })
 	});
