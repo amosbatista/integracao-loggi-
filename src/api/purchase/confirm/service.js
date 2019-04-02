@@ -1,25 +1,16 @@
 import httpReq from 'superagent'
 import query from './query/index'
 import notaryData from '../entities/notaryData'
-import auth from '../../login/authorization'
 
-const service = (req) => {
+const service = (req, auth) => {
 
   return new Promise ( (resolve, reject) => {
-
-    const authString = auth(req)
-
-    if(!authString){
-      reject({
-        message: 'Unauthorized'
-      })
-    }
 
     httpReq.post(process.env.LOGGI_API_V2)
     .query({
       query: query(req.body, notaryData)
     })
-    .set('authorization', auth(req))
+    .set('authorization', auth)
     .end((err, apiRes) => {
 
       if(err){
@@ -42,3 +33,5 @@ const service = (req) => {
     })
   })
 }
+
+export default service
