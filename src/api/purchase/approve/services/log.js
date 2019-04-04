@@ -95,8 +95,11 @@ const service = class {
         .then(()=>{
           resolve()
         })
-        .catch(()=>{
-          reject()
+        .catch((err)=>{
+          reject({
+            message: 'Error at log into database',
+            data: err
+          })
         })
       })
     })

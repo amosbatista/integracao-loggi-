@@ -1,33 +1,44 @@
 import nodemailer from "nodemailer"
 
-const service = (emailTo, clientName) => { 
+const service = (emailTo, clientName, message) => { 
 
   return new Promise( (resolve, reject) => {
 
-    let transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: process.env.EMAIL_PORT,
-      secure: process.env.EMAIL_IS_SECURE, // true for 465, false for other ports
-      auth: {
-        user: process.env.EMAIL_FROM,
-        pass: process.env.EMAIL_ACCOUNT_PASSWORD
-      }
-    })
+    try{
 
-    const mailOptions = {
-      from: `"${process.env.EMAIL_FROM_NAME}" <${process.env.EMAIL_FROM}>`, // sender address
-      to: emailTo, // list of receivers
-      subject: "20º Cartório - Delivery", // Subject line
-      html: `
-        <p>Obrigado por ter usado nossos serviços.</p>
-      ` // html body
-    };
+      let transporter = nodemailer.createTransport({
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        secure: process.env.EMAIL_IS_SECURE, // true for 465, false for other ports
+        auth: {
+          user: process.env.EMAIL_FROM,
+          pass: process.env.EMAIL_ACCOUNT_PASSWORD
+        }
+      })
 
-    const info = await transporter.sendMail(mailOptions)
+      const mailOptions = {
+        from: `"${process.env.EMAIL_FROM_NAME}" <${process.env.EMAIL_FROM}>`, // sender address
+        to: emailTo, // list of receivers
+        subject: "20º Cartório - Delivery", // Subject line
+        html: `
+          <h5>Olá, ${clientName}</h5>
+          <p>${message}</p>
+          <p><strong>20º Cartório</strong></p>
+        ` // html body
+      };
 
-    console.log("Message sent: %s", info.messageId);
+      const info = await transporter.sendMail(mailOptions)
 
-    resolve()
+      console.log("Message sent: %s", info.messageId);
+
+      resolve()
+    }
+    catch(err){
+      reject({
+        message: `Error in send e-mail to ${emailTo}`,
+        data: err
+      })
+    }
   })
 }
 

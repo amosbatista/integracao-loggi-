@@ -44,7 +44,7 @@ const service = (inquiryId, auth) => {
 
       if(!apiRes.body.data.confirmOrder.success) {
         reject({
-          message: `The Loggi's order confirmation has response, but rertuned errors`,
+          message: `The Loggi's order confirmation has response, but returned errors`,
           data: apiRes.body.data.confirmOrder.errors
         })
       }
