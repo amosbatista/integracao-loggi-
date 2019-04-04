@@ -12,6 +12,7 @@ import httpReq from 'superagent'
 //}
 
 const validate = (paymentData) => {
+  
   return paymentData.totalAmount &&
   paymentData.creditCard.cardNumber &&
   paymentData.creditCard.nameFromCard &&
@@ -26,6 +27,7 @@ const transactionMessage = "20Cartorio_Delivery"
 const service = (paymentData) => {
 
   return new Promise ((resolve, reject) => {
+
     if(!validate(paymentData)) {
       reject({
         message: "There's any payment field missing"
@@ -33,10 +35,10 @@ const service = (paymentData) => {
     }
 
     httpReq.post(process.env.CIELO_API_REQUEST + "/1/sales")
-    .query({
+    .send(JSON.stringify({
       "MerchantOrderId": process.env.CIELO_API_MERCHANTID,
       "Customer":{
-         "Name": creditCardData.nameFromCard
+         "Name": paymentData.creditCard.nameFromCard
       },
       "Payment":{
         "Type":"CreditCard",
@@ -50,7 +52,7 @@ const service = (paymentData) => {
           "Brand": paymentData.creditCard.brand
         }
       }
-    })
+    }))
     .set('Content-Type', "application/json")
     .set("MerchantId", process.env.CIELO_API_MERCHANTID)
     .set("MerchantKey", process.env.CIELO_API_MERCHANTKEY)
@@ -64,17 +66,19 @@ const service = (paymentData) => {
         })
       }
 
-      const transactionStatusApproved = "1"
-      const transactionStatusSuccess = "2"
+      else {
+        const transactionStatusApproved = "4"
+        const transactionStatusApproved2 = "6"
 
-      if(apiRes.body.Payment.ReturnCode != transactionStatusSuccess) {
-        reject({
-          message: `The transaction not worked well: ${apiRes.body.Payment.ReturnMessage}`,
-          data: apiRes.body
-        })
+        if(apiRes.body.Payment.ReturnCode != transactionStatusApproved && apiRes.body.Payment.ReturnCode != transactionStatusApproved2) {
+          reject({
+            message: `The transaction not worked well: ${apiRes.body.Payment.ReturnMessage}`,
+            data: apiRes.body
+          })
+        }
+        else
+          resolve(apiRes.body)
       }
-      
-      resolve(apiRes.body)
     })
   })
 }

@@ -6,19 +6,19 @@ let model = class {
     this.authorization = authorization
   }
 
-  get login () {
+  login () {
     return this.userLogin
   }
 
-  get password () {
+  password () {
     return this.userPassword
   }
 
-  get authorization () {
+  authorization () {
     return this.authorization
   }
 
-  get toString () {
+  toString () {
     return `Apikey ${this.userLogin}:${this.authorization}`
   }
 }

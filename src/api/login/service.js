@@ -9,8 +9,8 @@ const service = () => {
 
   return new Promise( (resolve, reject) => {
 
-    const login = process.env.userLogin
-    const password = process.env.userPassword
+    const login = process.env.LOGGI_USER_LOGIN
+    const password = process.env.LOGGI_USER_PASSWORD
 
     if(!validate(login, password)){
       reject({
@@ -24,7 +24,8 @@ const service = () => {
 
         if(err){
           reject({
-            message: 'Error in client API request'
+            message: 'Error in client API request',
+            data: err
           })
         }
           
@@ -33,11 +34,14 @@ const service = () => {
         try {
           const apiId = resData.data.login.user.apiKey
           const authData = new Model(login, password, apiId)
+
           resolve(authData)
         }
         catch(err) {
+
           reject({
-            message: 'It was impossible to generate user key. Check your password or login'
+            message: 'It was impossible to generate user key. Check your password or login',
+            data: err
           })
         }
       })

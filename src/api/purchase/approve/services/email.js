@@ -27,11 +27,10 @@ const service = (emailTo, clientName, message) => {
         ` // html body
       };
 
-      const info = await transporter.sendMail(mailOptions)
-
-      console.log("Message sent: %s", info.messageId);
-
-      resolve()
+      transporter.sendMail(mailOptions).then((info)=>{
+        console.log("Message sent: %s", info.messageId)
+        resolve()
+      })
     }
     catch(err){
       reject({

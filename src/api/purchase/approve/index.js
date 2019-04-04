@@ -8,8 +8,6 @@ import loggiCancelation from './services/loggiCancelation'
 import email from './services/email'
 import Log from './services/log'
 
-const log = new Log()
-
 export default ({ config, db }) => {
 	let api = Router();
 
@@ -26,6 +24,8 @@ export default ({ config, db }) => {
 
         .then((loggiData) => {
 
+          const log = new Log()
+          
           log.save({
             clientName: req.body.servicesData.clientName,
             address: req.body.addressData.address,
@@ -73,13 +73,13 @@ export default ({ config, db }) => {
             ])
 
             .then(() => {
-              res.status(STATUS_SERVER_ERROR).send(error.message)
+              res.status(STATUS_SERVER_ERROR).send(err.message)
               res.end()
             })
 
             .catch( (err) => {
               console.log(err.message, err.data)
-              res.status(STATUS_SERVER_ERROR).send(error.message)
+              res.status(STATUS_SERVER_ERROR).send(err.message)
               res.end()
             })
 
@@ -91,13 +91,13 @@ export default ({ config, db }) => {
           cieloCancelation(creditCardReturnData.Payment.PaymentId, req.body.paymentData.totalAmount)
 
           .then(() => {
-            res.status(STATUS_SERVER_ERROR).send(error.message)
+            res.status(STATUS_SERVER_ERROR).send(err.message)
             res.end()
           })
 
           .catch( (err) => {
             console.log(err.message, err.data)
-            res.status(STATUS_SERVER_ERROR).send(error.message)
+            res.status(STATUS_SERVER_ERROR).send(err.message)
             res.end()
           })
 
@@ -107,7 +107,7 @@ export default ({ config, db }) => {
 
       .catch((err)=>{
         console.log(err.message, err.data)
-        res.status(STATUS_SERVER_ERROR).send(error.message)
+        res.status(STATUS_SERVER_ERROR).send(err.message)
         res.end()
       })
       
@@ -115,7 +115,7 @@ export default ({ config, db }) => {
 
     .catch( (err) => {
       console.log('Unauthorized atempt to conclude order')
-      res.status(STATUS_UNAUTHORIZED).send(error.message)
+      res.status(STATUS_UNAUTHORIZED).send(err.message)
       res.end()
     })
 

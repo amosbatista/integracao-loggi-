@@ -15,6 +15,7 @@ export default ({ config, db }) => {
           apiId: apiId
       })
     }).catch((apiError) => {
+      console.log(apiError.message, apiError.data)
       res.status(STATUS_UNAUTHORIZED).send(apiError.message)
     })
 	});

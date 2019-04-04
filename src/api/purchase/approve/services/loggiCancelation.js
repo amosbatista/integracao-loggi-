@@ -9,7 +9,7 @@ const service = (orderId, auth) => {
   return new Promise ((resolve, reject) => {
 
     httpReq.post(process.env.LOGGI_API_V2)
-    .query({
+    .send({
       "query": `mutation {
         cancelOrder(input: {
           id: ${orderId}

@@ -20,13 +20,6 @@ const query = (originData, notaryData) => {
           instructions: "Entregar documento"
           tag: entregar
           addressData: ${addressComponents(notaryData)}
-        }, 
-        {
-          addressComplement: "Complemento retorno"
-          instructions: "Retorno de documento"
-          tag: outros
-          isReturn: true
-          addressData: ${addressComponents(originData)}
         }]
     }) {
       success
