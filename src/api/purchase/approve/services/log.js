@@ -2,7 +2,7 @@ import Sequelize from 'sequelize'
 // {
 //   clientName, address, number, neighborhood, totalPurchase, 
 //   creditCardData: {
-//     numberFromAPI, brand, holder,proofOfSale, tid, authorizationCode, softDescriptor, paymentId, linksData 
+//     numberFromAPI, brand, holder,proofOfSale, tid, authorizationCode, paymentId, linksData 
 //   }
 // }
 
@@ -59,9 +59,6 @@ const service = class {
       creditCardAuthorizationCode:{
         type: Sequelize.STRING
       },
-      creditCardSoftDescriptor:{
-        type: Sequelize.STRING
-      },
       creditCardPaymentId:{
         type: Sequelize.STRING
       },
@@ -81,16 +78,15 @@ const service = class {
           address: transactionData.address,
           number: transactionData.number,
           neighborhood: transactionData.neighborhood,
-          totalPurchase: transactionData.neighborhood,
+          totalPurchase: transactionData.totalPurchase,
           creditCardNumberFromAPI: transactionData.creditCard.numberFromAPI,
           creditCardBrand: transactionData.creditCard.brand,
           creditCardHolder: transactionData.creditCard.holder,
           creditCardProofOfSale: transactionData.creditCard.proofOfSale,
           creditCardTid: transactionData.creditCard.tid,
           creditCardAuthorizationCode: transactionData.creditCard.authorizationCode,
-          creditCardSoftDescriptor: transactionData.creditCard.softDescriptor,
           creditCardPaymentId: transactionData.creditCard.paymentId,
-          creditCardLinksData: transactionData.creditCard.linksData
+          creditCardLinksData: JSON.stringify(transactionData.creditCard.linksData)
         })
         .then(()=>{
           resolve()
