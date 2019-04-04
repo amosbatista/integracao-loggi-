@@ -1,32 +1,32 @@
 import httpReq from 'superagent'
 
 // {
-//   cardNumber: this.cardNumber,
-//   nameFromCard: this.nameFromCard,
-//   validate: this.validate,
-//   cvv: this.cvv,
-//   brand: ''
-// }
-// {
 //   totalAmount: 0
-// }
+//   creditCard: {
+//    cardNumber: this.cardNumber,
+//    nameFromCard: this.nameFromCard,
+//    validate: this.validate,
+//    cvv: this.cvv,
+//    brand: ''
+//  }
+//}
 
-const validate = (paymentData, creditCardData) => {
+const validate = (paymentData) => {
   return paymentData.totalAmount &&
-  creditCardData.cardNumber &&
-  creditCardData.nameFromCard &&
-  creditCardData.validate &&
-  creditCardData.cvv &&
-  creditCardData.brand
+  paymentData.creditCard.cardNumber &&
+  paymentData.creditCard.nameFromCard &&
+  paymentData.creditCard.validate &&
+  paymentData.creditCard.cvv &&
+  paymentData.creditCard.brand
 }
 
 const creditCardInstallments = 1
 const transactionMessage = "20Cartorio_Delivery"
 
-const service = (paymentData, creditCardData) => {
+const service = (paymentData) => {
 
   return new Promise ((resolve, reject) => {
-    if(!validate(creditCardData)) {
+    if(!validate(paymentData)) {
       reject({
         message: "There's any payment field missing"
       })
@@ -42,13 +42,12 @@ const service = (paymentData, creditCardData) => {
         "Type":"CreditCard",
         "Amount": paymentData.totalAmount,
         "Installments": creditCardInstallments,
-        "SoftDescriptor": transactionMessage,
         "CreditCard":{
-          "CardNumber":creditCardData.cardNumber,
-          "Holder": creditCardData.nameFromCard,
-          "ExpirationDate": creditCardData.validate,
-          "SecurityCode":creditCardData.cvv,
-          "Brand": creditCardData.brand
+          "CardNumber":paymentData.creditCard.cardNumber,
+          "Holder": paymentData.creditCard.nameFromCard,
+          "ExpirationDate": paymentData.creditCard.validate,
+          "SecurityCode":paymentData.creditCard.cvv,
+          "Brand": paymentData.creditCard.brand
         }
       }
     })
@@ -57,6 +56,7 @@ const service = (paymentData, creditCardData) => {
     .set("MerchantKey", process.env.CIELO_API_MERCHANTKEY)
 
     .end((err, apiRes) => {
+      
       if(err){
         reject({
           message: "Error at card operator transaction",
