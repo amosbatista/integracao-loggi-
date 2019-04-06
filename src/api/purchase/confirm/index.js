@@ -12,7 +12,7 @@ export default ({ config, db }) => {
     const STATUS_SERVER_ERROR = 500
 
     authService().then( (authData) => {
-      purchaseService(req, authData.toString())
+      purchaseService(req.body.addressData, authData.toString())
       .then((apiRes) => {
 
         const servicesSum = req.body.servicesData.services.reduce( (total, current ) => {

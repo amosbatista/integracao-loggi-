@@ -16,6 +16,7 @@ const service = (PaymentId, purchaseAmount) => {
     .set("MerchantKey", process.env.CIELO_API_MERCHANTKEY)
 
     .end((err, apiRes) => {
+
       if(err){
         reject({
           message: "Error at card operator cancelation",
@@ -23,16 +24,18 @@ const service = (PaymentId, purchaseAmount) => {
         })
       }
 
-      const cancelationStatusSucess = "9"
+      else{
+        const cancelationStatusSucess = "0"
 
-      if(apiRes.body.Payment.ReturnCode != cancelationStatusSucess) {
-        reject({
-          message: `The transaction cancelation not worked well: ${apiRes.body.Payment.ReturnMessage}`,
-          data: apiRes.body
-        })
+        if(apiRes.body.ReturnCode != cancelationStatusSucess) {
+          reject({
+            message: `The transaction cancelation not worked well: ${apiRes.Payment.ReturnMessage}`,
+            data: apiRes.body
+          })
+        }
+        else 
+          resolve()
       }
-      
-      resolve()
     })
   })
 }

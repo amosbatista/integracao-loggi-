@@ -22,7 +22,6 @@ const validate = (paymentData) => {
 }
 
 const creditCardInstallments = 1
-const transactionMessage = "20Cartorio_Delivery"
 
 const service = (paymentData) => {
 

@@ -2,12 +2,12 @@ import httpReq from 'superagent'
 import query from './query/index'
 import notaryData from '../../entities/notaryData'
 
-const service = (req, auth) => {
+const service = (addressData, auth) => {
 
   return new Promise ( (resolve, reject) => {
     httpReq.post(process.env.LOGGI_API_V2)
     .send({
-      query: query(req.body, notaryData)
+      query: query(addressData, notaryData)
     })
     .set('authorization', auth)
     .set('Content-Type', 'application/json')

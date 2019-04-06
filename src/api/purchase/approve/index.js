@@ -20,6 +20,7 @@ export default ({ config, db }) => {
       cieloTransaction(req.body.paymentData)
 
       .then((creditCardReturnData)=>{
+        console.log(creditCardReturnData)
         loggiApproved(req.body.deliveryData, authData.toString())
 
         .then((loggiData) => {
@@ -28,19 +29,21 @@ export default ({ config, db }) => {
           
           log.save({
             clientName: req.body.servicesData.clientName,
-            address: req.body.addressData.address,
-            number:  req.body.addressData.number,
+            address: req.body.addressData.streetName,
+            number:  req.body.addressData.streetNumber,
             neighborhood: req.body.addressData.neighborhood,
+            addressComplement: req.body.addressData.addressComplement,
+            postalCode: req.body.addressData.postalCode,
             totalPurchase: req.body.paymentData.totalAmount,
             creditCard: {
               numberFromAPI: creditCardReturnData.Payment.CreditCard.CardNumber,
               brand: creditCardReturnData.Payment.CreditCard.Brand,
-              creditCardHolder: creditCardReturnData.Payment.CreditCard.Holder,
-              creditCardProofOfSale: creditCardReturnData.Payment.ProofOfSale,
-              creditCardTid: creditCardReturnData.Payment.Tid,
-              creditCardAuthorizationCode: creditCardReturnData.Payment.AuthorizationCode,
-              creditCardPaymentId: creditCardReturnData.Payment.PaymentId,
-              creditCardLinksData: creditCardReturnData.Payment.Links
+              holder: creditCardReturnData.Payment.CreditCard.Holder,
+              proofOfSale: creditCardReturnData.Payment.ProofOfSale,
+              tid: creditCardReturnData.Payment.Tid,
+              authorizationCode: creditCardReturnData.Payment.AuthorizationCode,
+              paymentId: creditCardReturnData.Payment.PaymentId,
+              linksData: creditCardReturnData.Payment.Links
             }
           })
           
@@ -114,7 +117,7 @@ export default ({ config, db }) => {
     })
 
     .catch( (err) => {
-      console.log('Unauthorized atempt to conclude order')
+      console.log('Unauthorized atempt to conclude order', err)
       res.status(STATUS_UNAUTHORIZED).send(err.message)
       res.end()
     })

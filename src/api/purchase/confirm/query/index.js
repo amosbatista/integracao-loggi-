@@ -10,7 +10,7 @@ const query = (originData, notaryData) => {
       clientMutationId: "test_inquiry"
       waypoints: [
         {
-          addressComplement: "Complemento retirada"
+          addressComplement: "${originData.addressComplement}"
           instructions: "Retirada de documento"
           tag: , retirar_documento
           addressData: ${addressComponents(originData)}
