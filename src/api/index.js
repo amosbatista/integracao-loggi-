@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import login from './login';
 import confirm from './purchase/confirm/index';
 import approve from './purchase/approve/index';
 

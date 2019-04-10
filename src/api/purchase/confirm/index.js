@@ -20,11 +20,11 @@ export default ({ config, db }) => {
         }, 0)
 
         const taxsSum = ecommerceTax(servicesSum)
-        const totalPurchase = servicesSum + taxsSum
+        const totalPurchase = servicesSum + taxsSum.calculedValue
 
         res.json({
-          purchaseId: apiRes.body,
-          serviceSum,
+          purchaseId: apiRes.newRequestId,
+          servicesSum,
           taxsSum,
           totalPurchase
         })

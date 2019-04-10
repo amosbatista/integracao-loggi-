@@ -16,15 +16,22 @@ export default ({ config, db }) => {
     const STATUS_UNAUTHORIZED = 401
     const STATUS_SERVER_ERROR = 500
 
+    console.log('Start of transaction process')
+    console.log("On Loggi's auth")
+
     authService().then( (authData) => {
+
+      console.log("On Credit Card operator process")
       cieloTransaction(req.body.paymentData)
 
       .then((creditCardReturnData)=>{
-        console.log(creditCardReturnData)
+
+        console.log("On Loggi's order approvation")
         loggiApproved(req.body.deliveryData, authData.toString())
 
         .then((loggiData) => {
 
+          console.log("After transaction finish, on log process")
           const log = new Log()
           
           log.save({
@@ -48,20 +55,29 @@ export default ({ config, db }) => {
           })
           
           .then( () => {
+
+            console.log("On email process", req.body.servicesData)
             email(req.body.servicesData.clientName, req.body.servicesData.clientEmail, "Entrega aprovada com sucesso.")
 
             .then( () => {
+
+              console.log("Everthing is done. Returning data to response")
               res.json({
                 isProcessOk: true,
+                loggiOrderId: loggiData.loggiOrderId,
+                paymentId: creditCardReturnData.Payment.PaymentId
               })
               res.end()
             })
 
             .catch( (err) => {
               console.log(err.message, err.data)
+              console.log("There's some error im email process. Even that, returning data to response")
               res.json({
                 isProcessOk: false,
-                message: err.message
+                message: err.message,
+                loggiOrderId: loggiData.loggiOrderId,
+                paymentId: creditCardReturnData.Payment.PaymentId
               })
               res.end()
             })
@@ -70,6 +86,7 @@ export default ({ config, db }) => {
           .catch( (err) => {
             console.log(err.message, err.data)
 
+            console.log("Trying to rollback transactions, after database failure.")
             Promise.all([
               cieloCancelation(creditCardReturnData.Payment.PaymentId, req.body.paymentData.totalAmount),
               loggiCancelation(loggiData.loggiOrderId, authData.toString())

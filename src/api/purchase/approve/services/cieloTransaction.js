@@ -14,11 +14,11 @@ import httpReq from 'superagent'
 const validate = (paymentData) => {
   
   return paymentData.totalAmount &&
-  paymentData.creditCard.cardNumber &&
-  paymentData.creditCard.nameFromCard &&
-  paymentData.creditCard.validate &&
-  paymentData.creditCard.cvv &&
-  paymentData.creditCard.brand
+  paymentData.cardNumber &&
+  paymentData.nameFromCard &&
+  paymentData.validate &&
+  paymentData.cvv &&
+  paymentData.brand
 }
 
 const creditCardInstallments = 1
@@ -37,18 +37,18 @@ const service = (paymentData) => {
     .send(JSON.stringify({
       "MerchantOrderId": process.env.CIELO_API_MERCHANTID,
       "Customer":{
-         "Name": paymentData.creditCard.nameFromCard
+         "Name": paymentData.nameFromCard
       },
       "Payment":{
         "Type":"CreditCard",
         "Amount": paymentData.totalAmount,
         "Installments": creditCardInstallments,
         "CreditCard":{
-          "CardNumber":paymentData.creditCard.cardNumber,
-          "Holder": paymentData.creditCard.nameFromCard,
-          "ExpirationDate": paymentData.creditCard.validate,
-          "SecurityCode":paymentData.creditCard.cvv,
-          "Brand": paymentData.creditCard.brand
+          "CardNumber":paymentData.cardNumber,
+          "Holder": paymentData.nameFromCard,
+          "ExpirationDate": paymentData.validate,
+          "SecurityCode":paymentData.cvv,
+          "Brand": paymentData.brand
         }
       }
     }))

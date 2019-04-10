@@ -5,6 +5,12 @@ import notaryData from '../../entities/notaryData'
 const service = (addressData, auth) => {
 
   return new Promise ( (resolve, reject) => {
+
+    resolve({
+      "newRequestId": '12345abc'
+    })
+    return
+
     httpReq.post(process.env.LOGGI_API_V2)
     .send({
       query: query(addressData, notaryData)

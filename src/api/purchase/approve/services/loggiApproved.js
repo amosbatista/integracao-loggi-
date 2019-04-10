@@ -4,9 +4,15 @@ import httpReq from 'superagent'
 //   inquiryId: 0
 // }
 
-const service = (inquiryId, auth) => {
+const service = (deliveryData, auth) => {
 
   return new Promise ((resolve, reject) => {
+
+    resolve({
+      "loggiOrderId": '12345abc',
+      "status": 'ok'
+    })
+    return
 
     const paymentMethod = process.env.LOGGI_PAYMENT_METHODID
     
@@ -14,7 +20,7 @@ const service = (inquiryId, auth) => {
     .send({
       "query": `mutation {
         confirmOrder(input: {
-          inquiry: "${inquiryId}"
+          inquiry: "${deliveryData.inquiryId}"
           paymentMethod: ${paymentMethod}
           clientMutationId: "confirm_order"
         }) {
