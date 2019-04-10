@@ -12,7 +12,7 @@ export default ({ config, db }) => {
     const STATUS_SERVER_ERROR = 500
 
     authService().then( (authData) => {
-      purchaseService(req, authData.toString())
+      purchaseService(req.body.addressData, authData.toString())
       .then((apiRes) => {
 
         const servicesSum = req.body.servicesData.services.reduce( (total, current ) => {
@@ -20,24 +20,25 @@ export default ({ config, db }) => {
         }, 0)
 
         const taxsSum = ecommerceTax(servicesSum)
-        const totalPurchase = servicesSum + taxsSum
+        const totalPurchase = servicesSum + taxsSum.calculedValue
 
         res.json({
-          purchaseId: apiRes.body,
-          serviceSum,
+          purchaseId: apiRes.newRequestId,
+          servicesSum,
           taxsSum,
           totalPurchase
         })
         res.end()
       })
-      .catch((error) => {
-        res.status(STATUS_SERVER_ERROR).send(error.message)
-        console.log(error.message, error.object)
+      .catch((err) => {
+        res.status(STATUS_SERVER_ERROR).send(err.message)
+        console.log(err.message, err.object)
         res.end()
       })
 
     }).catch( (err) => {
-      res.status(STATUS_UNAUTHORIZED).send(error.message)
+      console.log(err.message, err.data)
+      res.status(STATUS_UNAUTHORIZED).send(err.message)
       res.end()
     })
 	});

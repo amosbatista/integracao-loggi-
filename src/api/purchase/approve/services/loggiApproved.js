@@ -4,17 +4,23 @@ import httpReq from 'superagent'
 //   inquiryId: 0
 // }
 
-const service = (inquiryId, auth) => {
+const service = (deliveryData, auth) => {
 
   return new Promise ((resolve, reject) => {
+
+    resolve({
+      "loggiOrderId": '12345abc',
+      "status": 'ok'
+    })
+    return
 
     const paymentMethod = process.env.LOGGI_PAYMENT_METHODID
     
     httpReq.post(process.env.LOGGI_API_V2)
-    .query({
+    .send({
       "query": `mutation {
         confirmOrder(input: {
-          inquiry: "${inquiryId}"
+          inquiry: "${deliveryData.inquiryId}"
           paymentMethod: ${paymentMethod}
           clientMutationId: "confirm_order"
         }) {
@@ -41,19 +47,22 @@ const service = (inquiryId, auth) => {
           data: err
         })
       }
-
-      if(!apiRes.body.data.confirmOrder.success) {
+      else{
+        if(!apiRes.body.data.confirmOrder.success) {
+          
+          reject({
+            message: `The Loggi's order confirmation has response, but returned errors`,
+            data: apiRes.body.data.confirmOrder.errors
+          })
+        }
         
-        reject({
-          message: `The Loggi's order confirmation has response, but returned errors`,
-          data: apiRes.body.data.confirmOrder.errors
-        })
+        else{
+          resolve({
+            "loggiOrderId": apiRes.body.data.confirmOrder.order.pk,
+            "status": apiRes.body.data.confirmOrder.order.status
+          })
+        }
       }
-      
-      resolve({
-        "loggiOrderId": apiRes.body.data.confirmOrder.order.pk,
-        "status": apiRes.body.data.confirmOrder.order.status
-      })
     })
   })
 }

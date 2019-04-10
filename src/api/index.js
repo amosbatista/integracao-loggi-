@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import login from './login';
 import confirm from './purchase/confirm/index';
 import approve from './purchase/approve/index';
 
@@ -8,7 +7,7 @@ export default ({ config, db }) => {
 	const noResponseCode = 501
 
 	api.use('/confirm', confirm({ config, db }));
-	api.use('/approve', confirm({ config, db }));
+	api.use('/approve', approve({ config, db }));
 
 	// perhaps expose some API metadata at the root
 	api.post('/', (req, res) => {

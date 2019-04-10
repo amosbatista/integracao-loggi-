@@ -13,7 +13,7 @@ const service = class {
     const maxConnections = 5
     const minConnections = 1
     const idleSecondsBeforeClose = 10000
-
+    
     this.sequelize = new Sequelize(process.env.LOG_DATABASE, process.env.LOG_LOGIN, process.env.LOG_PASSWORD, {
       host: process.env.LOG_HOST,
       dialect: process.env.LOG_DATABASE_TYPE,
@@ -25,7 +25,7 @@ const service = class {
       }
     })
 
-    this.transactionLog = sequelize.define('transactionLog', {
+    this.transactionLog = this.sequelize.define('transactionLog', {
       clientName: {
         type: Sequelize.STRING
       },
@@ -36,6 +36,12 @@ const service = class {
         type: Sequelize.STRING
       },
       neighborhood: {
+        type: Sequelize.STRING
+      },
+      addressComplement: {
+        type: Sequelize.STRING
+      },
+      postalCode: {
         type: Sequelize.STRING
       },
       totalPurchase: {
@@ -71,13 +77,15 @@ const service = class {
   save(transactionData) {
     return new Promise((resolve, reject)=> {
       let transactionLog = this.transactionLog
-
+      
       transactionLog.sync().then( () => {
         transactionLog.create({
           clientName: transactionData.clientName,
           address: transactionData.address,
           number: transactionData.number,
           neighborhood: transactionData.neighborhood,
+          addressComplement: transactionData.addressComplement,
+          postalCode: transactionData.postalCode,
           totalPurchase: transactionData.totalPurchase,
           creditCardNumberFromAPI: transactionData.creditCard.numberFromAPI,
           creditCardBrand: transactionData.creditCard.brand,

@@ -9,7 +9,7 @@ const service = (emailTo, clientName, message) => {
       let transporter = nodemailer.createTransport({
         host: process.env.EMAIL_HOST,
         port: process.env.EMAIL_PORT,
-        secure: process.env.EMAIL_IS_SECURE, // true for 465, false for other ports
+        secure: process.env.IS_EMAIL_SECURE, // true for 465, false for other ports
         auth: {
           user: process.env.EMAIL_FROM,
           pass: process.env.EMAIL_ACCOUNT_PASSWORD
@@ -27,11 +27,18 @@ const service = (emailTo, clientName, message) => {
         ` // html body
       };
 
-      const info = await transporter.sendMail(mailOptions)
+      transporter.sendMail(mailOptions)
+      .then((info)=>{
+        console.log("Message sent: %s", info.messageId)
+        resolve()
+      })
 
-      console.log("Message sent: %s", info.messageId);
-
-      resolve()
+      .catch((err)=>{
+        reject({
+          message: `Error in send e-mail to ${emailTo}, after data set`,
+          data: err
+        })
+      })
     }
     catch(err){
       reject({
