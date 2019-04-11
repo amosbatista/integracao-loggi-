@@ -27,7 +27,7 @@ export default ({ config, db }) => {
       .then((creditCardReturnData)=>{
 
         console.log("On Loggi's order approvation")
-        loggiApproved(req.body.deliveryData, authData.toString())
+        loggiApproved(req.body.addressData, req.body.servicesData, req.body.paymentData, authData.toString())
 
         .then((loggiData) => {
 
@@ -36,12 +36,14 @@ export default ({ config, db }) => {
           
           log.save({
             clientName: req.body.servicesData.clientName,
-            address: req.body.addressData.streetName,
-            number:  req.body.addressData.streetNumber,
-            neighborhood: req.body.addressData.neighborhood,
+            clientEmail: req.body.servicesData.clientEmail,
+            clientPhone: req.body.servicesData.clientPhone,
+            completeAddress: req.body.addressData.completeAddress,
             addressComplement: req.body.addressData.addressComplement,
-            postalCode: req.body.addressData.postalCode,
             totalPurchase: req.body.paymentData.totalAmount,
+            deliveryTax: req.body.paymentData.deliveryTax,
+            servicesSum: req.body.paymentData.servicesSum,
+            transactionOperationTax: req.body.paymentData.transactionOperationTax,
             creditCard: {
               numberFromAPI: creditCardReturnData.Payment.CreditCard.CardNumber,
               brand: creditCardReturnData.Payment.CreditCard.Brand,
