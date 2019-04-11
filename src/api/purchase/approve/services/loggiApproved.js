@@ -8,11 +8,11 @@ const service = (deliveryData, auth) => {
 
   return new Promise ((resolve, reject) => {
 
-    resolve({
-      "loggiOrderId": '12345abc',
-      "status": 'ok'
-    })
-    return
+    // resolve({
+    //   "loggiOrderId": '12345abc',
+    //   "status": 'ok'
+    // })
+    // return
 
     const paymentMethod = process.env.LOGGI_PAYMENT_METHODID
     

@@ -12,6 +12,7 @@ export default ({ config, db }) => {
     const STATUS_SERVER_ERROR = 500
 
     authService().then( (authData) => {
+
       purchaseService(req.body.addressData, authData.toString())
       .then((apiRes) => {
 
@@ -19,13 +20,14 @@ export default ({ config, db }) => {
           return total + (current.value * current.amount) 
         }, 0)
 
-        const taxsSum = ecommerceTax(servicesSum)
-        const totalPurchase = servicesSum + taxsSum.calculedValue
+        const deliveryTax = apiRes.estimatedCost
+        const transactionOperationTax = ecommerceTax(servicesSum + deliveryTax)
+        const totalPurchase = servicesSum + deliveryTax + transactionOperationTax.calculedValue
 
         res.json({
-          purchaseId: apiRes.newRequestId,
           servicesSum,
-          taxsSum,
+          deliveryTax,
+          transactionOperationTax,
           totalPurchase
         })
         res.end()
