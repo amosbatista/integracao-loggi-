@@ -6,14 +6,54 @@ const service = (addressData, auth) => {
 
     const notariusStoreId = process.env.LOGGI_STORE_ID
     const originCoordinate = addressData.coordinates
-    
+
+    const query = `query {
+      estimate(
+        shopId: ${notariusStoreId},
+        packagesDestination: [
+          {
+            lat: ${originCoordinate.lat},
+            lng: ${originCoordinate.lng}   
+          }
+        ]
+        chargeMethod: 1,
+        optimize: true
+      ) {
+        packages {
+          error
+          eta
+          index
+          rideCm
+          outOfCityCover
+          outOfCoverageArea
+          originalIndex
+          waypoint {
+            indexDisplay
+            originalIndexDisplay
+            role
+          }
+        }
+        routeOptimized
+        normal {
+          cost
+          distance
+          eta
+        }
+        optimized {
+          cost
+          distance
+          eta
+        }
+      }   
+    }
+    `
+
     httpReq.post(process.env.LOGGI_API_V2)
     .send({
-      query: `query{estimate(shopId:${notariusStoreId},packagesDestination:[{lat:${originCoordinate.lat},lng:${originCoordinate.lng}}] chargeMethod:1,optimize:true){packages{error eta index rideCm outOfCityCover outOfCoverageArea originalIndex waypoint{indexDisplay originalIndexDisplay role}} routeOptimized normal{cost distance eta} optimized{cost distance eta}}}`
+      query: query
     })
-    .set('authorization', auth)
+    .set('Authorization', auth)
     .set('Content-Type', 'application/json')
-    .set('Accept', 'application/json')
     .end((err, apiRes) => {
       
       if(err){
