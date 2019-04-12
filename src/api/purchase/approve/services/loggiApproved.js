@@ -29,7 +29,7 @@ const service = (addressData, servicesData, paymentData, auth) => {
               complement: "${addressData.addressComplement}"
             }
             charge: {
-              value: ${paymentData.deliveryTax}
+              value: "${paymentData.deliveryTax}"
               method: ${paymentMethodAlreadyChaged}
               change: "0.00"
             }

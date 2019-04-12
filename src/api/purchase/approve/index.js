@@ -43,7 +43,7 @@ export default ({ config, db }) => {
             totalPurchase: req.body.paymentData.totalAmount,
             deliveryTax: req.body.paymentData.deliveryTax,
             servicesSum: req.body.paymentData.servicesSum,
-            transactionOperationTax: req.body.paymentData.transactionOperationTax,
+            transactionOperationTax: req.body.paymentData.transactionOperationTax.calculedValue,
             creditCard: {
               numberFromAPI: creditCardReturnData.Payment.CreditCard.CardNumber,
               brand: creditCardReturnData.Payment.CreditCard.Brand,
