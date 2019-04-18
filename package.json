@@ -1,6 +1,6 @@
 {
   "name": "integracao-loggi-bff",
-  "version": "0.1.1",
+  "version": "0.3.1",
   "description": "Integatrion with Loggi's delivery system API",
   "main": "dist",
   "scripts": {
