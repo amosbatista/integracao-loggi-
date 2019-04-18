@@ -3,6 +3,7 @@ import confirm from './purchase/confirm/index';
 import approve from './purchase/approve/index';
 
 export default ({ config, db }) => {
+	process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 	let api = Router();
 	const noResponseCode = 501
 

@@ -5,7 +5,6 @@ import cieloCancelation from './services/cieloCancelation'
 import cieloTransaction from './services/cieloTransaction'
 import loggiApproved from './services/loggiApproved'
 import loggiCancelation from './services/loggiCancelation'
-import email from './services/email'
 import Log from './services/log'
 
 export default ({ config, db }) => {
@@ -57,32 +56,14 @@ export default ({ config, db }) => {
           })
           
           .then( () => {
-
-            console.log("On email process", req.body.servicesData)
-            email(req.body.servicesData.clientName, req.body.servicesData.clientEmail, "Entrega aprovada com sucesso.")
-
-            .then( () => {
-
-              console.log("Everthing is done. Returning data to response")
-              res.json({
-                isProcessOk: true,
-                loggiOrderId: loggiData.loggiOrderId,
-                paymentId: creditCardReturnData.Payment.PaymentId
-              })
-              res.end()
+            
+            res.json({
+              isProcessOk: true,
+              loggiOrderId: loggiData.loggiOrderId,
+              paymentId: creditCardReturnData.Payment.PaymentId
             })
-
-            .catch( (err) => {
-              console.log(err.message, err.data)
-              console.log("There's some error im email process. Even that, returning data to response")
-              res.json({
-                isProcessOk: false,
-                message: err.message,
-                loggiOrderId: loggiData.loggiOrderId,
-                paymentId: creditCardReturnData.Payment.PaymentId
-              })
-              res.end()
-            })
+            res.end()
+           
           })
 
           .catch( (err) => {
