@@ -29,22 +29,29 @@ const service = class {
       clientName: {
         type: Sequelize.STRING
       },
-      address: {
+      clientEmail: {
         type: Sequelize.STRING
       },
-      number: {
+      clientPhone: {
         type: Sequelize.STRING
       },
-      neighborhood: {
-        type: Sequelize.STRING
+      completeAddress: {
+        type: Sequelize.STRING,
+        allowNull: true
       },
       addressComplement: {
         type: Sequelize.STRING
       },
-      postalCode: {
-        type: Sequelize.STRING
-      },
       totalPurchase: {
+        type: Sequelize.DECIMAL
+      },
+      deliveryTax: {
+        type: Sequelize.DECIMAL
+      },
+      servicesSum: {
+        type: Sequelize.DECIMAL
+      },
+      transactionOperationTax: {
         type: Sequelize.DECIMAL
       },
       creditCardNumberFromAPI:{
@@ -81,12 +88,14 @@ const service = class {
       transactionLog.sync().then( () => {
         transactionLog.create({
           clientName: transactionData.clientName,
-          address: transactionData.address,
-          number: transactionData.number,
-          neighborhood: transactionData.neighborhood,
+          clientEmail: transactionData.clientEmail,
+          clientPhone: transactionData.clientPhone,
+          completeAddress: transactionData.completeAddress,
           addressComplement: transactionData.addressComplement,
-          postalCode: transactionData.postalCode,
           totalPurchase: transactionData.totalPurchase,
+          servicesSum: transactionData.servicesSum,
+          deliveryTax: transactionData.deliveryTax,
+          transactionOperationTax: transactionData.transactionOperationTax,
           creditCardNumberFromAPI: transactionData.creditCard.numberFromAPI,
           creditCardBrand: transactionData.creditCard.brand,
           creditCardHolder: transactionData.creditCard.holder,

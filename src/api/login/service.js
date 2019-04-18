@@ -27,8 +27,10 @@ const service = () => {
             message: 'Error in client API request',
             data: err
           })
+
+          return
         }
-          
+        
         const resData = JSON.parse(response.text)
 
         try {
