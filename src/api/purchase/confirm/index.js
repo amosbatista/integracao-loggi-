@@ -8,6 +8,10 @@ export default ({ config, db }) => {
 
 	// perhaps expose some API metadata at the root
 	api.post('/', (req, res) => {
+
+    res.status(505).send('I m on confirm')
+    res.end()
+    return 
     const STATUS_UNAUTHORIZED = 401
     const STATUS_SERVER_ERROR = 500
 

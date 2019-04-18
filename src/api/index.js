@@ -11,16 +11,14 @@ export default ({ config, db }) => {
 	api.use('/approve', approve({ config, db }));
 
 	console.log('setting api route')
-	
+
 	// perhaps expose some API metadata at the root
 	api.post('/', (req, res) => {
-		console.log('empty post request')
-		res.status(noResponseCode).send()
+		res.status(noResponseCode).send('empty post request')
 	});
 
 	api.get('/', (req, res) => {
-		console.log('empty get request')
-		res.status(noResponseCode).send()
+		res.status(noResponseCode).send('empty get request')
 	});
 
 	return api;
