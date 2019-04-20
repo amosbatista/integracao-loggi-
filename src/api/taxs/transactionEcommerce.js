@@ -1,7 +1,11 @@
-const taxValue = 2.40
-
 const tax = (transactionValue) => {
-  const valuePostTax = parseFloat(transactionValue) + taxValue
+
+  const totalPercent = 100
+  const percentualTax = 0.02
+
+  const taxValue = parseFloat(transactionValue) * percentualTax / totalPercent
+  const valuePostTax = transactionValue + taxValue
+
   return {
     taxValue,
     description: 'Taxa E-commerce',

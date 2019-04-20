@@ -114,7 +114,7 @@ const service = (addressData, servicesData, paymentData, auth) => {
       }
 
       resolve({
-        "loggiOrderId": apiRes.body.data.createOrder.shop.pk
+        "loggiOrderId": apiRes.body.data.createOrder.shop.order.pk
       })
 
     })
