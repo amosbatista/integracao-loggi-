@@ -21,7 +21,8 @@ export default ({ config, db }) => {
           return total + (current.value * current.amount) 
         }, 0)
 
-        const deliveryTax = apiRes.estimatedCost
+        const doubleDeliveryTax = 2
+        const deliveryTax = apiRes.estimatedCost * doubleDeliveryTax
         const transactionOperationTax = ecommerceTax(servicesSum + deliveryTax)
         const totalPurchase = servicesSum + deliveryTax + transactionOperationTax.calculedValue
 

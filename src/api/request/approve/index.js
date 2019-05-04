@@ -1,8 +1,6 @@
 import { Router } from 'express'
 import authService from '../../login/service'
 
-import cieloCancelation from './services/cieloCancelation'
-import cieloTransaction from './services/cieloTransaction'
 import loggiApproved from './services/loggiApproved'
 import loggiCancelation from './services/loggiCancelation'
 import Log from './services/log'
