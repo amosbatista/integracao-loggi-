@@ -8,7 +8,7 @@ const service = class {
     this.transaction = dbConnection('requestLog', logModel(requestModel))
   }
 
-  save(requestId, lastStatus, newStatus) {
+  save(request, newStatus) {
 
     return new Promise((resolve, reject)=> {
       let transaction = this.transaction
@@ -16,9 +16,9 @@ const service = class {
       transaction.sync().then( () => {
 
         transaction.create({
-          lastStatus,
+          lastStatus: request.status,
           newStatus,
-          requestId
+          requestId: request.id
         })
         .then(()=>{
           resolve()

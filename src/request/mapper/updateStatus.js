@@ -25,8 +25,8 @@ const service = class {
             }
           }
         )
-        .then(()=>{
-          resolve()
+        .then((updatedRequests)=>{
+          resolve(updatedRequests)
         })
         .catch((err)=>{
           reject({
