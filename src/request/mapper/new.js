@@ -1,33 +1,11 @@
-import Sequelize from 'sequelize'
-import Entity from '../entity'
-
-// {
-//   clientName, address, number, neighborhood, totalPurchase, 
-//   creditCardData: {
-//     numberFromAPI, brand, holder,proofOfSale, tid, authorizationCode, paymentId, linksData 
-//   }
-// }
+import model from '../model'
+import dbConnection from '../../database/helper'
+import status from '../status'
 
 const service = class {
 
   constructor () {
-
-    const maxConnections = 5
-    const minConnections = 1
-    const idleSecondsBeforeClose = 10000
-    
-    this.sequelize = new Sequelize(process.env.LOG_DATABASE, process.env.LOG_LOGIN, process.env.LOG_PASSWORD, {
-      host: process.env.LOG_HOST,
-      dialect: process.env.LOG_DATABASE_TYPE,
-    
-      pool: {
-        max: maxConnections,
-        min: minConnections,
-        idle: idleSecondsBeforeClose
-      }
-    })
-
-    this.transactionLog = this.sequelize.define('request', Entity)
+    this.transactionLog = dbConnection('request', model)
   }
 
   save(transactionData) {
@@ -46,6 +24,7 @@ const service = class {
           servicesSum: transactionData.servicesSum,
           deliveryTax: transactionData.deliveryTax,
           transactionOperationTax: transactionData.transactionOperationTax,
+          status: status.AT_RECEIVE
         })
         .then(()=>{
           resolve()
