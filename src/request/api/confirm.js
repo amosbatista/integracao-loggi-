@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import purchaseService from './service'
-import authService from '../../login/service'
-import ecommerceTax from '../../taxs/transactionEcommerce'
+import purchaseService from '../../delivery/loggiEstimateDeliveryService'
+import authService from '../../delivery/loggiLogin/service'
+import ecommerceTax from '../../bankTransaction/cieloTax'
 
 export default ({ config, db }) => {
 	let api = Router();

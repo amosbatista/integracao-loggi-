@@ -58,7 +58,7 @@ const service = (addressData, auth) => {
       
       if(err){
         reject({
-          message: 'Error in client API request',
+          message: 'Erro ao fazer requisição na API da Loggi',
           object: JSON.stringify(err)
         })
 
@@ -69,7 +69,7 @@ const service = (addressData, auth) => {
       
       if(apiRes.body.data.estimate.packages[firstPackage].error){
         reject({
-          message: 'API request is done but there"s errors ',
+          message: 'Requisição na API foi concluída, mas há erros',
           object: JSON.stringify(apiRes.body.data.estimate.packages[firstPackage].error)
         })
 
@@ -78,7 +78,7 @@ const service = (addressData, auth) => {
 
       if(apiRes.body.data.estimate.packages[firstPackage].outOfCityCover){
         reject({
-          message: 'Delivery request is so far from São Paulo.',
+          message: 'Endereço de origem da retirada está longe demais de São Paulo.',
           object: ""
         })
 
@@ -87,7 +87,7 @@ const service = (addressData, auth) => {
 
       if(apiRes.body.data.estimate.packages[firstPackage].outOfCoverageArea){
         reject({
-          message: 'Delivery request is so far from Loggi',
+          message: 'Endereço de origem da retirada está longe demais da Loggi.',
           object: ""
         })
 

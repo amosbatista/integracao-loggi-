@@ -98,7 +98,7 @@ const service = (addressData, servicesData, paymentData, auth) => {
       if(err){
 
         reject({
-          message: "Error at Loggi's API order confirmation",
+          message: "Erro ao confirmar pedido na API da Loggi",
           data: err
         })
         return
@@ -107,7 +107,7 @@ const service = (addressData, servicesData, paymentData, auth) => {
       if(!apiRes.body.data.createOrder.success) {
 
         reject({
-          message: `The Loggi's order confirmation has response, but returned errors`,
+          message: `A confirmação de pedido foi feita, mas existem erros.`,
           data: apiRes.body.data.createOrder.errors
         })
         return

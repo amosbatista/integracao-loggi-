@@ -16,7 +16,7 @@ export default ({ config, db }) => {
     const STATUS_REQUEST_ACCEPT = 202
 
     if(!req.body.requestId) {
-      res.status(STATUS_INVALID_REQUEST).send("Request ID is empty")
+      res.status(STATUS_INVALID_REQUEST).send("ID do pedido está vazio")
       res.end()
 
       return
@@ -27,7 +27,7 @@ export default ({ config, db }) => {
     loadMapper.load(requestId).then( (request) => {
 
       if(!request){
-        res.status(STATUS_INVALID_REQUEST).send("Request was not found in database")
+        res.status(STATUS_INVALID_REQUEST).send("Pedido não foi localizado na base de dados")
         res.end()
 
         return

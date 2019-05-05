@@ -1,5 +1,5 @@
-import requestModel from '../../model'
-import logModel from '../model'
+import requestModel from '../model'
+import logModel from './model'
 import dbConnection from '../../database/helper'
 
 const service = class {
@@ -25,7 +25,7 @@ const service = class {
         })
         .catch((err)=>{
           reject({
-            message: 'Error at create new request log into database',
+            message: 'Erro ao criar novo log de pedido no banco de dados',
             data: err
           })
         })

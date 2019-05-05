@@ -1,37 +1,36 @@
 import model from '../model'
 import dbConnection from '../../database/helper'
-import status from '../status'
 
 const service = class {
 
   constructor () {
-    this.transactionLog = dbConnection('request', model)
+    this.requestConnection = dbConnection('request', model)
   }
 
-  save(transactionData) {
+  save(requestData) {
     return new Promise((resolve, reject)=> {
-      let transactionLog = this.transactionLog
+      let requestConnection = this.requestConnection
       
-      transactionLog.sync().then( () => {
+      requestConnection.sync().then( () => {
 
-        transactionLog.create({
-          clientName: transactionData.clientName,
-          clientEmail: transactionData.clientEmail,
-          clientPhone: transactionData.clientPhone,
-          completeAddress: transactionData.completeAddress,
-          addressComplement: transactionData.addressComplement,
-          totalPurchase: transactionData.totalPurchase,
-          servicesSum: transactionData.servicesSum,
-          deliveryTax: transactionData.deliveryTax,
-          transactionOperationTax: transactionData.transactionOperationTax,
-          status: status.AT_RECEIVE
+        requestConnection.create({
+          clientName: requestData.clientName,
+          clientEmail: requestData.clientEmail,
+          clientPhone: requestData.clientPhone,
+          completeAddress: requestData.completeAddress,
+          addressComplement: requestData.addressComplement,
+          totalPurchase: requestData.totalPurchase,
+          servicesSum: requestData.servicesSum,
+          deliveryTax: requestData.deliveryTax,
+          requestOperationTax: requestData.requestOperationTax,
+          status: requestData.status
         })
-        .then(()=>{
-          resolve()
+        .then((newRequest)=>{
+          resolve(newRequest)
         })
         .catch((err)=>{
           reject({
-            message: 'Error at create new request into database',
+            message: 'Erro ao criar novo pedido no banco de dados',
             data: err
           })
         })

@@ -29,14 +29,14 @@ const service = (orderId, auth) => {
       
       if(err){
         reject({
-          message: "Error at Loggi's API order cancelation",
+          message: "Erro no cancelamento de pedido da Loggi",
           data: err
         })
       }
 
       if(!apiRes.body.data.cancelOrder.success) {
         reject({
-          message: `The Loggi's order cancelation has response, but returned errors`,
+          message: `O cancelamento foi feito na APi da Loggi, mas ela retornou erro`,
           data: apiRes.body.data.confirmOrder.errors
         })
       }

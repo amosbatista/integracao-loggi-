@@ -14,7 +14,7 @@ const service = () => {
 
     if(!validate(login, password)){
       reject({
-        message: 'Login or password is empty'
+        message: 'O login ou a senha está vazio.'
       })
     }
     else {
@@ -24,7 +24,7 @@ const service = () => {
 
         if(err){
           reject({
-            message: 'Error in client API request',
+            message: 'Erro na requsição de login na API da Loggi',
             data: err
           })
 
@@ -42,7 +42,7 @@ const service = () => {
         catch(err) {
 
           reject({
-            message: 'It was impossible to generate user key. Check your password or login',
+            message: 'Foi impossível conseguir a autenticação. Favor verificar o login e senha.',
             data: err
           })
         }
