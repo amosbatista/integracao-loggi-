@@ -16,6 +16,9 @@ const model = (requestModel) => {
       type: Sequelize.STRING,
       allowNull: true
     },
+    isOrderComplete: {
+      type: Sequelize.BOOLEAN
+    },
     requestId: {
       type: Sequelize.INTEGER,
    
