@@ -38,6 +38,8 @@ export default ({ config, db }) => {
           clientPhone: req.body.servicesData.clientPhone,
           completeAddress: req.body.addressData.completeAddress,
           addressComplement: req.body.addressData.addressComplement,
+          addressLat: req.body.addressData.coordinates.lat,
+          addressLng: req.body.addressData.coordinates.lng,
           totalPurchase: req.body.paymentData.totalAmount,
           deliveryTax: req.body.paymentData.deliveryTax,
           servicesSum: req.body.paymentData.servicesSum,

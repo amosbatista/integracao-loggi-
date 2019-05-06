@@ -1,6 +1,6 @@
-import requestModel from '../model'
-import orderModel from './model'
-import dbConnection from '../../database/helper'
+import requestModel from '../../model'
+import orderModel from '../model'
+import dbConnection from '../../../database/helper'
 
 const service = class {
 

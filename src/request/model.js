@@ -12,8 +12,7 @@ const entity = {
     type: Sequelize.STRING
   },
   completeAddress: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   addressComplement: {
     type: Sequelize.STRING
@@ -30,9 +29,11 @@ const entity = {
   transactionOperationTax: {
     type: Sequelize.DECIMAL
   },
-  completeAddress: {
-    type: Sequelize.STRING,
-    allowNull: true
+  addressLat: {
+    type: Sequelize.STRING
+  },
+  addressLng: {
+    type: Sequelize.STRING
   },
   status: {
     type: Sequelize.ENUM(

@@ -1,9 +1,11 @@
 import { Router } from 'express'
 import { isNull } from 'util';
 import RequestMapper from '../mapper/load'
-import RequestOrderMapper from '../order/mapper'
+import RequestOrderMapper from '../order/mapper/new'
 import RequestUpdateMapper from '../mapper/updateStatus'
 import RequestStatus from '../status'
+import RequestLogMapper from '../log/mapper'
+import EmailService from '../../email/service'
 
 const api = ({ config, db }) => {
 
@@ -12,10 +14,11 @@ const api = ({ config, db }) => {
 	api.post('/', (req, res) => {
 
     const STATUS_INVALID_REQUEST = 400
+    const STATUS_REQUEST_ACCEPT = 202
     const validateBodyErrors = validateBody(req.body)
 
     if(validateBodyErrors){
-      res.status(STATUS_INVALID_REQUEST).send("ID do pedido está vazio")
+      res.status(STATUS_INVALID_REQUEST).send(validateBodyErrors)
       res.end()
 
       return
@@ -36,16 +39,30 @@ const api = ({ config, db }) => {
       orderData.proposedValue = request.totalPurchase
 
       const requestOrderMapper = new RequestOrderMapper()
-      requestOrderMapper.save(orderData, request).then ( () => {
-        
-        const requestUpdateMapper = new RequestUpdateMapper()
-        requestUpdateMapper.update(request, RequestStatus.WAITING_PAYMENT)
+      const requestOrderPromise = requestOrderMapper.save(orderData, request)
+
+      const requestUpdateMapper = new RequestUpdateMapper()
+      const requestUpdatePromise = requestUpdateMapper.update(request, RequestStatus.WAITING_PAYMENT)
+
+      const requestLogMapper = new RequestLogMapper()
+      const requestLogPromise = requestLogMapper.save(request, RequestStatus.WAITING_PAYMENT)
+
+      const emailPromise = EmailService(request.clientEmail, request.clientName, emailMessage(request))
+
+      Promise.all([
+        requestOrderPromise,
+        requestUpdatePromise,
+        requestLogPromise,
+        emailPromise
+      ]).then(()=> {
+        res.status(STATUS_REQUEST_ACCEPT).send()
+        res.end()
+
+        return
       })
+      .catch(errorDealer(err, res))
 
     })
-    
-
-    
 	});
 
 	return api;
@@ -77,5 +94,18 @@ const validateBody = (body) => {
   return null
 
 }
+
+
+const emailMessage = (request) => {
+  return `O seu pedido está finalizado. Favor fazer o pagamento para o pedido ${request.id}`
+}
+
+
+const errorDealer = (err, res) => {
+  console.log(err.message, err.data)
+  res.status(STATUS_SERVER_ERROR).send(err.message)
+  res.end()
+}
+
 
 export default api
