@@ -30,7 +30,7 @@ const service = class {
         })
         .catch((err)=>{
           reject({
-            message: 'Error at update new request into database',
+            message: 'Erro ao atualizar requisição no banco de dados',
             data: err
           })
         })

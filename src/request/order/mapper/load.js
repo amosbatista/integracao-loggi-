@@ -7,7 +7,7 @@ const service = class {
     this.orderConnection = dbConnection('requestOrder', orderModel)
   }
 
-  load(request) {
+  load(requestId) {
 
     return new Promise((resolve, reject)=> {
       let orderConnection = this.orderConnection
@@ -16,7 +16,7 @@ const service = class {
 
         orderConnection.findOne({
           where: {
-            id: request.id
+            requestId: requestId
           }
         })
         .then((order)=>{

@@ -24,7 +24,7 @@ const service = class {
         })
         .catch((err)=>{
           reject({
-            message: 'Error at retrieve of all requests from database.',
+            message: 'Erro ao pesquisar todos os pedidos do banco de dados.',
             data: err
           })
         })

@@ -11,7 +11,7 @@ const model = {
     type: Sequelize.BOOLEAN
   },
   reasonToDifference: {
-    type: Sequelize.STRING,
+    type: Sequelize.STRING(1000),
     allowNull: true
   },
   isOrderComplete: {

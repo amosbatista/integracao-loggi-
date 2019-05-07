@@ -16,8 +16,7 @@ const api = ({ config, db }) => {
 	let api = Router();
 
 	api.post('/', (req, res) => {
-		const STATUS_INVALID_REQUEST = 400
-    const STATUS_REQUEST_ACCEPT = 202
+		
 		const validateBodyErrors = validateBody(req.body)
 		
 		if(validateBodyErrors){
@@ -33,7 +32,7 @@ const api = ({ config, db }) => {
 			requestLoadMapper.load(req.body.requestId).then( (request) => {
 
 				const orderLoadMapper = new OrderLoadMapper()
-				orderLoadMapper.load(request).then( (order) => {
+				orderLoadMapper.load(request.id).then( (order) => {
 
 					if (!order) {
 						res.status(STATUS_INVALID_REQUEST).send("Pagamento não existe")
@@ -47,6 +46,16 @@ const api = ({ config, db }) => {
 						res.end()
 
 						return
+					}
+
+					const paymentData = {
+						"totalAmount": order.realValue,
+						"deliveryTax": request.deliveryTax,
+						"cardNumber": req.body.paymentData.cardNumber,
+						"nameFromCard": req.body.paymentData.nameFromCard,
+						"validate": req.body.paymentData.validate, 
+						"cvv": req.body.paymentData.cvv,
+						"brand": req.body.paymentData.brand
 					}
 
 					transactionService(req.body.paymentData).then( (transactionReturnedData) => {
@@ -63,10 +72,7 @@ const api = ({ config, db }) => {
 							clientName: request.clientName,
 							clientPhone: request.clientPhone
 						}
-						const paymentData = {
-							deliveryTax: request.deliveryTax
-						}
-
+						
 						deliveryReturnService(addressData, servicesData, paymentData, authData.toString()).then( (deliveryData) => {
 
 							const emailPromise = emailService(request.clientEmail, request.clientName, messageGenerator(request))
@@ -91,7 +97,7 @@ const api = ({ config, db }) => {
 
 								return
 							}).catch( (err) => {
-								cancelTransactionServiice(transactionReturnedData.Payment.PaymentId)
+								cancelTransactionService(transactionReturnedData.Payment.PaymentId)
 								errorDealer(err, res)
 							})
 						}).catch( (err) => {
@@ -106,6 +112,10 @@ const api = ({ config, db }) => {
 
 	return api;
 }
+
+const STATUS_INVALID_REQUEST = 400
+const STATUS_REQUEST_ACCEPT = 202
+const STATUS_SERVER_ERROR = 500
 
 const validateBody = (body) => {
 	if (!body.requestId){

@@ -26,7 +26,7 @@ const api = ({ config, db }) => {
 
     const requestMapper = new RequestMapper()
     
-    requestMapper.load(body.requestId).then( (request) => {
+    requestMapper.load(req.body.requestId).then( (request) => {
 
       if(!request) {
         res.status(STATUS_INVALID_REQUEST).send("Pedido não existe")
@@ -38,6 +38,7 @@ const api = ({ config, db }) => {
       let orderData = req.body.orderData
       orderData.proposedValue = request.totalPurchase
       orderData.isOrderComplete = false
+      orderData.requestId = request.id
 
       const requestOrderMapper = new RequestOrderMapper()
       const requestOrderPromise = requestOrderMapper.save(orderData, request)
@@ -48,7 +49,7 @@ const api = ({ config, db }) => {
       const requestLogMapper = new RequestLogMapper()
       const requestLogPromise = requestLogMapper.save(request, RequestStatus.WAITING_PAYMENT)
 
-      const emailPromise = EmailService(request.clientEmail, request.clientName, emailMessage(request))
+      const emailPromise = EmailService(request.clientEmail, request.clientName, emailMessage(request, orderData))
 
       Promise.all([
         requestOrderPromise,
@@ -96,8 +97,8 @@ const validateBody = (body) => {
 
 }
 
-const emailMessage = (request) => {
-  return `O seu pedido está finalizado. Favor fazer o pagamento para o pedido ${request.id}`
+const emailMessage = (request, order) => {
+  return `O seu pedido está finalizado. Favor fazer o pagamento para o pedido ${request.id}. Será cobrado o valor de ${order.realValue}`
 }
 
 const errorDealer = (err, res) => {

@@ -24,7 +24,7 @@ const service = class {
         })
         .catch((err)=>{
           reject({
-            message: `Error at retrieve of request ${requestId} from database.`,
+            message: `Erro ao carregar a requisição ${requestId} do banco.`,
             data: err
           })
         })

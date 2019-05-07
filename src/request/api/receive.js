@@ -24,7 +24,7 @@ export default ({ config, db }) => {
 
     const loadMapper = new LoadMappper()
 
-    loadMapper.load(requestId).then( (request) => {
+    loadMapper.load(req.body.requestId).then( (request) => {
 
       if(!request){
         res.status(STATUS_INVALID_REQUEST).send("Pedido não foi localizado na base de dados")

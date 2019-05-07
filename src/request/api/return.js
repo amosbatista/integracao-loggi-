@@ -24,7 +24,7 @@ const api = ({ config, db }) => {
 
     const requestMapper = new RequestMapper()
     
-    requestMapper.load(body.requestId).then( (request) => {
+    requestMapper.load(req.body.requestId).then( (request) => {
 
       if(!request) {
         res.status(STATUS_INVALID_REQUEST).send("Pedido não existe")

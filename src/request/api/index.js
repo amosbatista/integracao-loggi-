@@ -18,7 +18,7 @@ export default ({ config, db }) => {
 	api.use('/finish', finish({ config, db }));
 	api.use('/pay', pay({ config, db }));
 	api.use('/receive', receive({ config, db }));
-	api.use('/returnApi', returnApi({ config, db }));
+	api.use('/return', returnApi({ config, db }));
 	api.use('/list', list({ config, db }));
 
 	// perhaps expose some API metadata at the root
