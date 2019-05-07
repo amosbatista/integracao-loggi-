@@ -75,8 +75,9 @@ const service = (paymentData) => {
             data: apiRes.body
           })
         }
-        else
+        else {
           resolve(apiRes.body)
+        }
       }
     })
   })

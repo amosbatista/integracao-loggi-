@@ -8,16 +8,20 @@ const service = class {
     this.orderConnection = dbConnection('requestOrder', orderModel(requestModel))
   }
 
-  load(request) {
+  save(order) {
 
     return new Promise((resolve, reject)=> {
       let orderConnection = this.orderConnection
       
       orderConnection.sync().then( () => {
 
-        orderConnection.loadAll({
+        orderConnection.update(
+          {
+            isOrderComplete: true
+          },
+          {
           where: {
-            id: request.id
+            id: order.id
           }
         })
         .then((order)=>{
@@ -26,7 +30,7 @@ const service = class {
         })
         .catch((err)=>{
           reject({
-            message: 'Erro ao carregar compra na base de dados.',
+            message: 'Erro ao marcar a compra como finalizada.',
             data: err
           })
         })

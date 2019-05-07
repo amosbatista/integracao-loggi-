@@ -6,7 +6,7 @@ import httpReq from 'superagent'
 // }
 
 
-const service = (PaymentId, purchaseAmount) => {
+const service = (PaymentId) => {
 
   return new Promise ((resolve, reject) => {
 

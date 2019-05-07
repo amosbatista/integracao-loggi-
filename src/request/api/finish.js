@@ -35,8 +35,9 @@ const api = ({ config, db }) => {
         return
       }
 
-      const orderData = req.body.orderData
+      let orderData = req.body.orderData
       orderData.proposedValue = request.totalPurchase
+      orderData.isOrderComplete = false
 
       const requestOrderMapper = new RequestOrderMapper()
       const requestOrderPromise = requestOrderMapper.save(orderData, request)
@@ -62,7 +63,7 @@ const api = ({ config, db }) => {
       })
       .catch(errorDealer(err, res))
 
-    })
+    }).catch(errorDealer(err, res))
 	});
 
 	return api;
@@ -95,11 +96,9 @@ const validateBody = (body) => {
 
 }
 
-
 const emailMessage = (request) => {
   return `O seu pedido está finalizado. Favor fazer o pagamento para o pedido ${request.id}`
 }
-
 
 const errorDealer = (err, res) => {
   console.log(err.message, err.data)

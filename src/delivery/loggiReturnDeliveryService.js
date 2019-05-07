@@ -23,10 +23,10 @@ const service = (addressData, servicesData, paymentData, auth) => {
         shopId: ${notariusStoreId}
         pickups: [{
           address: {
-            lat: ${ addressData.coordinates.lat}
-            lng: ${ addressData.coordinates.lng}
-            address: "${addressData.completeAddress}"
-            complement: "${addressData.addressComplement}"
+            lat: ${notariusAddress.lat}
+            lng: ${notariusAddress.lng}
+            address: "${notariusAddress.completeAddress}"
+            complement: "${notariusAddress.complement}"
           }
         }]
         packages: [{
@@ -36,10 +36,10 @@ const service = (addressData, servicesData, paymentData, auth) => {
             phone: "${servicesData.clientPhone}"
           }
           address: {
-            lat: ${notariusAddress.lat}
-            lng: ${notariusAddress.lng}
-            address: "${notariusAddress.completeAddress}"
-            complement: "${notariusAddress.complement}"
+            lat: ${ addressData.coordinates.lat}
+            lng: ${ addressData.coordinates.lng}
+            address: "${addressData.completeAddress}"
+            complement: "${addressData.addressComplement}"
           }
           charge: {
             value: "${paymentData.deliveryTax}"

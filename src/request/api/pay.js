@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import RequestLoadMapper from '../mapper/load'
 import transactionService from '../../bankTransaction/cieloTransactionService'
+import cancelTransactionServiice from '../../bankTransaction/cieloCancelationService'
 import OrderLoadMapper from '../order/mapper/load'
 import deliveryReturnService from '../../delivery/loggiReturnDeliveryService'
 import deliveryAuthService from '../../delivery/loggiLogin/service'
@@ -8,6 +9,7 @@ import emailService from '../../email/service'
 import RequestStatusUpdateMapper from '../mapper/updateStatus'
 import RequestLogMapper from '../log/mapper'
 import requestStatus from '../status'
+import OrderProcessedMarkerMapper from '../order/mapper/markAsOrdered'
 
 const api = ({ config, db }) => {
 
@@ -75,22 +77,27 @@ const api = ({ config, db }) => {
 							const requestLogMapper = new RequestLogMapper()
 							const requestLogPromise = requestLogMapper.save(request, requestStatus.READY_TO_RETURN)
 
+							const orderProcessedMarkerMapper = new OrderProcessedMarkerMapper()
+							const orderProcessedMarkerPromise = orderProcessedMarkerMapper.save(order)
+
 							Promise.all([
 								emailPromise,
 								requestStatusUpdatePromise,
-								requestLogPromise
+								requestLogPromise,
+								orderProcessedMarkerPromise
 							]).then( () => {
 								res.status(STATUS_REQUEST_ACCEPT).send()
 								res.end()
 
 								return
 							})
+						}).catch( (err) => {
+							cancelTransactionServiice(transactionReturnedData.Payment.PaymentI)
 						})
-					})
-
-				})
-			})
-		})
+					}).catch(errorDealer(err, res))
+				}).catch(errorDealer(err, res))
+			}).catch(errorDealer(err, res))
+		}).catch(errorDealer(err, res))
 	});
 
 	return api;
@@ -108,6 +115,12 @@ const validateBody = (body) => {
 
 const messageGenerator = (request) => {
 	return 'O seu pedido está sendo pronto para ser retornado de volta para você. Favor aguardar.'
+}
+
+const errorDealer = (err, res) => {
+  console.log(err.message, err.data)
+  res.status(STATUS_SERVER_ERROR).send(err.message)
+  res.end()
 }
 
 export default api 
