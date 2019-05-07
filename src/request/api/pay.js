@@ -98,10 +98,10 @@ const api = ({ config, db }) => {
 							cancelTransactionServiice(transactionReturnedData.Payment.PaymentId)
 							errorDealer(err, res)
 						})
-					}).catch(errorDealer(err, res))
-				}).catch(errorDealer(err, res))
-			}).catch(errorDealer(err, res))
-		}).catch(errorDealer(err, res))
+					}).catch((err) => {errorDealer(err, res)} )
+				}).catch((err) => {errorDealer(err, res)} )
+			}).catch((err) => {errorDealer(err, res)} )
+		}).catch((err) => {errorDealer(err, res)} )
 	});
 
 	return api;

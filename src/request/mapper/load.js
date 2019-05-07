@@ -14,13 +14,12 @@ const service = class {
       
       requestModel.sync().then( () => {
 
-        requestModel.loadAll({
+        requestModel.findOne({
           where: { 
             id: requestId
           }
         })
         .then((request)=>{
-          console.log('Request:', request)
           resolve(request)
         })
         .catch((err)=>{

@@ -22,7 +22,10 @@ const service = class {
           servicesSum: requestData.servicesSum,
           deliveryTax: requestData.deliveryTax,
           requestOperationTax: requestData.requestOperationTax,
-          status: requestData.status
+          status: requestData.status,
+          addressLat: requestData.addressLat,
+          addressLng: requestData.addressLng,
+          transactionOperationTax: requestData.transactionOperationTax
         })
         .then((newRequest)=>{
           resolve(newRequest)

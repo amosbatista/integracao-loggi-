@@ -14,13 +14,12 @@ const service = class {
       
       orderConnection.sync().then( () => {
 
-        orderConnection.loadAll({
+        orderConnection.findOne({
           where: {
             id: request.id
           }
         })
         .then((order)=>{
-          console.log('Order:', order)
           resolve(order)
         })
         .catch((err)=>{

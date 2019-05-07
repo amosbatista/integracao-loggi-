@@ -51,7 +51,7 @@ const api = ({ config, db }) => {
 
         return
       })
-      .catch(errorDealer(err, res))
+      .catch((err) => {errorDealer(err, res)} )
 
     })
 	});

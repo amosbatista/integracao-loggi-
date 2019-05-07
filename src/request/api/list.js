@@ -7,17 +7,21 @@ const api = ({ config, db }) => {
 
 	api.post('/', (req, res) => {
 
-    const STATUS_INVALID_REQUEST = 400
-
     const requestListMapper = new RequestListMapper()
     requestListMapper.loadAll().then( (requests) => {
 
-    })
+      res.json(requests)
+      res.end()
+
+      return
+    }).catch((err) => {errorDealer(err, res)} )
     
 	});
 
 	return api;
 }
+
+const STATUS_SERVER_ERROR = 500
 
 const errorDealer = (err, res) => {
   console.log(err.message, err.data)

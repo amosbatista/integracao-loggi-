@@ -24,7 +24,6 @@ const service = class {
           }
         })
         .then((order)=>{
-          console.log('Order:', order)
           resolve(order)
         })
         .catch((err)=>{
