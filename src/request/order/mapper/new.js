@@ -1,11 +1,10 @@
-import requestModel from '../../model'
 import orderModel from '../model'
 import dbConnection from '../../../database/helper'
 
 const service = class {
 
   constructor () {
-    this.orderConnection = dbConnection('requestOrder', orderModel(requestModel))
+    this.orderConnection = dbConnection('requestOrder', orderModel)
   }
 
   save(order, request) {

@@ -6,15 +6,17 @@ const service = (emailTo, clientName, message) => {
 
     try{
 
-      let transporter = nodemailer.createTransport({
+      const transporterOptions = {
         host: process.env.EMAIL_HOST,
         port: process.env.EMAIL_PORT,
-        secure: process.env.IS_EMAIL_SECURE, // true for 465, false for other ports
+        secure: JSON.parse(process.env.IS_EMAIL_SECURE), // true for 465, false for other ports
         auth: {
           user: process.env.EMAIL_FROM,
           pass: process.env.EMAIL_ACCOUNT_PASSWORD
-        }
-      })
+        },
+        requireTLS: true
+      }
+      let transporter = nodemailer.createTransport(transporterOptions )
 
       const mailOptions = {
         from: `"${process.env.EMAIL_FROM_NAME}" <${process.env.EMAIL_FROM}>`, // sender address
@@ -27,22 +29,19 @@ const service = (emailTo, clientName, message) => {
         ` // html body
       };
 
-      transporter.sendMail(mailOptions)
-      .then((info)=>{
+      transporter.sendMail(mailOptions).then((info)=>{
         console.log("Message sent: %s", info.messageId)
         resolve()
-      })
-
-      .catch((err)=>{
+      }).catch((err)=>{
         reject({
-          message: `Error in send e-mail to ${emailTo}, after data set`,
+          message: `Erro ao enviar e-mail ${emailTo}, depois de configurar conjunto de dados.`,
           data: err
         })
       })
     }
     catch(err){
       reject({
-        message: `Error in send e-mail to ${emailTo}`,
+        message: `Erro ao enviar e-mail para ${emailTo}`,
         data: err
       })
     }

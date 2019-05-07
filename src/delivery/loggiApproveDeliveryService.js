@@ -84,8 +84,6 @@ const service = (addressData, servicesData, paymentData, auth) => {
       }
     }
     `
-
-    console.log(query)
     
     httpReq.post(process.env.LOGGI_API_V2)
     .send({

@@ -4,7 +4,7 @@ import UpdateStatusMappper from '../mapper/updateStatus'
 import LoadMappper from '../mapper/load'
 import email from '../../email/service'
 import requestStatus from '../status'
-import LogMapper from '../log/mapper/new'
+import LogMapper from '../log/mapper'
 
 export default ({ config, db }) => {
 	let api = Router();

@@ -1,6 +1,5 @@
 import { Router } from 'express'
 import RequestMapper from '../mapper/load'
-import RequestOrderMapper from '../order/mapper/new'
 import RequestUpdateMapper from '../mapper/updateStatus'
 import RequestStatus from '../status'
 import RequestLogMapper from '../log/mapper'
@@ -60,7 +59,6 @@ const api = ({ config, db }) => {
 	return api;
 }
 
-
 const validateBody = (body) => {
 
   if(!body.requestId) {
@@ -68,20 +66,16 @@ const validateBody = (body) => {
   }
 
   return null
-
 }
-
 
 const emailMessage = (request) => {
   return `O seu pedido acabou de sair em direção ao seu destino.`
 }
-
 
 const errorDealer = (err, res) => {
   console.log(err.message, err.data)
   res.status(STATUS_SERVER_ERROR).send(err.message)
   res.end()
 }
-
 
 export default api

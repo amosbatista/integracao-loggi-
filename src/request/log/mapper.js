@@ -1,11 +1,10 @@
-import requestModel from '../model'
 import logModel from './model'
 import dbConnection from '../../database/helper'
 
 const service = class {
 
   constructor () {
-    this.transaction = dbConnection('requestLog', logModel(requestModel))
+    this.transaction = dbConnection('requestLog', logModel)
   }
 
   save(request, newStatus) {

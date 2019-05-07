@@ -12,7 +12,6 @@ const service = class {
       let requestConnection = this.requestConnection
       
       requestConnection.sync().then( () => {
-
         requestConnection.create({
           clientName: requestData.clientName,
           clientEmail: requestData.clientEmail,

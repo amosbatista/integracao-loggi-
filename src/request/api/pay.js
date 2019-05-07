@@ -35,7 +35,7 @@ const api = ({ config, db }) => {
 				const orderLoadMapper = new OrderLoadMapper()
 				orderLoadMapper.load(request).then( (order) => {
 
-					if(!order) {
+					if (!order) {
 						res.status(STATUS_INVALID_REQUEST).send("Pagamento não existe")
 						res.end()
 
@@ -90,9 +90,13 @@ const api = ({ config, db }) => {
 								res.end()
 
 								return
+							}).catch( (err) => {
+								cancelTransactionServiice(transactionReturnedData.Payment.PaymentId)
+								errorDealer(err, res)
 							})
 						}).catch( (err) => {
-							cancelTransactionServiice(transactionReturnedData.Payment.PaymentI)
+							cancelTransactionServiice(transactionReturnedData.Payment.PaymentId)
+							errorDealer(err, res)
 						})
 					}).catch(errorDealer(err, res))
 				}).catch(errorDealer(err, res))
