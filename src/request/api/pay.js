@@ -21,8 +21,10 @@ const api = ({ config, db }) => {
 		const validateBodyErrors = validateBody(req.body)
 		
 		if(validateBodyErrors){
-      res.status(STATUS_INVALID_REQUEST).send(validateBodyErrors)
-      res.end()
+			errorDealer({
+				message: validateBodyErrors,
+				data: null
+			}, res, STATUS_INVALID_REQUEST)
 
       return
 		}
@@ -36,16 +38,20 @@ const api = ({ config, db }) => {
 				orderLoadMapper.load(request.id).then( (order) => {
 
 					if (!order) {
-						res.status(STATUS_INVALID_REQUEST).send("Pagamento não existe")
-						res.end()
-
+						errorDealer({
+							message: "Pagamento não existe",
+							data: null
+						}, res, STATUS_INVALID_REQUEST)
+			
 						return
 					}
 
 					if(order.isOrderComplete) {
-						res.status(STATUS_INVALID_REQUEST).send("Pagamento já foi realizado")
-						res.end()
-
+						errorDealer({
+							message: "Pagamento já foi realizado",
+							data: null
+						}, res, STATUS_INVALID_REQUEST)
+			
 						return
 					}
 
@@ -105,7 +111,9 @@ const api = ({ config, db }) => {
 								requestLogPromise,
 								orderProcessedMarkerPromise
 							]).then( () => {
-								res.status(STATUS_REQUEST_ACCEPT).send()
+								res.status(STATUS_REQUEST_ACCEPT).send({
+									transactionId: transactionReturnedData.Payment.PaymentId
+								})
 								res.end()
 
 								return
@@ -140,13 +148,10 @@ const validateBody = (body) => {
 	return null
 }
 
-const messageGenerator = (request) => {
-	return 'O seu pedido está sendo pronto para ser retornado de volta para você. Favor aguardar.'
-}
 
-const errorDealer = (err, res) => {
+const errorDealer = (err, res, status=STATUS_SERVER_ERROR) => {
   console.log(err.message, err.data)
-  res.status(STATUS_SERVER_ERROR).send(err.message)
+  res.status(status).send(err.message)
   res.end()
 }
 
