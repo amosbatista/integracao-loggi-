@@ -17,6 +17,7 @@ const service = class {
         orderConnection.create({
           proposedValue: order.proposedValue,
           realValue: order.realValue,
+          realServiceValue: order.realServiceValue,
           isRealValueDifferentFromProposed: order.isRealValueDifferentFromProposed,
           reasonToDifference: order.reasonToDifference,
           requestId: request.id

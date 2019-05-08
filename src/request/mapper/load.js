@@ -20,6 +20,13 @@ const service = class {
           }
         })
         .then((request)=>{
+
+          // Forcing conversion values to decimal (due MYSQL2 preciosion bug)
+          request.totalPurchase = Number.parseFloat(request.totalPurchase)
+          request.deliveryTax = Number.parseFloat(request.deliveryTax)
+          request.servicesSum = Number.parseFloat(request.servicesSum)
+          request.transactionOperationTax = Number.parseFloat(request.transactionOperationTax)
+
           resolve(request)
         })
         .catch((err)=>{

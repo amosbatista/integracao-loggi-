@@ -20,6 +20,12 @@ const service = class {
           }
         })
         .then((order)=>{
+
+          // Forcing conversion values to decimal (due MYSQL2 preciosion bug)
+          order.proposedValue = Number.parseFloat(order.proposedValue)
+          order.realValue = Number.parseFloat(order.realValue)
+          order.realServiceValue = Number.parseFloat(order.realServiceValue)
+
           resolve(order)
         })
         .catch((err)=>{

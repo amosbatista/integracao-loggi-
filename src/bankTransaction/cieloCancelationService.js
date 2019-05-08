@@ -19,7 +19,7 @@ const service = (PaymentId) => {
 
       if(err){
         reject({
-          message: "Error at card operator cancelation",
+          message: "Erro na operação de cancelamento do pagamento",
           data: err
         })
         return
@@ -30,7 +30,7 @@ const service = (PaymentId) => {
 
       if(apiRes.body.ReturnCode != cancelationStatusSucess) {
         reject({
-          message: `The transaction cancelation not worked well: ${apiRes.body.ReturnMessage}`,
+          message: `O cancelamento da transação não funcionou: ${apiRes.body.ReturnMessage}`,
           data: apiRes.body
         })
         return

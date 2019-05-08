@@ -1,14 +1,17 @@
 import Sequelize from 'sequelize'
 
+const decimalIntegerPartLimit = 5
+const decimalDigitLimit = 2
+
 const model = {   
   proposedValue: {
-    type: Sequelize.DECIMAL
+    type: Sequelize.DECIMAL(decimalIntegerPartLimit, decimalDigitLimit)
   },
   realValue: {
-    type: Sequelize.DECIMAL
+    type: Sequelize.DECIMAL(decimalIntegerPartLimit, decimalDigitLimit)
   },
   realServiceValue: {
-    type: Sequelize.DECIMAL
+    type: Sequelize.DECIMAL(decimalIntegerPartLimit, decimalDigitLimit)
   },
   isRealValueDifferentFromProposed: {
     type: Sequelize.BOOLEAN

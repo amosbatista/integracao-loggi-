@@ -49,7 +49,7 @@ const api = ({ config, db }) => {
 					}
 
 					const paymentData = {
-						"totalAmount": order.realValue,
+						"totalAmount": request.totalPurchase,
 						"deliveryTax": request.deliveryTax,
 						"cardNumber": req.body.paymentData.cardNumber,
 						"nameFromCard": req.body.paymentData.nameFromCard,
@@ -58,7 +58,7 @@ const api = ({ config, db }) => {
 						"brand": req.body.paymentData.brand
 					}
 
-					transactionService(req.body.paymentData).then( (transactionReturnedData) => {
+					transactionService(paymentData).then( (transactionReturnedData) => {
 
 						const addressData = {
 							coordinates: {

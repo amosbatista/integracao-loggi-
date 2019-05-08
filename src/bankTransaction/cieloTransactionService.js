@@ -29,7 +29,7 @@ const service = (paymentData) => {
 
     if(!validate(paymentData)) {
       reject({
-        message: "There's any payment field missing"
+        message: "Existem campos faltando para efetuar o pagamento"
       })
     }
 
@@ -60,7 +60,7 @@ const service = (paymentData) => {
       
       if(err){
         reject({
-          message: "Error at card operator transaction",
+          message: "Erro ao efetuar pagamento do operador.",
           data: err
         })
       }
@@ -71,7 +71,7 @@ const service = (paymentData) => {
 
         if(apiRes.body.Payment.ReturnCode != transactionStatusApproved && apiRes.body.Payment.ReturnCode != transactionStatusApproved2) {
           reject({
-            message: `The transaction not worked well: ${apiRes.body.Payment.ReturnMessage}`,
+            message: `A transação não funcionou: ${apiRes.body.Payment.ReturnMessage}`,
             data: apiRes.body
           })
         }

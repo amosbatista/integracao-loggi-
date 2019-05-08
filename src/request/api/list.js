@@ -10,6 +10,16 @@ const api = ({ config, db }) => {
     const requestListMapper = new RequestListMapper()
     requestListMapper.loadAll().then( (requests) => {
 
+      // Forcing conversion values to decimal (due MYSQL2 preciosion bug)
+      requests.map( (request) => {
+        request.totalPurchase = Number.parseFloat(request.totalPurchase)
+        request.deliveryTax = Number.parseFloat(request.deliveryTax)
+        request.servicesSum = Number.parseFloat(request.servicesSum)
+        request.transactionOperationTax = Number.parseFloat(request.transactionOperationTax)
+
+        return request
+      } )
+
       res.json(requests)
       res.end()
 

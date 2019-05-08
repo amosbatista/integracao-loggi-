@@ -1,9 +1,8 @@
 const tax = (transactionValue) => {
 
-  const totalPercent = 100
   const percentualTax = 0.02
 
-  const taxValue = parseFloat(transactionValue) * percentualTax / totalPercent
+  const taxValue = transactionValue * percentualTax
   const valuePostTax = transactionValue + taxValue
 
   return {

@@ -1,6 +1,9 @@
 import Sequelize from 'sequelize'
 import Status from './status'
 
+const decimalIntegerPartLimit = 5
+const decimalDigitLimit = 2
+
 const entity = {
   clientName: {
     type: Sequelize.STRING
@@ -18,16 +21,16 @@ const entity = {
     type: Sequelize.STRING
   },
   totalPurchase: {
-    type: Sequelize.DECIMAL
+    type: Sequelize.DECIMAL(decimalIntegerPartLimit, decimalDigitLimit) 
   },
   deliveryTax: {
-    type: Sequelize.DECIMAL
+    type: Sequelize.DECIMAL(decimalIntegerPartLimit, decimalDigitLimit) 
   },
   servicesSum: {
-    type: Sequelize.DECIMAL
+    type: Sequelize.DECIMAL(decimalIntegerPartLimit, decimalDigitLimit) 
   },
   transactionOperationTax: {
-    type: Sequelize.DECIMAL
+    type: Sequelize.DECIMAL(decimalIntegerPartLimit, decimalDigitLimit) 
   },
   addressLat: {
     type: Sequelize.STRING

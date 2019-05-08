@@ -43,7 +43,7 @@ export default ({ config, db }) => {
           totalPurchase: req.body.paymentData.totalAmount,
           deliveryTax: req.body.paymentData.deliveryTax,
           servicesSum: req.body.paymentData.servicesSum,
-          transactionOperationTax: req.body.paymentData.transactionOperationTax.calculedValue,
+          transactionOperationTax: req.body.paymentData.transactionOperationTax,
           status: RequestStatus.AT_RECEIVE
         }).then( (request) => {
 
