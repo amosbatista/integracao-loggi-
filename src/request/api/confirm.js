@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import purchaseService from '../../delivery/loggiEstimateDeliveryService'
 import authService from '../../delivery/loggiLogin/service'
-import ecommerceTax from '../../bankTransaction/cieloTax'
+import calcService from '../purchaseCalculator'
 
 export default ({ config, db }) => {
 	let api = Router();
@@ -21,17 +21,11 @@ export default ({ config, db }) => {
           return total + (current.value * current.amount) 
         }, 0)
 
-        const doubleDeliveryTax = 2
-        const deliveryTax = apiRes.estimatedCost * doubleDeliveryTax
-        const transactionOperationTax = ecommerceTax(servicesSum + deliveryTax)
-        const totalPurchase = servicesSum + deliveryTax + transactionOperationTax.calculedValue
+        const returnMultiplier = 2
+        const deliveryTax = apiRes.estimatedCost * returnMultiplier
+        const purchaseData = calcService(servicesSum, deliveryTax)
 
-        res.json({
-          servicesSum,
-          deliveryTax,
-          transactionOperationTax,
-          totalPurchase
-        })
+        res.json(purchaseData)
         res.end()
       })
       .catch((err) => {

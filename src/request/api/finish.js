@@ -2,10 +2,12 @@ import { Router } from 'express'
 import { isNull } from 'util';
 import RequestMapper from '../mapper/load'
 import RequestOrderMapper from '../order/mapper/new'
-import RequestUpdateMapper from '../mapper/updateStatus'
+import RequestUpdateStatusMapper from '../mapper/updateStatus'
 import RequestStatus from '../status'
 import RequestLogMapper from '../log/mapper'
 import EmailService from '../../email/service'
+import requestNewValueCalculator from '../purchaseCalculator'
+import RequestUpdateValuesMapper from '../mapper/updateValues'
 
 const api = ({ config, db }) => {
 
@@ -40,11 +42,25 @@ const api = ({ config, db }) => {
       orderData.isOrderComplete = false
       orderData.requestId = request.id
 
+      const totalRealValueData = requestNewValueCalculator(orderData.realServiceValue, request.deliveryTax)
+      console.log(totalRealValueData)
+      console.log(orderData)
+
+      orderData.realServiceValue = totalRealValueData.totalPurchase
+
       const requestOrderMapper = new RequestOrderMapper()
       const requestOrderPromise = requestOrderMapper.save(orderData, request)
 
-      const requestUpdateMapper = new RequestUpdateMapper()
-      const requestUpdatePromise = requestUpdateMapper.update(request, RequestStatus.WAITING_PAYMENT)
+      const requestUpdateValuesMapper = new RequestUpdateValuesMapper()
+      const requestUpdateValuesPromise = requestUpdateValuesMapper.update(
+        request, 
+        orderData.realServiceValue, 
+        totalRealValueData.totalPurchase, 
+        totalRealValueData.transactionOperationTax.calculedValue
+      )
+
+      const requestUpdateStatusMapper = new RequestUpdateStatusMapper()
+      const requestUpdateStatusPromise = requestUpdateStatusMapper.update(request, RequestStatus.WAITING_PAYMENT)
 
       const requestLogMapper = new RequestLogMapper()
       const requestLogPromise = requestLogMapper.save(request, RequestStatus.WAITING_PAYMENT)
@@ -53,9 +69,10 @@ const api = ({ config, db }) => {
 
       Promise.all([
         requestOrderPromise,
-        requestUpdatePromise,
+        requestUpdateStatusPromise,
         requestLogPromise,
-        emailPromise
+        emailPromise,
+        requestUpdateValuesPromise
       ]).then(()=> {
         res.status(STATUS_REQUEST_ACCEPT).send()
         res.end()
@@ -81,8 +98,8 @@ const validateBody = (body) => {
     return 'Dados de compra está vazio'
   }
 
-  if(!body.orderData.realValue) {
-    return 'Valor real está vazio'
+  if(!body.orderData.realServiceValue) {
+    return 'Valor de serviço real está vazio'
   }
 
   if(isNull(body.orderData.isRealValueDifferentFromProposed)) {
@@ -98,7 +115,7 @@ const validateBody = (body) => {
 }
 
 const emailMessage = (request, order) => {
-  return `O seu pedido está finalizado. Favor fazer o pagamento para o pedido ${request.id}. Será cobrado o valor de ${order.realValue}`
+  return `O seu pedido está finalizado. Favor fazer o pagamento para o pedido ${request.id}. Será cobrado o valor de ${order.realServiceValue}`
 }
 
 const errorDealer = (err, res) => {

@@ -7,6 +7,9 @@ const model = {
   realValue: {
     type: Sequelize.DECIMAL
   },
+  realServiceValue: {
+    type: Sequelize.DECIMAL
+  },
   isRealValueDifferentFromProposed: {
     type: Sequelize.BOOLEAN
   },
