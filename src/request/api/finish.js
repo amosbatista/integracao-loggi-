@@ -8,6 +8,7 @@ import RequestLogMapper from '../log/mapper'
 import EmailService from '../../email/service'
 import requestNewValueCalculator from '../purchaseCalculator'
 import RequestUpdateValuesMapper from '../mapper/updateValues'
+import emailHelper from '../../email/emailHelper'
 
 const api = ({ config, db }) => {
 
@@ -62,7 +63,18 @@ const api = ({ config, db }) => {
       const requestLogMapper = new RequestLogMapper()
       const requestLogPromise = requestLogMapper.save(request, RequestStatus.WAITING_PAYMENT)
 
-      const emailPromise = EmailService(request.clientEmail, request.clientName, emailMessage(request, orderData))
+      const emailContent = emailHelper(
+        "Finalização de pedido",
+        request.clientName,
+        request.clientEmail,
+        [
+          `O seu pedido está finalizado!`,
+          `ID do pedido: ${request.id}`,
+          `Para poder recebẽ-lo de volta, você deve realizar o pagamento. Clique no link abaixo para visualizar o formulário onde você informará os dados de pagamento:`,
+          `<a href="http://20cartorio.com.br/integracao-loggi/#/payment/${request.id}"> <strong>http://20cartorio.com.br/integracao-loggi/#/payment/${request.id}</strong> </a>`
+        ]
+      )
+      const emailPromise = EmailService(emailContent)
 
       Promise.all([
         requestOrderPromise,
@@ -113,10 +125,6 @@ const validateBody = (body) => {
 
   return null
 
-}
-
-const emailMessage = (request, order) => {
-  return `O seu pedido está finalizado. Favor fazer o pagamento para o pedido ${request.id}. Será cobrado o valor de ${order.realServiceValue}`
 }
 
 const errorDealer = (err, res) => {

@@ -5,6 +5,7 @@ import LoadMappper from '../mapper/load'
 import email from '../../email/service'
 import requestStatus from '../status'
 import LogMapper from '../log/mapper'
+import emailHelper from '../../email/emailHelper'
 
 export default ({ config, db }) => {
 	let api = Router();
@@ -36,7 +37,17 @@ export default ({ config, db }) => {
       const updateStatusMapper = new UpdateStatusMappper()
       const updateStatusPromise = updateStatusMapper.update(request, requestStatus.AT_FINISH)
 
-      const emailSendPromise = email(request.clientEmail, request.clientName, "Seu pedido foi recebido e está em processamento.")
+      const emailContent = emailHelper(
+        "Recebimento de pedido",
+        request.clientName,
+        request.clientEmail,
+        [
+          "Seu pedido foi recebido e está em processamento.",
+          `ID do pedido: ${request.id}`,
+          "Após a finalização do serviço, enviaremos um novo e-mail, informando a forma de pagamento."
+        ]
+      )
+      const emailSendPromise = email(emailContent)
 
       const logMapper = new LogMapper()
       const logPromise = logMapper.save(request, requestStatus.AT_FINISH)

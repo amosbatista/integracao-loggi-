@@ -4,6 +4,7 @@ import RequestUpdateMapper from '../mapper/updateStatus'
 import RequestStatus from '../status'
 import RequestLogMapper from '../log/mapper'
 import EmailService from '../../email/service'
+import emailHelper from '../../email/emailHelper'
 
 const api = ({ config, db }) => {
 
@@ -39,7 +40,18 @@ const api = ({ config, db }) => {
       const requestLogMapper = new RequestLogMapper()
       const requestLogPromise = requestLogMapper.save(request, RequestStatus.RETURNED)
 
-      const emailPromise = EmailService(request.clientEmail, request.clientName, emailMessage(request))
+      const emailContent = emailHelper(
+        "Retorno do pedido",
+        request.clientName,
+        request.clientEmail,
+        [
+          `O pagamento foi confirmado!`,
+          `ID do pedido: ${request.id}`,
+          `Seus documentos estão retornando para você.`,
+          `Muito obrigado por utilizar nossos serviços.`,
+        ]
+      )
+      const emailPromise = EmailService(emailContent)
 
       Promise.all([
         requestUpdatePromise,
@@ -66,10 +78,6 @@ const validateBody = (body) => {
   }
 
   return null
-}
-
-const emailMessage = (request) => {
-  return `O seu pedido acabou de sair em direção ao seu destino.`
 }
 
 const errorDealer = (err, res) => {

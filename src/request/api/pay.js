@@ -10,6 +10,7 @@ import RequestStatusUpdateMapper from '../mapper/updateStatus'
 import RequestLogMapper from '../log/mapper'
 import requestStatus from '../status'
 import OrderProcessedMarkerMapper from '../order/mapper/markAsOrdered'
+import emailHelper from '../../email/emailHelper'
 
 const api = ({ config, db }) => {
 
@@ -75,7 +76,19 @@ const api = ({ config, db }) => {
 						
 						deliveryReturnService(addressData, servicesData, paymentData, authData.toString()).then( (deliveryData) => {
 
-							const emailPromise = emailService(request.clientEmail, request.clientName, messageGenerator(request))
+							const emailContent = emailHelper(
+								"Pagamento de pedido",
+								request.clientName,
+								request.clientEmail,
+								[
+									`O pagamento do pedido foi realizado com sucesso!`,
+									`ID do pedido: ${request.id}`,
+									`Valor pago: ${request.totalPurchase}`,
+									`Código de transação bancária: ${transactionReturnedData.Payment.PaymentId}`,
+									`Aguarde um pouco para o cartório receber o pagamento e enviar o pedido.`
+								]
+							)
+							const emailPromise = emailService(emailContent)
 							
 							const requestStatusUpdateMapper = new RequestStatusUpdateMapper()
 							const requestStatusUpdatePromise = requestStatusUpdateMapper.update(request, requestStatus.READY_TO_RETURN)
