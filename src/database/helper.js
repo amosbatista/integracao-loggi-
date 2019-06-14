@@ -2,9 +2,9 @@ import Sequelize from 'sequelize'
 
 const service = (tableName, model) => {
 
-  const maxConnections = 5
-  const minConnections = 1
-  const idleSecondsBeforeClose = 10000
+  const maxConnections = 1
+  const minConnections = 0
+  const idleSecondsBeforeClose = 1000
   
   const sequelize = new Sequelize(process.env.LOG_DATABASE, process.env.LOG_LOGIN, process.env.LOG_PASSWORD, {
     host: process.env.LOG_HOST,
