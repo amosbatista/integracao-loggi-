@@ -1,7 +1,7 @@
 {
   "name": "integracao-loggi-bff",
   "version": "0.3.7",
-  "description": "Integatrion with Loggi's delivery system API",
+  "description": "Integatrion with Loggi's delivery system API.",
   "main": "dist",
   "scripts": {
     "dev": "nodemon -w src --exec \"babel-node src --presets es2015,stage-0\"",
