@@ -58,7 +58,8 @@ export default ({ config, db }) => {
       deliveryTax: req.body.paymentData.deliveryTax,
       servicesSum: req.body.paymentData.servicesSum,
       transactionOperationTax: req.body.paymentData.transactionOperationTax,
-      status: RequestStatus.AT_RECEIVE
+      status: RequestStatus.AT_RECEIVE,
+      deliveryId: loggiData.loggiOrderId
     }).catch( (err) => {
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).send(err.message)

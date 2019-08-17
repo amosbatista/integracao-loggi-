@@ -47,6 +47,9 @@ const entity = {
       Status.RETURNED,
       Status.CANCELED
     )
+  },
+  deliveryId:{
+    type: Sequelize.STRING
   }
 }
 

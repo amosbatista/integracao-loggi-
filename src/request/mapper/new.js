@@ -25,7 +25,8 @@ const service = class {
           status: requestData.status,
           addressLat: requestData.addressLat,
           addressLng: requestData.addressLng,
-          transactionOperationTax: requestData.transactionOperationTax
+          transactionOperationTax: requestData.transactionOperationTax,
+          deliveryId: requestData.deliveryId
         })
         .then((newRequest)=>{
           resolve(newRequest)
