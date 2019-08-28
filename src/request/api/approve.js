@@ -8,6 +8,8 @@ import RequestLog from '../log/mapper'
 import RequestStatus from '../status'
 import emailService from '../../email/service'
 import emailHelper from '../../email/emailHelper'
+import DeliveryMapper from '../../delivery/db/mappers/save'
+import deliveryType from '../../delivery/db/deliveryType'
 
 export default ({ config, db }) => {
 
@@ -58,8 +60,20 @@ export default ({ config, db }) => {
       deliveryTax: req.body.paymentData.deliveryTax,
       servicesSum: req.body.paymentData.servicesSum,
       transactionOperationTax: req.body.paymentData.transactionOperationTax,
-      status: RequestStatus.AT_RECEIVE,
-      deliveryId: loggiData.loggiOrderId
+      status: RequestStatus.AT_RECEIVE
+    }).catch( (err) => {
+      console.log(err.message, err.data)
+      res.status(STATUS_SERVER_ERROR).send(err.message)
+      res.end()
+      return
+    })
+
+    const deliveryMapper = new DeliveryMapper()
+
+    await deliveryMapper.save({
+      requestId: request.id,
+      deliveryId: loggiData.loggiOrderId,
+      type: deliveryType.TO_RECEIVE
     }).catch( (err) => {
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).send(err.message)

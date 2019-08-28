@@ -14,11 +14,7 @@ const service = class {
       
       requestModel.sync().then( () => {
 
-        requestModel.findAll({
-          attributes: { 
-            exclude: ['createdAt', 'updatedAt'] 
-          }
-        })
+        requestModel.findAll()
         .then((requests)=>{
           resolve(requests)
         })

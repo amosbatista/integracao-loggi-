@@ -48,8 +48,11 @@ const entity = {
       Status.CANCELED
     )
   },
-  deliveryId:{
-    type: Sequelize.STRING
+  createdAt: {
+    type: Sequelize.DATE
+  },
+  updatedAt:  {
+    type: Sequelize.DATE
   }
 }
 

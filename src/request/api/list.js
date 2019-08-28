@@ -1,30 +1,64 @@
 import { Router } from 'express'
 import RequestListMapper from '../mapper/loadAll'
+import DeliveryLoadMapper from '../../delivery/db/mappers/load'
+import deliveryTypes from '../../delivery/db/deliveryType'
 
 const api = ({ config, db }) => {
 
 	let api = Router();
 
-	api.post('/', (req, res) => {
+	api.post('/', async (req, res) => {
 
     const requestListMapper = new RequestListMapper()
-    requestListMapper.loadAll().then( (requests) => {
 
-      // Forcing conversion values to decimal (due MYSQL2 preciosion bug)
-      requests.map( (request) => {
-        request.totalPurchase = Number.parseFloat(request.totalPurchase)
-        request.deliveryTax = Number.parseFloat(request.deliveryTax)
-        request.servicesSum = Number.parseFloat(request.servicesSum)
-        request.transactionOperationTax = Number.parseFloat(request.transactionOperationTax)
+    // Forcing conversion values to decimal (due MYSQL2 preciosion bug)
+    const requests = await requestListMapper.loadAll().catch((err) => {errorDealer(err, res)} );
 
-        return request
-      } )
+    const requestsWithTransaction = requests.map( (request) => {
+      request.totalPurchase = Number.parseFloat(request.totalPurchase)
+      request.deliveryTax = Number.parseFloat(request.deliveryTax)
+      request.servicesSum = Number.parseFloat(request.servicesSum)
+      request.transactionOperationTax = Number.parseFloat(request.transactionOperationTax)
 
-      res.json(requests)
-      res.end()
+      return request
+    });
 
-      return
-    }).catch((err) => {errorDealer(err, res)} )
+    const deliveryLoadMapper = new DeliveryLoadMapper()
+
+    const requestWithDeliveryPromises = requestsWithTransaction.map( (request) => {
+
+      return new Promise(async (resolve, reject) => {
+
+        const deliveryData = await deliveryLoadMapper.load(request.id).catch((err)=>{
+          reject(err)
+        })
+
+        request.dataValues.delivery = {
+          toReceive: deliveryData.find((delivery)=> {
+            return delivery.type == deliveryTypes.TO_RECEIVE
+          }) || {
+            requestId: null,
+            deliveryId: null,
+            type: null
+          },
+          toReturn: deliveryData.find((delivery)=> {
+            return delivery.type == deliveryTypes.TO_RETURN
+          }) || {
+            requestId: null,
+            deliveryId: null,
+            type: null
+          }
+        }
+        resolve(request)
+      }) 
+    })
+    
+    const requestWithDelivery = await Promise.all(requestWithDeliveryPromises)
+      
+    res.json(requestWithDelivery)
+    res.end()
+
+    return
     
 	});
 
