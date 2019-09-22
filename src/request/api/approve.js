@@ -10,6 +10,7 @@ import emailService from '../../email/service'
 import emailHelper from '../../email/emailHelper'
 import DeliveryMapper from '../../delivery/db/mappers/save'
 import deliveryType from '../../delivery/db/deliveryType'
+import ServiceMapper from '../../notary/services/mapper/save'
 
 export default ({ config, db }) => {
 
@@ -75,6 +76,25 @@ export default ({ config, db }) => {
       deliveryId: loggiData.loggiOrderId,
       type: deliveryType.TO_RECEIVE
     }).catch( (err) => {
+      console.log(err.message, err.data)
+      res.status(STATUS_SERVER_ERROR).send(err.message)
+      res.end()
+      return
+    })
+
+    const serviceMapper = new ServiceMapper()
+    const requestServicesSavePromises = req.body.servicesData.services.map( async (service)=> {
+
+      return new Promise( async (resolve, reject) => {
+        await serviceMapper.save(request.id, service).catch( (err) => {
+          reject(err)
+        })
+
+        resolve()
+      })
+    })
+
+    await Promise.all(requestServicesSavePromises).catch( (err) => {
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).send(err.message)
       res.end()

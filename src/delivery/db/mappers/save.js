@@ -18,7 +18,7 @@ const service = class {
         deliveryConnection.create({
           requestId: deliveryData.requestId,
           deliveryId: deliveryData.deliveryId,
-          type: deliveryData.requestId || type.TO_RECEIVE
+          type: deliveryData.type || type.TO_RECEIVE
         })
         .then((newDelivery)=>{
           resolve(newDelivery)

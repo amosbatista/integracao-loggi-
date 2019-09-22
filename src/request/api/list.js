@@ -2,6 +2,7 @@ import { Router } from 'express'
 import RequestListMapper from '../mapper/loadAll'
 import DeliveryLoadMapper from '../../delivery/db/mappers/load'
 import deliveryTypes from '../../delivery/db/deliveryType'
+import ServicesMapper from '../../notary/services/mapper/loadAll'
 
 const api = ({ config, db }) => {
 
@@ -24,6 +25,7 @@ const api = ({ config, db }) => {
     });
 
     const deliveryLoadMapper = new DeliveryLoadMapper()
+    const servicesMapper = new ServicesMapper()
 
     const requestWithDeliveryPromises = requestsWithTransaction.map( (request) => {
 
@@ -49,6 +51,9 @@ const api = ({ config, db }) => {
             type: null
           }
         }
+
+        request.dataValues.serviceData = await servicesMapper.loadAll(request.id) || []
+
         resolve(request)
       }) 
     })
