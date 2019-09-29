@@ -45,7 +45,6 @@ const api = ({ config, db }) => {
       orderData.realServiceValue = req.body.orderData.realServiceValue
 
       const totalRealValueData = requestNewValueCalculator(orderData.realServiceValue, request.deliveryTax)
-      console.log("DATA: ", totalRealValueData)
 
       orderData.realValue = totalRealValueData.totalPurchase
 
@@ -124,10 +123,6 @@ const validateBody = (body) => {
 
   if(body.orderData.isRealValueDifferentFromProposed && !body.orderData.reasonToDifference) {
     return 'O valor esta diferente, mas o motivo não foi informado.'
-  }
-
-  if(!body.orderData.deliveryTax) {
-    return 'Dados da entrega está vazio'
   }
 
   return null

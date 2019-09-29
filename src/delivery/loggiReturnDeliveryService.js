@@ -57,23 +57,24 @@ const service = (addressData, servicesData, paymentData, auth) => {
         shop {
           pk
           name
-          order {
+        }
+        orders {
+          pk
+          trackingKey
+          packages {
             pk
-            packages {
-              pk
-              status
-              pickupWaypoint {
-                index
-                indexDisplay
-                eta
-                legDistance
-              }
-              waypoint {
-                index
-                indexDisplay
-                eta
-                legDistance
-              }
+            status
+            pickupWaypoint {
+              index
+              indexDisplay
+              eta
+              legDistance
+            }
+            waypoint {
+              index
+              indexDisplay
+              eta
+              legDistance
             }
           }
         }
@@ -112,7 +113,8 @@ const service = (addressData, servicesData, paymentData, auth) => {
       }
 
       resolve({
-        "loggiOrderId": apiRes.body.data.createOrder.shop.order.pk
+        "loggiOrderId": apiRes.body.data.createOrder.orders[0].pk,
+        "packageId": apiRes.body.data.createOrder.orders[0].packages[0].pk
       })
 
     })

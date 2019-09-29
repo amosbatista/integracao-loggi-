@@ -2,7 +2,7 @@ import { Router } from 'express'
 import deliveryAuthService from '../../delivery/loggiLogin/service'
 
 import loggiApproved from '../../delivery/loggiApproveDeliveryService'
-import loggiCancelation from '../../delivery/loggiCancelDelivery'
+import loggiCancelation from '../../delivery/loggiCancelDeliveryByEditService'
 import NewRequestMapper from '../mapper/new'
 import RequestLog from '../log/mapper'
 import RequestStatus from '../status'
@@ -29,10 +29,11 @@ export default ({ config, db }) => {
     const STATUS_SERVER_ERROR = 500
 
     const authData = await deliveryAuthService().catch( (err) => {
-      console.log('Tentativa não autorizada de concluir aprovação', err)
+      const message = 'Tentativa não autorizada de concluir aprovação'
+      console.log(message, err)
       res.status(STATUS_UNAUTHORIZED).send(err.message)
       res.end()
-      return
+      throw new Error(message)
     })
 
     const loggiData = await loggiApproved(
@@ -44,7 +45,7 @@ export default ({ config, db }) => {
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).send(err.message)
       res.end()
-      return
+      throw new Error(err.message)
     })
 
     const newRequestMapper = new NewRequestMapper()
@@ -62,11 +63,12 @@ export default ({ config, db }) => {
       servicesSum: req.body.paymentData.servicesSum,
       transactionOperationTax: req.body.paymentData.transactionOperationTax,
       status: RequestStatus.AT_RECEIVE
-    }).catch( (err) => {
+    }).catch( async (err) => {
       console.log(err.message, err.data)
+      await loggiCancelation(loggiData.loggiOrderId, loggiData.packageId, authData)
       res.status(STATUS_SERVER_ERROR).send(err.message)
       res.end()
-      return
+      throw new Error(err.message)
     })
 
     const deliveryMapper = new DeliveryMapper()
@@ -74,12 +76,14 @@ export default ({ config, db }) => {
     await deliveryMapper.save({
       requestId: request.id,
       deliveryId: loggiData.loggiOrderId,
+      packageId: loggiData.packageId,
       type: deliveryType.TO_RECEIVE
-    }).catch( (err) => {
+    }).catch( async (err) => {
+      await loggiCancelation(loggiData.loggiOrderId, loggiData.packageId, authData)
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).send(err.message)
       res.end()
-      return
+      throw new Error(err.message)
     })
 
     const serviceMapper = new ServiceMapper()
@@ -94,11 +98,12 @@ export default ({ config, db }) => {
       })
     })
 
-    await Promise.all(requestServicesSavePromises).catch( (err) => {
+    await Promise.all(requestServicesSavePromises).catch(async (err) => {
+      await loggiCancelation(loggiData.loggiOrderId, loggiData.packageId, authData)
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).send(err.message)
       res.end()
-      return
+      throw new Error(err.message)
     })
 
     const emailContent = emailHelper(
@@ -117,11 +122,12 @@ export default ({ config, db }) => {
         "Observação: Se houver qualquer diferença em relação aos serviços e à documentação enviada, o valor final será alterado."
       ]
     )
-    await emailService(emailContent).catch( (err) => {
+    await emailService(emailContent).catch(async  (err) => {
+      await loggiCancelation(loggiData.loggiOrderId, loggiData.packageId, authData)
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).send(err.message)
       res.end()
-      return
+      throw new Error(err.message)
     })
     
     const requestLog = new RequestLog()

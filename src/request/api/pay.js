@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import RequestLoadMapper from '../mapper/load'
 import transactionService from '../../bankTransaction/cieloTransactionService'
-import cancelTransactionServiice from '../../bankTransaction/cieloCancelationService'
+import cancelTransactionService from '../../bankTransaction/cieloCancelationService'
 import OrderLoadMapper from '../order/mapper/load'
 import deliveryReturnService from '../../delivery/loggiReturnDeliveryService'
 import deliveryAuthService from '../../delivery/loggiLogin/service'
@@ -11,6 +11,8 @@ import RequestLogMapper from '../log/mapper'
 import requestStatus from '../status'
 import OrderProcessedMarkerMapper from '../order/mapper/markAsOrdered'
 import emailHelper from '../../email/emailHelper'
+import deliveryCancellationService from '../../delivery/loggiCancelDeliveryByEditService'
+import DeliveryMapper from '../../delivery/db/mappers/save'
 
 const api = ({ config, db }) => {
 
@@ -105,11 +107,20 @@ const api = ({ config, db }) => {
 							const orderProcessedMarkerMapper = new OrderProcessedMarkerMapper()
 							const orderProcessedMarkerPromise = orderProcessedMarkerMapper.save(order)
 
+							const deliveryMapper = new DeliveryMapper()
+							const deliveryPromise = deliveryMapper.save({
+								requestId: request.id,
+								deliveryId: deliveryData.loggiOrderId,
+								packageId: deliveryData.packageId,
+								type: deliveryData.TO_RETURN
+							})
+
 							Promise.all([
 								emailPromise,
 								requestStatusUpdatePromise,
 								requestLogPromise,
-								orderProcessedMarkerPromise
+								orderProcessedMarkerPromise,
+								deliveryPromise
 							]).then( () => {
 								res.status(STATUS_REQUEST_ACCEPT).send({
 									transactionId: transactionReturnedData.Payment.PaymentId
@@ -118,11 +129,12 @@ const api = ({ config, db }) => {
 
 								return
 							}).catch( (err) => {
+								deliveryCancellationService(deliveryData.loggiOrderId, deliveryData.packageId, authData)
 								cancelTransactionService(transactionReturnedData.Payment.PaymentId)
 								errorDealer(err, res)
 							})
 						}).catch( (err) => {
-							cancelTransactionServiice(transactionReturnedData.Payment.PaymentId)
+							cancelTransactionService(transactionReturnedData.Payment.PaymentId)
 							errorDealer(err, res)
 						})
 					}).catch((err) => {errorDealer(err, res)} )
