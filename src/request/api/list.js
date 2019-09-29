@@ -3,6 +3,7 @@ import RequestListMapper from '../mapper/loadAll'
 import DeliveryLoadMapper from '../../delivery/db/mappers/load'
 import deliveryTypes from '../../delivery/db/deliveryType'
 import ServicesMapper from '../../notary/services/mapper/loadAll'
+import RequestOrderMapper from '../../request/order/mapper/load'
 
 const api = ({ config, db }) => {
 
@@ -53,6 +54,11 @@ const api = ({ config, db }) => {
         }
 
         request.dataValues.serviceData = await servicesMapper.loadAll(request.id) || []
+
+        const requestOrderMapper = new RequestOrderMapper()
+        request.dataValues.orderData = await requestOrderMapper.load(request.id).catch( (err) => {
+          reject(err)
+        })  || {}
 
         resolve(request)
       }) 

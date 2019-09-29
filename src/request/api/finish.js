@@ -64,17 +64,32 @@ const api = ({ config, db }) => {
 
       const requestLogMapper = new RequestLogMapper()
       const requestLogPromise = requestLogMapper.save(request, RequestStatus.WAITING_PAYMENT)
+      
+      const emailBody = request.isRealValueDifferentFromProposed ?
+        [
+          `O seu pedido está finalizado!`,
+          `ID do pedido: ${request.id}`,
+          `<strong>Valor do serviço: </strong>${orderData.realServiceValue}`,
+          `<strong>Valor total: </strong>${totalRealValueData.totalPurchase}`,
+          `Para poder recebẽ-lo de volta, você deve realizar o pagamento. Clique no link abaixo para visualizar o formulário onde você informará os dados de pagamento:`,
+          `<a href="http://20cartorio.com.br/integracao-loggi/#/payment/${request.id}"> <strong>http://20cartorio.com.br/integracao-loggi/#/payment/${request.id}</strong> </a>`
+        ] : 
+        [
+          `O seu pedido está finalizado!`,
+          `ID do pedido: ${request.id}`,
+          `<strong>Houve alterações no valor!!</strong> O novo valor do pedido ficou em:`,
+          `<strong>Valor do serviço: </strong>${orderData.realServiceValue}`,
+          `<strong>Valor total: </strong>${totalRealValueData.totalPurchase}`,
+          `<strong>Motivo da mudança: </strong>${request.reasonToDifference}`,
+          `Para poder recebẽ-lo de volta, você deve realizar o pagamento. Clique no link abaixo para visualizar o formulário onde você informará os dados de pagamento:`,
+          `<a href="http://20cartorio.com.br/integracao-loggi/#/payment/${request.id}"> <strong>http://20cartorio.com.br/integracao-loggi/#/payment/${request.id}</strong> </a>`
+        ]
 
       const emailContent = emailHelper(
         "Finalização de pedido",
         request.clientName,
         request.clientEmail,
-        [
-          `O seu pedido está finalizado!`,
-          `ID do pedido: ${request.id}`,
-          `Para poder recebẽ-lo de volta, você deve realizar o pagamento. Clique no link abaixo para visualizar o formulário onde você informará os dados de pagamento:`,
-          `<a href="http://20cartorio.com.br/integracao-loggi/#/payment/${request.id}"> <strong>http://20cartorio.com.br/integracao-loggi/#/payment/${request.id}</strong> </a>`
-        ]
+        
       )
       const emailPromise = EmailService(emailContent)
 
