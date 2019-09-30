@@ -9,6 +9,7 @@ import EmailService from '../../email/service'
 import requestNewValueCalculator from '../purchaseCalculator'
 import RequestUpdateValuesMapper from '../mapper/updateValues'
 import emailHelper from '../../email/emailHelper'
+import currencyFormat from '../../helpers/formatCurrency'
 
 const api = ({ config, db }) => {
 
@@ -24,7 +25,7 @@ const api = ({ config, db }) => {
       res.status(STATUS_INVALID_REQUEST).send(validateBodyErrors)
       res.end()
 
-      return
+      throw new Error(err.message)
     }
 
     const requestMapper = new RequestMapper()
@@ -35,7 +36,7 @@ const api = ({ config, db }) => {
         res.status(STATUS_INVALID_REQUEST).send("Pedido não existe")
         res.end()
 
-        return
+        throw new Error(err.message)
       }
 
       let orderData = req.body.orderData
@@ -65,22 +66,26 @@ const api = ({ config, db }) => {
       const requestLogMapper = new RequestLogMapper()
       const requestLogPromise = requestLogMapper.save(request, RequestStatus.WAITING_PAYMENT)
       
+      const formatedValues = {
+        realServiceValue: currencyFormat(orderData.realServiceValue),
+        totalPurchase: currencyFormat(totalRealValueData.totalPurchase)
+      }
       const emailBody = request.isRealValueDifferentFromProposed ?
         [
           `O seu pedido está finalizado!`,
           `ID do pedido: ${request.id}`,
-          `<strong>Valor do serviço: </strong>${orderData.realServiceValue}`,
-          `<strong>Valor total: </strong>${totalRealValueData.totalPurchase}`,
+          `<strong>Valor do serviço: </strong>${formatedValues.realServiceValue}`,
+          `<strong>Valor total: </strong>${formatedValues.totalPurchase}`,
           `Para poder recebẽ-lo de volta, você deve realizar o pagamento. Clique no link abaixo para visualizar o formulário onde você informará os dados de pagamento:`,
           `<a href="http://20cartorio.com.br/integracao-loggi/#/payment/${request.id}"> <strong>http://20cartorio.com.br/integracao-loggi/#/payment/${request.id}</strong> </a>`
         ] : 
         [
           `O seu pedido está finalizado!`,
           `ID do pedido: ${request.id}`,
-          `<strong>Houve alterações no valor!!</strong> O novo valor do pedido ficou em:`,
-          `<strong>Valor do serviço: </strong>${orderData.realServiceValue}`,
-          `<strong>Valor total: </strong>${totalRealValueData.totalPurchase}`,
-          `<strong>Motivo da mudança: </strong>${request.reasonToDifference}`,
+          `<strong>Houve alterações no valor!!</strong>`,
+          `<strong>O novo valor do serviço ficou em: </strong>${formatedValues.realServiceValue}`,
+          `<strong>Novo valor total: </strong>${formatedValues.totalPurchase}`,
+          `<strong>Motivo da mudança: </strong>${req.body.orderData.reasonToDifference}`,
           `Para poder recebẽ-lo de volta, você deve realizar o pagamento. Clique no link abaixo para visualizar o formulário onde você informará os dados de pagamento:`,
           `<a href="http://20cartorio.com.br/integracao-loggi/#/payment/${request.id}"> <strong>http://20cartorio.com.br/integracao-loggi/#/payment/${request.id}</strong> </a>`
         ]
@@ -89,15 +94,15 @@ const api = ({ config, db }) => {
         "Finalização de pedido",
         request.clientName,
         request.clientEmail,
-        
+        emailBody
       )
       const emailPromise = EmailService(emailContent)
 
       Promise.all([
+        emailPromise,
         requestOrderPromise,
         requestUpdateStatusPromise,
         requestLogPromise,
-        emailPromise,
         requestUpdateValuesPromise
       ]).then(()=> {
         res.status(STATUS_REQUEST_ACCEPT).send()
@@ -144,10 +149,13 @@ const validateBody = (body) => {
 
 }
 
+const STATUS_SERVER_ERROR = 500
+
 const errorDealer = (err, res) => {
   console.log(err.message, err.data)
   res.status(STATUS_SERVER_ERROR).send(err.message)
   res.end()
+  throw new Error(err.message)
 }
 
 

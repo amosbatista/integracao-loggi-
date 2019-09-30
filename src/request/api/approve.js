@@ -11,6 +11,7 @@ import emailHelper from '../../email/emailHelper'
 import DeliveryMapper from '../../delivery/db/mappers/save'
 import deliveryType from '../../delivery/db/deliveryType'
 import ServiceMapper from '../../notary/services/mapper/save'
+import currencyFormat from '../../helpers/formatCurrency'
 
 export default ({ config, db }) => {
 
@@ -106,6 +107,12 @@ export default ({ config, db }) => {
       throw new Error(err.message)
     })
 
+    const formatedValues = {
+      deliveryTax: currencyFormat(req.body.paymentData.deliveryTax),
+      servicesSum: currencyFormat(req.body.paymentData.servicesSum),
+      transactionOperationTax: currencyFormat(req.body.paymentData.transactionOperationTax),
+      totalAmount: currencyFormat(req.body.paymentData.totalAmount)
+    }
     const emailContent = emailHelper(
       "Aprovação de pedido", 
       request.clientName, 
@@ -114,11 +121,11 @@ export default ({ config, db }) => {
         "Informamos que o pedido foi efetuado com sucesso. Segue os dados dele:",
         `ID do pedido: ${request.id}`,
         `Endereço de retirada: ${req.body.addressData.completeAddress} - ${req.body.addressData.addressComplement}`,
-        `Taxa de entrega: ${req.body.paymentData.deliveryTax}`,
-        `Total dos serviços: ${req.body.paymentData.servicesSum}`,
-        `Taxa de transação bancária: ${req.body.paymentData.transactionOperationTax}`,
+        `Taxa de entrega: ${formatedValues.deliveryTax}`,
+        `Total dos serviços: ${formatedValues.servicesSum}`,
+        `Taxa de transação bancária: ${formatedValues.transactionOperationTax}`,
         `Código da transportadora: ${loggiData.loggiOrderId}`,
-        `Total geral: ${req.body.paymentData.totalAmount}`,
+        `Total geral: ${formatedValues.totalAmount}`,
         "Observação: Se houver qualquer diferença em relação aos serviços e à documentação enviada, o valor final será alterado."
       ]
     )
