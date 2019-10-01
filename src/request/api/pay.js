@@ -13,6 +13,8 @@ import OrderProcessedMarkerMapper from '../order/mapper/markAsOrdered'
 import emailHelper from '../../email/emailHelper'
 import deliveryCancellationService from '../../delivery/loggiCancelDeliveryByEditService'
 import DeliveryMapper from '../../delivery/db/mappers/save'
+import DeliveryType from '../../delivery/db/deliveryType'
+import deliveryType from '../../delivery/db/deliveryType';
 
 const api = ({ config, db }) => {
 
@@ -106,13 +108,19 @@ const api = ({ config, db }) => {
 
 							const orderProcessedMarkerMapper = new OrderProcessedMarkerMapper()
 							const orderProcessedMarkerPromise = orderProcessedMarkerMapper.save(order)
-
+							
+							console.log({
+								requestId: request.id,
+								deliveryId: deliveryData.loggiOrderId,
+								packageId: deliveryData.packageId,
+								type: DeliveryType.TO_RETURN
+							})
 							const deliveryMapper = new DeliveryMapper()
 							const deliveryPromise = deliveryMapper.save({
 								requestId: request.id,
 								deliveryId: deliveryData.loggiOrderId,
 								packageId: deliveryData.packageId,
-								type: deliveryData.TO_RETURN
+								type: deliveryType.TO_RETURN
 							})
 
 							Promise.all([

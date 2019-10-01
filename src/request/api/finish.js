@@ -43,11 +43,27 @@ const api = ({ config, db }) => {
       orderData.proposedValue = request.totalPurchase
       orderData.isOrderComplete = false
       orderData.requestId = request.id
-      orderData.realServiceValue = req.body.orderData.realServiceValue
+      orderData.realServiceValue = orderData.isRealValueDifferentFromProposed ? 
+        req.body.orderData.realServiceValue : 
+        request.servicesSum
 
-      const totalRealValueData = requestNewValueCalculator(orderData.realServiceValue, request.deliveryTax)
+      var totalRealValueData
 
-      orderData.realValue = totalRealValueData.totalPurchase
+      if(orderData.isRealValueDifferentFromProposed){
+        totalRealValueData = requestNewValueCalculator(orderData.realServiceValue, request.deliveryTax)
+
+        orderData.realValue = totalRealValueData.totalPurchase
+      }
+      else{
+        totalRealValueData = {
+          totalPurchase: request.totalPurchase,
+          transactionOperationTax: {
+            taxValue: request.transactionOperationTax
+          }
+        }
+      }
+
+      console.log(request)
 
       const requestOrderMapper = new RequestOrderMapper()
       const requestOrderPromise = requestOrderMapper.save(orderData, request)
@@ -129,11 +145,11 @@ const validateBody = (body) => {
     return 'Dados de compra está vazio'
   }
 
-  if(!body.orderData.realServiceValue) {
+  if(!body.orderData.realServiceValue && body.orderData.isRealValueDifferentFromProposed) {
     return 'Valor de serviço real está vazio'
   }
 
-  if(Number.isNaN( body.orderData.realServiceValue)) {
+  if(body.orderData.isRealValueDifferentFromProposed && Number.isNaN( body.orderData.realServiceValue)) {
     return 'Valor de serviço deve ser numérico'
   }
 
