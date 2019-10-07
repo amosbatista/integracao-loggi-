@@ -6,7 +6,7 @@ import ServicesMapper from '../../notary/services/mapper/loadAll'
 
 const api = ({ config, db }) => {
 
-	let api = Router();
+	let api = Router(); 
 
 	api.post('/', async (req, res) => {
 
