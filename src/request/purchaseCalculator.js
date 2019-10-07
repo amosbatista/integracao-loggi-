@@ -1,4 +1,4 @@
-import ecommerceTax from '../bankTransaction/cieloTax'
+import ecommerceTax from '../bankTransaction/emptyTax'
 
 const calculator = (servicesSum, deliveryTax) => {
   const transactionOperationTax = ecommerceTax(servicesSum + deliveryTax)
