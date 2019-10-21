@@ -68,8 +68,11 @@ const service = (paymentData) => {
       else {
         const transactionStatusApproved = "4"
         const transactionStatusApproved2 = "6"
+        const transactionStatusApproved_ZeroAuth = "00"
 
-        if(apiRes.body.Payment.ReturnCode != transactionStatusApproved && apiRes.body.Payment.ReturnCode != transactionStatusApproved2) {
+        if(apiRes.body.Payment.ReturnCode != transactionStatusApproved && 
+          apiRes.body.Payment.ReturnCode != transactionStatusApproved2 && 
+          apiRes.body.Payment.ReturnCode != transactionStatusApproved_ZeroAuth) {
           reject({
             message: `A transação não funcionou: ${apiRes.body.Payment.ReturnMessage}`,
             data: apiRes.body

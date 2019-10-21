@@ -51,8 +51,6 @@ const api = ({ config, db }) => {
 
       if(orderData.isRealValueDifferentFromProposed){
         totalRealValueData = requestNewValueCalculator(orderData.realServiceValue, request.deliveryTax)
-
-        orderData.realValue = totalRealValueData.totalPurchase
       }
       else{
         totalRealValueData = {
