@@ -4,12 +4,25 @@ import DeliveryLoadMapper from '../../delivery/db/mappers/load'
 import deliveryTypes from '../../delivery/db/deliveryType'
 import ServicesMapper from '../../notary/services/mapper/loadAll'
 import RequestOrderMapper from '../../request/order/mapper/load'
+import deliveryStatusService from '../../delivery/loggiDeliveryStatusService'
+import deliveryAuthService from '../../delivery/loggiLogin/service'
+import requestStatus from '../status'
 
 const api = ({ config, db }) => {
 
 	let api = Router();
 
 	api.post('/', async (req, res) => {
+
+    const STATUS_UNAUTHORIZED = 401
+
+    const authData = await deliveryAuthService().catch( (err) => {
+      const message = 'Tentativa não autorizada de listar pedidos'
+      console.log(message, err)
+      res.status(STATUS_UNAUTHORIZED).send(err.message)
+      res.end()
+      throw new Error(message)
+    })
 
     const requestListMapper = new RequestListMapper()
 
@@ -42,15 +55,32 @@ const api = ({ config, db }) => {
           }) || {
             requestId: null,
             deliveryId: null,
-            type: null
+            type: null,
+            packageId: null
           },
           toReturn: deliveryData.find((delivery)=> {
             return delivery.type == deliveryTypes.TO_RETURN
           }) || {
             requestId: null,
             deliveryId: null,
-            type: null
+            type: null,
+            packageId: null
           }
+        }
+
+        request.dataValues.delivery.status = {
+          name: "unknown",
+          translated: "Desconhecido"
+        }
+        if(request.status == requestStatus.AT_RECEIVE){
+          const deliveryStatus = await deliveryStatusService(request.dataValues.delivery.toReceive.packageId, authData)
+
+          request.dataValues.delivery.status = deliveryStatus;
+        }
+        if(request.status == requestStatus.READY_TO_RETURN){
+          const deliveryStatus = await deliveryStatusService(request.dataValues.delivery.toReturn.packageId, authData)
+
+          request.dataValues.delivery.status = deliveryStatus;
         }
 
         request.dataValues.serviceData = await servicesMapper.loadAll(request.id) || []
