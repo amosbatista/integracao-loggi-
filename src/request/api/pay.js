@@ -84,7 +84,7 @@ const api = ({ config, db }) => {
 							clientPhone: request.clientPhone
 						}
 						
-						deliveryReturnService(addressData, servicesData, paymentData, authData.toString()).then( (deliveryData) => {
+						deliveryReturnService(addressData, servicesData, paymentData, authData.toString(), request.id).then( (deliveryData) => {
 
 							const emailContent = emailHelper(
 								"Pagamento de pedido",

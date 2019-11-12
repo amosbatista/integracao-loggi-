@@ -4,7 +4,7 @@ import httpReq from 'superagent'
 //   inquiryId: 0
 // }
 
-const service = (addressData, servicesData, paymentData, auth) => {
+const service = (addressData, servicesData, paymentData, auth, requestId) => {
 
   return new Promise ((resolve, reject) => {
 
@@ -32,7 +32,7 @@ const service = (addressData, servicesData, paymentData, auth) => {
         packages: [{
           pickupIndex: 0
           recipient: {
-            name: "${servicesData.clientName}"
+            name: "Pedido número: ${requestId}. Avisar retirada de documento no balcão."
             phone: "${servicesData.clientPhone}"
           }
           address: {
@@ -85,7 +85,6 @@ const service = (addressData, servicesData, paymentData, auth) => {
       }
     }
     `
-    
     httpReq.post(process.env.LOGGI_API_V2)
     .send({
       "query": query
