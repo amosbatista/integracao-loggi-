@@ -27,12 +27,13 @@ const service = (addressData, servicesData, paymentData, auth, requestId) => {
             lng: ${notariusAddress.lng}
             address: "${notariusAddress.completeAddress}"
             complement: "${notariusAddress.complement}"
-          }
+          },
+          instructions: "Procurar por Izabel. Informar código de retirada ${requestId}"
         }]
         packages: [{
           pickupIndex: 0
           recipient: {
-            name: "Pedido número: ${requestId}. Avisar retirada de documento no balcão."
+            name: "${servicesData.clientName}"
             phone: "${servicesData.clientPhone}"
           }
           address: {
