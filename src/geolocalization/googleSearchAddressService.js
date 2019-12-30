@@ -1,10 +1,11 @@
 import httpReq from 'superagent'
+import encoder from '../helpers/encoderURL'
 
 const service = (address) => {
 
   return new Promise ((resolve, reject) => {
     const key = process.env.GOOGLE_API_KEY
-    httpReq.get(`${process.env.GOOGLE_GEOCODE_API}?address=${address}&key=${key}`)
+    httpReq.get(`${process.env.GOOGLE_GEOCODE_API}?address=${encoder(address)}&key=${key}`)
     .set('Content-Type', "application/json")
     .end((err, apiRes) => {
       

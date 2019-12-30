@@ -7,7 +7,7 @@ const api = () => {
 
 	api.post('/', async (req, res) => {
 
-    const geolocalization = await service(req.completeAddress)
+    const geolocalization = await service(req.body.completeAddress)
       .catch(errorDealer)
 
     res.json(geolocalization)
