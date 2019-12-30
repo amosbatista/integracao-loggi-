@@ -9,6 +9,7 @@ import returnApi from './return';
 import list from './list';
 import purchaseValue from './purchaseValue';
 import detail from './detail';
+import geo from './geo';
 
 export default ({ config, db }) => {
 	process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -24,6 +25,7 @@ export default ({ config, db }) => {
 	api.use('/list', list({ config, db }));
 	api.use('/purchaseValue', purchaseValue({ config, db }));
 	api.use('/detail', detail({ config, db }));
+	api.use('/geo', geo({ config, db }));
 
 	// perhaps expose some API metadata at the root
 	api.post('/', (req, res) => {
