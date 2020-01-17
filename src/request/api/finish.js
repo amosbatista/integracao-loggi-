@@ -10,6 +10,7 @@ import requestNewValueCalculator from '../purchaseCalculator'
 import RequestUpdateValuesMapper from '../mapper/updateValues'
 import emailHelper from '../../email/emailHelper'
 import currencyFormat from '../../helpers/formatCurrency'
+import logService from '../log/logGenerator'
 
 const api = ({ config, db }) => {
 
@@ -19,6 +20,9 @@ const api = ({ config, db }) => {
 
     const STATUS_INVALID_REQUEST = 400
     const STATUS_REQUEST_ACCEPT = 202
+
+    logService('Finish request', req.body)
+    
     const validateBodyErrors = validateBody(req.body)
 
     if(validateBodyErrors){

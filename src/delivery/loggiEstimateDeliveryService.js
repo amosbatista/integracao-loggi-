@@ -1,4 +1,5 @@
 import httpReq from 'superagent'
+import log from '../request/log/logGenerator'
 
 const service = (addressData, auth) => {
 
@@ -66,6 +67,16 @@ const service = (addressData, auth) => {
       }
 
       const firstPackage = 0
+      log("Estimative delivery result:", apiRes.body)
+
+      if(apiRes.body.errors){
+        reject({
+          message: 'Erro interno da API Loggi ao realizar requisição',
+          object: JSON.stringify(apiRes.body.errors)
+        })
+
+        return
+      }
       
       if(apiRes.body.data.estimate.packages[firstPackage].error){
         reject({

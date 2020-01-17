@@ -2,6 +2,7 @@ import { Router } from 'express'
 import purchaseService from '../../delivery/loggiEstimateDeliveryService'
 import authService from '../../delivery/loggiLogin/service'
 import calcService from '../purchaseCalculator'
+import logService from '../log/logGenerator'
 
 export default ({ config, db }) => {
 	let api = Router();
@@ -14,6 +15,8 @@ export default ({ config, db }) => {
 
     authService().then( (authData) => {
 
+      logService('Confirm request', req.body)
+      
       purchaseService(req.body.addressData, authData.toString())
       .then((apiRes) => {
 
@@ -30,12 +33,12 @@ export default ({ config, db }) => {
       })
       .catch((err) => {
         res.status(STATUS_SERVER_ERROR).send(err.message)
-        console.log(err.message, err.object)
+        logService(err.message, err.object)
         res.end()
       })
 
     }).catch( (err) => {
-      console.log(err.message, err.data)
+      logService(err.message, err.data)
       res.status(STATUS_UNAUTHORIZED).send(err.message)
       res.end()
     })

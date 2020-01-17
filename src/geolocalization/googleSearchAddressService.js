@@ -14,6 +14,16 @@ const service = (address) => {
           message: "Erro ao fazer geolocalização",
           data: err
         })
+
+        return 
+      }
+
+      if(apiRes.body.results.length == 0){
+        reject({
+          message: "Nenhum resultado localizado. Favor verificar o endereço informado.",
+          data: null
+        })
+        return
       }
       resolve(apiRes.body.results[0].geometry.location)
     })
