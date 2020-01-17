@@ -12,6 +12,7 @@ import DeliveryMapper from '../../delivery/db/mappers/save'
 import deliveryType from '../../delivery/db/deliveryType'
 import ServiceMapper from '../../notary/services/mapper/save'
 import currencyFormat from '../../helpers/formatCurrency'
+import logService from '../log/logGenerator'
 
 export default ({ config, db }) => {
 
@@ -37,6 +38,8 @@ export default ({ config, db }) => {
       throw new Error(message)
     })
 
+    logService('Approve request', req.body)
+    
     const loggiData = await loggiApproved(
       req.body.addressData, 
       req.body.servicesData, 
