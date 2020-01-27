@@ -10,6 +10,7 @@ import list from './list';
 import purchaseValue from './purchaseValue';
 import detail from './detail';
 import geo from './geo';
+import testDomain from './test-api-without-domain'
 
 export default ({ config, db }) => {
 	process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -26,6 +27,7 @@ export default ({ config, db }) => {
 	api.use('/purchaseValue', purchaseValue({ config, db }));
 	api.use('/detail', detail({ config, db }));
 	api.use('/geo', geo({ config, db }));
+	api.use('/testdomain', testDomain({config, db}))
 
 	// perhaps expose some API metadata at the root
 	api.post('/', (req, res) => {
