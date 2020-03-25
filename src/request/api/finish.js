@@ -95,7 +95,7 @@ const api = ({ config, db }) => {
           `<strong>Valor do serviço: </strong>${formatedValues.realServiceValue}`,
           `<strong>Valor total: </strong>${formatedValues.totalPurchase}`,
           `Para poder recebẽ-lo de volta, você deve realizar o pagamento. Clique no link abaixo para visualizar o formulário onde você informará os dados de pagamento:`,
-          `<a href="http://20cartorio.com.br/integracao-loggi/#/payment/${request.id}"> <strong>http://20cartorio.com.br/integracao-loggi/#/payment/${request.id}</strong> </a>`
+          `<a href="https://20cartorio.com.br/delivery/#/payment/${request.id}"> <strong>https://20cartorio.com.br/delivery/#/payment/${request.id}</strong> </a>`
         ] : 
         [
           `O seu pedido está finalizado!`,
@@ -105,7 +105,7 @@ const api = ({ config, db }) => {
           `<strong>Novo valor total: </strong>${formatedValues.totalPurchase}`,
           `<strong>Motivo da mudança: </strong>${req.body.orderData.reasonToDifference}`,
           `Para poder recebẽ-lo de volta, você deve realizar o pagamento. Clique no link abaixo para visualizar o formulário onde você informará os dados de pagamento:`,
-          `<a href="http://20cartorio.com.br/integracao-loggi/#/payment/${request.id}"> <strong>http://20cartorio.com.br/integracao-loggi/#/payment/${request.id}</strong> </a>`
+          `<a href="https://20cartorio.com.br/delivery/#/payment/${request.id}"> <strong>https://20cartorio.com.br/delivery/#/payment/${request.id}</strong> </a>`
         ]
 
       const emailContent = emailHelper(
