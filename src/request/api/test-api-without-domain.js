@@ -6,7 +6,6 @@ const api = () => {
 	let api = Router(); 
 
 	api.get('/', async (req, res) => {
-
     
         httpReq.get("http://teste-servico-sem-dominio-com-br.umbler.net")
         .send()
