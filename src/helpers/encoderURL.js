@@ -1,3 +1,3 @@
 export default (content) => {
-  return encodeURIComponent(escape(content))
+  return encodeURIComponent(content)
 }
