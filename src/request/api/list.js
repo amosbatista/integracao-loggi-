@@ -27,7 +27,9 @@ const api = ({ config, db }) => {
     const requestListMapper = new RequestListMapper()
 
     // Forcing conversion values to decimal (due MYSQL2 preciosion bug)
+    console.log("Fazendo requests")
     const requests = await requestListMapper.loadAll().catch((err) => {errorDealer(err, res)} );
+    console.log("Fiz requests")
 
     const requestsWithTransaction = requests.map( (request) => {
       request.totalPurchase = Number.parseFloat(request.totalPurchase)
