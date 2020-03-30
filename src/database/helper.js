@@ -2,7 +2,7 @@ import Sequelize from 'sequelize'
 
 const service = (tableName, model) => {
 
-  const maxConnections = 1
+  const maxConnections = 20
   const minConnections = 0
   const idleSecondsBeforeClose = 1000
   
