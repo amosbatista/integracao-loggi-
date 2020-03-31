@@ -1,6 +1,9 @@
 import { Router } from 'express'
 
-import RequestListMapper from '../mapper/loadAllByMysql'
+import RequestListMapper from '../mapper/loadAll'
+import DeliveryLoadMapper from '../../delivery/db/mappers/load'
+import ServicesMapper from '../../notary/services/mapper/loadAll'
+import RequestOrderMapper from '../order/mapper/load'
 import deliveryStatusService from '../../delivery/loggiDeliveryStatusService'
 
 import deliveryTypes from '../../delivery/db/deliveryType'
@@ -37,56 +40,57 @@ const api = ({ config, db }) => {
       return request
     });
 
+    const deliveryLoadMapper = new DeliveryLoadMapper()
+    const servicesMapper = new ServicesMapper()
+
     const requestWithDeliveryPromises = requestsWithTransaction.map( (request) => {
 
       return new Promise(async (resolve, reject) => {
-        request.delivery = {
 
-          toReceive: {
-            requestId: request.id,
-            deliveryId: request["deliveryReceive_deliveryId"],
-            type: deliveryTypes.TO_RECEIVE,
-            packageId: request["deliveryReceive_packageId"],
+        const deliveryData = await deliveryLoadMapper.load(request.id).catch((err)=>{
+          reject(err)
+        })
+
+        request.dataValues.delivery = {
+          toReceive: deliveryData.find((delivery)=> {
+            return delivery.type == deliveryTypes.TO_RECEIVE
+          }) || {
+            requestId: null,
+            deliveryId: null,
+            type: null,
+            packageId: null
           },
-          toReturn: {
-            requestId: request.id,
-            deliveryId: request["deliveryReturn_deliveryId"],
-            type: deliveryTypes.TO_RETURN,
-            packageId: request["deliveryReturn_packageId"],
+          toReturn: deliveryData.find((delivery)=> {
+            return delivery.type == deliveryTypes.TO_RETURN
+          }) || {
+            requestId: null,
+            deliveryId: null,
+            type: null,
+            packageId: null
           }
         }
 
-        request.delivery.status = {
+        request.dataValues.delivery.status = {
           name: "unknown",
           translated: "Desconhecido"
         }
         if(request.status == requestStatus.AT_RECEIVE){
-          const deliveryStatus = await deliveryStatusService(request.delivery.toReceive.packageId, authData)
+          const deliveryStatus = await deliveryStatusService(request.dataValues.delivery.toReceive.packageId, authData)
 
-          request.delivery.status = deliveryStatus;
+          request.dataValues.delivery.status = deliveryStatus;
         }
         if(request.status == requestStatus.READY_TO_RETURN){
-          const deliveryStatus = await deliveryStatusService(request.delivery.toReturn.packageId, authData)
+          const deliveryStatus = await deliveryStatusService(request.dataValues.delivery.toReturn.packageId, authData)
 
-          request.delivery.status = deliveryStatus;
+          request.dataValues.delivery.status = deliveryStatus;
         }
 
-        request.serviceData = {
-          serviceId: request.serviceId,
-          amount: request.amount,
-          value: request.value,
-          totalValue: request.totalValue,
-          text: request.text
-        }
+        request.dataValues.serviceData = await servicesMapper.loadAll(request.id) || []
 
-        request.orderData = {
-          proposedValue: request.proposedValue,
-          realValue: request.realValue,
-          realServiceValue: request.realServiceValue,
-          isRealValueDifferentFromProposed: request.isRealValueDifferentFromProposed,
-          reasonToDifference: request.reasonToDifference,
-          isOrderComplete: request.isOrderComplete
-        }
+        const requestOrderMapper = new RequestOrderMapper()
+        request.dataValues.orderData = await requestOrderMapper.load(request.id).catch( (err) => {
+          reject(err)
+        })  || {}
 
         resolve(request)
       }) 

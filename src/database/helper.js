@@ -9,6 +9,7 @@ const service = (tableName, model) => {
   const sequelize = new Sequelize(process.env.LOG_DATABASE, process.env.LOG_LOGIN, process.env.LOG_PASSWORD, {
     host: process.env.LOG_HOST,
     //port: 41890,
+    log: false,
     dialect: process.env.LOG_DATABASE_TYPE,
     pool: {
       max: maxConnections,
