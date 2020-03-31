@@ -71,14 +71,6 @@ const api = ({ config, db }) => {
           request.delivery.status = deliveryStatus;
         }
 
-        request.serviceData = {
-          serviceId: request.serviceId,
-          amount: request.amount,
-          value: request.value,
-          totalValue: request.totalValue,
-          text: request.text
-        }
-
         request.orderData = {
           proposedValue: request.proposedValue,
           realValue: request.realValue,
@@ -93,8 +85,40 @@ const api = ({ config, db }) => {
     })
     
     const requestWithDelivery = await Promise.all(requestWithDeliveryPromises)
+
+    const requestWithServiceList = requestWithDelivery.reduce( (total, request) => {
+
+      const lastRequestIndex = total.findIndex( (addedRequest ) => {
+        return addedRequest.id == request.id
+      })
+
+      if(lastRequestIndex < 0){
+  
+        request.serviceData = [{
+          serviceId: request.serviceId,
+          amount: request.amount,
+          value: request.value,
+          totalValue: request.totalValue,
+          text: request.text
+        }]
+
+        total.push (request)
+      }
+      else{
+        total[lastRequestIndex].serviceData.push({
+          serviceId: request.serviceId,
+          amount: request.amount,
+          value: request.value,
+          totalValue: request.totalValue,
+          text: request.text
+        })
+      }
+
+      return total
       
-    res.json(requestWithDelivery)
+    }, [])
+      
+    res.json(requestWithServiceList)
     res.end()
 
     return
