@@ -20,9 +20,11 @@ const service = class {
           }
         })
         .then((delivery)=>{
+          deliveryModel.sequelize.close()
           resolve(delivery)
         })
         .catch((err)=>{
+          deliveryModel.sequelize.close()
           reject({
             message: `Erro ao carregar os dados da transportadora do pedido ${delivery.requestId}.`,
             data: err

@@ -28,9 +28,11 @@ const service = class {
           transactionOperationTax: requestData.transactionOperationTax
         })
         .then((newRequest)=>{
+          requestConnection.sequelize.close()
           resolve(newRequest)
         })
         .catch((err)=>{
+          requestConnection.sequelize.close()
           reject({
             message: 'Erro ao criar novo pedido no banco de dados',
             data: err

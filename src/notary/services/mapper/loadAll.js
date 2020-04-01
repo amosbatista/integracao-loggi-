@@ -20,9 +20,11 @@ const service = class {
           }
         })
         .then((services)=>{
+          serviceModel.sequelize.close()
           resolve(services)
         })
         .catch((err)=>{
+          serviceModel.sequelize.close()
           reject({
             message: `Erro ao pesquisar todos os serviços da requisição ${requestId}.`,
             data: err

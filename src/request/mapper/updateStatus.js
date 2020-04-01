@@ -26,9 +26,11 @@ const service = class {
           }
         )
         .then((updatedRequests)=>{
+          requestModel.sequelize.close()
           resolve(updatedRequests)
         })
         .catch((err)=>{
+          requestModel.sequelize.close()
           reject({
             message: 'Erro ao atualizar requisição no banco de dados',
             data: err

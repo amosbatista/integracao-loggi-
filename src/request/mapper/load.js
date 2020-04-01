@@ -27,9 +27,11 @@ const service = class {
           request.servicesSum = Number.parseFloat(request.servicesSum)
           request.transactionOperationTax = Number.parseFloat(request.transactionOperationTax)
 
+          requestModel.sequelize.close()
           resolve(request)
         })
         .catch((err)=>{
+          requestModel.sequelize.close()
           reject({
             message: `Erro ao carregar a requisição ${requestId} do banco.`,
             data: err

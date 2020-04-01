@@ -28,9 +28,11 @@ const service = class {
           }
         )
         .then((updatedRequests)=>{
+          requestModel.sequelize.close()
           resolve(updatedRequests)
         })
         .catch((err)=>{
+          requestModel.sequelize.close()
           reject({
             message: 'Erro ao atualizar valores de pagamento da requisição no banco de dados',
             data: err

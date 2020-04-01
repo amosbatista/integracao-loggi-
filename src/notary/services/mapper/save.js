@@ -23,9 +23,11 @@ const service = class {
           text: service.text
         })
         .then(()=>{
+          serviceConnection.sequelize.close()
           resolve()
         })
         .catch((err)=>{
+          serviceConnection.sequelize.close()
           reject({
             message: `Erro ao salvar um novo serviço para a requisição ${requestid}`,
             data: err

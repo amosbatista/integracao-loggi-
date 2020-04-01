@@ -22,9 +22,11 @@ const service = class {
           type: deliveryData.type || type.TO_RECEIVE
         })
         .then((newDelivery)=>{
+          deliveryConnection.sequelize.close()
           resolve(newDelivery)
         })
         .catch((err)=>{
+          deliveryConnection.sequelize.close()
           reject({
             message: `Erro ao salvar os dados da transportadora para o pedido ${deliveryData.requestId}.`,
             data: err
