@@ -33,6 +33,8 @@ const service = (paymentData) => {
       })
     }
 
+    const decimalConversorFactor = 100;
+
     httpReq.post(process.env.CIELO_API_REQUEST + "/1/sales")
     .send(JSON.stringify({
       "MerchantOrderId": process.env.CIELO_API_MERCHANTID,
@@ -41,7 +43,7 @@ const service = (paymentData) => {
       },
       "Payment":{
         "Type":"CreditCard",
-        "Amount": paymentData.totalAmount,
+        "Amount": Math.round(paymentData.totalAmount * decimalConversorFactor),
         "Installments": creditCardInstallments,
         "CreditCard":{
           "CardNumber":paymentData.cardNumber,
