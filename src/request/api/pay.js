@@ -15,6 +15,8 @@ import deliveryCancellationService from '../../delivery/loggiCancelDeliveryByEdi
 import DeliveryMapper from '../../delivery/db/mappers/save'
 import DeliveryType from '../../delivery/db/deliveryType'
 import deliveryType from '../../delivery/db/deliveryType';
+import PaymentAuthorizationService from '../payment/mapper/new';
+import paymentStatus from '../../request/payment/paymentStatus';
 
 const api = ({ config, db }) => {
 
@@ -50,14 +52,16 @@ const api = ({ config, db }) => {
 						return
 					}
 
-					if(order.isOrderComplete) {
-						errorDealer({
-							message: "Pagamento já foi realizado",
-							data: null
-						}, res, STATUS_INVALID_REQUEST)
+					// if(order.isOrderComplete) {
+					// 	errorDealer({
+					// 		message: "Pagamento já foi realizado",
+					// 		data: null
+					// 	}, res, STATUS_INVALID_REQUEST)
 			
-						return
-					}
+					// 	return
+					// }
+
+					const paymentAuthorizationService = new PaymentAuthorizationService();
 
 					const paymentData = {
 						"totalAmount": request.totalPurchase,
@@ -70,6 +74,17 @@ const api = ({ config, db }) => {
 					}
 
 					transactionService(paymentData).then( (transactionReturnedData) => {
+						console.log(transactionReturnedData)
+						paymentAuthorizationService.save(request.id, {
+							cardNumber: transactionReturnedData.Payment.CreditCard.CardNumber,
+							cardHolder: transactionReturnedData.Payment.CreditCard.Holder,
+							authorizationCode: transactionReturnedData.Payment.AuthorizationCode,
+							paymentId: transactionReturnedData.Payment.PaymentId,
+							transactionStatus: transactionReturnedData.Payment.Status,
+							returnCode: transactionReturnedData.Payment.ReturnCode,
+							returnMessage: transactionReturnedData.Payment.ReturnMessage,
+							status: paymentStatus.AUTHORIZED,
+						})
 
 						const addressData = {
 							coordinates: {
@@ -125,9 +140,9 @@ const api = ({ config, db }) => {
 
 							Promise.all([
 								emailPromise,
-								requestStatusUpdatePromise,
-								requestLogPromise,
-								orderProcessedMarkerPromise,
+								// requestStatusUpdatePromise,
+								// requestLogPromise,
+								// orderProcessedMarkerPromise,
 								deliveryPromise
 							]).then( () => {
 								res.status(STATUS_REQUEST_ACCEPT).send({
@@ -139,13 +154,18 @@ const api = ({ config, db }) => {
 							}).catch( (err) => {
 								deliveryCancellationService(deliveryData.loggiOrderId, deliveryData.packageId, authData)
 								cancelTransactionService(transactionReturnedData.Payment.PaymentId)
+								cancelPayment(transactionReturnedData, paymentAuthorizationService, request.id, paymentStatus.CANCELED)
 								errorDealer(err, res)
 							})
 						}).catch( (err) => {
 							cancelTransactionService(transactionReturnedData.Payment.PaymentId)
+							cancelPayment(transactionReturnedData, paymentAuthorizationService, request.id, paymentStatus.CANCELED)
 							errorDealer(err, res)
 						})
-					}).catch((err) => {errorDealer(err, res)} )
+					}).catch((err) => {
+						cancelPayment(err.data, paymentAuthorizationService, request.id, paymentStatus.REFUSED)
+						errorDealer(err, res)
+					})
 				}).catch((err) => {errorDealer(err, res)} )
 			}).catch((err) => {errorDealer(err, res)} )
 		}).catch((err) => {errorDealer(err, res)} )
@@ -174,6 +194,20 @@ const errorDealer = (err, res, status=STATUS_SERVER_ERROR) => {
   res.status(status).send(err.message)
   res.end()
 }
+
+const cancelPayment = (err, paymentAuthorizationService, requestId, status) => {
+	paymentAuthorizationService.save(requestId, {
+		cardNumber: err.Payment.CreditCard.CardNumber || "",
+		cardHolder: err.Payment.CreditCard.Holder || "",
+		authorizationCode: err.Payment.AuthorizationCode || "",
+		paymentId: err.Payment.PaymentId || "",
+		transactionStatus: err.Payment.Status,
+		returnCode: err.Payment.ReturnCode,
+		returnMessage: err.Payment.ReturnMessage,
+		status: status
+	})
+
+};
 
 export default api 
 
