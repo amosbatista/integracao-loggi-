@@ -7,7 +7,7 @@ const service = class {
   }
 
   save(requestId, payment) {
-    console.log('payment', payment)
+    
     return new Promise((resolve, reject)=> {
       let requestConnection = this.requestConnection
       
@@ -24,12 +24,10 @@ const service = class {
           status: payment.status,
         })
         .then((newPayment)=>{
-          requestConnection.sequelize.close()
           resolve(newPayment)
         })
         .catch((err)=>{
           console.log(err)
-          requestConnection.sequelize.close()
           reject({
             message: 'Erro ao criar nova autorização de compra',
             data: err

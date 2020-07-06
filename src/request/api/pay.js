@@ -17,6 +17,7 @@ import DeliveryType from '../../delivery/db/deliveryType'
 import deliveryType from '../../delivery/db/deliveryType';
 import PaymentAuthorizationService from '../payment/mapper/new';
 import paymentStatus from '../../request/payment/paymentStatus';
+import transactionCaptureService from '../../bankTransaction/cieloCaptureService';
 
 const api = ({ config, db }) => {
 
@@ -52,14 +53,14 @@ const api = ({ config, db }) => {
 						return
 					}
 
-					// if(order.isOrderComplete) {
-					// 	errorDealer({
-					// 		message: "Pagamento já foi realizado",
-					// 		data: null
-					// 	}, res, STATUS_INVALID_REQUEST)
+					if(order.isOrderComplete) {
+						errorDealer({
+							message: "Pagamento já foi realizado",
+							data: null
+						}, res, STATUS_INVALID_REQUEST)
 			
-					// 	return
-					// }
+						return
+					}
 
 					const paymentAuthorizationService = new PaymentAuthorizationService();
 
@@ -74,7 +75,7 @@ const api = ({ config, db }) => {
 					}
 
 					transactionService(paymentData).then( (transactionReturnedData) => {
-						console.log(transactionReturnedData)
+
 						paymentAuthorizationService.save(request.id, {
 							cardNumber: transactionReturnedData.Payment.CreditCard.CardNumber,
 							cardHolder: transactionReturnedData.Payment.CreditCard.Holder,
@@ -84,6 +85,8 @@ const api = ({ config, db }) => {
 							returnCode: transactionReturnedData.Payment.ReturnCode,
 							returnMessage: transactionReturnedData.Payment.ReturnMessage,
 							status: paymentStatus.AUTHORIZED,
+						}).catch ( (approvationError) => {
+							console.log('Erro ao aprovar compra na base de dados.', approvationError)
 						})
 
 						const addressData = {
@@ -123,6 +126,9 @@ const api = ({ config, db }) => {
 
 							const orderProcessedMarkerMapper = new OrderProcessedMarkerMapper()
 							const orderProcessedMarkerPromise = orderProcessedMarkerMapper.save(order)
+
+							const transactionCapturePromise = transactionCaptureService(transactionReturnedData.Payment.PaymentId)
+							
 							
 							console.log({
 								requestId: request.id,
@@ -140,11 +146,24 @@ const api = ({ config, db }) => {
 
 							Promise.all([
 								emailPromise,
-								// requestStatusUpdatePromise,
-								// requestLogPromise,
-								// orderProcessedMarkerPromise,
-								deliveryPromise
+								requestStatusUpdatePromise,
+								requestLogPromise,
+								orderProcessedMarkerPromise,
+								deliveryPromise,
+								transactionCapturePromise,
 							]).then( () => {
+
+								paymentAuthorizationService.save(request.id, {
+									cardNumber: transactionReturnedData.Payment.CreditCard.CardNumber,
+									cardHolder: transactionReturnedData.Payment.CreditCard.Holder,
+									authorizationCode: transactionReturnedData.Payment.AuthorizationCode,
+									paymentId: transactionReturnedData.Payment.PaymentId,
+									transactionStatus: transactionReturnedData.Payment.Status,
+									returnCode: transactionReturnedData.Payment.ReturnCode,
+									returnMessage: transactionReturnedData.Payment.ReturnMessage,
+									status: paymentStatus.CONFIRMED,
+								})
+
 								res.status(STATUS_REQUEST_ACCEPT).send({
 									transactionId: transactionReturnedData.Payment.PaymentId
 								})
@@ -196,6 +215,7 @@ const errorDealer = (err, res, status=STATUS_SERVER_ERROR) => {
 }
 
 const cancelPayment = (err, paymentAuthorizationService, requestId, status) => {
+
 	paymentAuthorizationService.save(requestId, {
 		cardNumber: err.Payment.CreditCard.CardNumber || "",
 		cardHolder: err.Payment.CreditCard.Holder || "",
