@@ -18,12 +18,25 @@ import deliveryType from '../../delivery/db/deliveryType';
 import PaymentAuthorizationService from '../payment/mapper/new';
 import paymentStatus from '../../request/payment/paymentStatus';
 import transactionCaptureService from '../../bankTransaction/cieloCaptureService';
+import timeService from '../../time/workTimeService'
 
 const api = ({ config, db }) => {
 
 	let api = Router();
 
 	api.post('/', (req, res) => {
+
+    if(!timeService.isWorkTime()){
+      
+			errorDealer({
+				message: 'Horário fora do expediente',
+				data: null
+			}, res, STATUS_UNAUTHORIZED)
+			
+			res.end()
+			
+			return
+    }
 		
 		const validateBodyErrors = validateBody(req.body)
 		
@@ -194,6 +207,7 @@ const api = ({ config, db }) => {
 }
 
 const STATUS_INVALID_REQUEST = 400
+const STATUS_UNAUTHORIZED = 401
 const STATUS_REQUEST_ACCEPT = 202
 const STATUS_SERVER_ERROR = 500
 

@@ -3,6 +3,7 @@ import purchaseService from '../../delivery/loggiEstimateDeliveryService'
 import authService from '../../delivery/loggiLogin/service'
 import calcService from '../purchaseCalculator'
 import logService from '../log/logGenerator'
+import timeService from '../../time/workTimeService'
 
 export default ({ config, db }) => {
 	let api = Router();
@@ -12,6 +13,19 @@ export default ({ config, db }) => {
 
     const STATUS_UNAUTHORIZED = 401
     const STATUS_SERVER_ERROR = 500
+
+    if(!timeService.isWorkTime()){
+      const err = {
+        message: 'Horário fora do expediente',
+        data: null,
+      }
+
+      logService(err.message, err.data)
+      res.status(STATUS_UNAUTHORIZED).send(err.message)
+      res.end()
+
+      return;
+    }
 
     authService().then( (authData) => {
 
