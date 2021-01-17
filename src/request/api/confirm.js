@@ -14,10 +14,12 @@ export default ({ config, db }) => {
     const STATUS_UNAUTHORIZED = 401
     const STATUS_SERVER_ERROR = 500
 
-    if(!timeService.isWorkTime()){
+    const checkCurrentTime = timeService.isWorkTime();
+		
+    if(!checkCurrentTime.isOnWorkTime){
       const err = {
         message: 'Horário fora do expediente',
-        data: null,
+        data: checkCurrentTime.currentTime,
       }
 
       logService(err.message, err.data)

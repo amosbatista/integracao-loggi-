@@ -26,11 +26,13 @@ const api = ({ config, db }) => {
 
 	api.post('/', (req, res) => {
 
-    if(!timeService.isWorkTime()){
+		const checkCurrentTime = timeService.isWorkTime();
+		
+    if(!checkCurrentTime.isOnWorkTime){
       
 			errorDealer({
 				message: 'Horário fora do expediente',
-				data: null
+				data: checkCurrentTime.currentTime,
 			}, res, STATUS_UNAUTHORIZED)
 			
 			res.end()
