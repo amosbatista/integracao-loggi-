@@ -3,7 +3,7 @@ import purchaseService from '../../delivery/loggiEstimateDeliveryService'
 import authService from '../../delivery/loggiLogin/service'
 import calcService from '../purchaseCalculator'
 import logService from '../log/logGenerator'
-import timeService from '../../time/workTimeServiceMock'
+import timeService from '../../time/workTimeService'
 
 export default ({ config, db }) => {
 	let api = Router();
@@ -19,7 +19,7 @@ export default ({ config, db }) => {
     if(!checkCurrentTime){
       const err = {
         message: 'Horário fora do expediente',
-        data: checkCurrentTime.currentTime,
+        data: checkCurrentTime.currentTime()
       }
 
       logService(err.message, err.data)

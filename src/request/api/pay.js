@@ -1,9 +1,9 @@
 import { Router } from 'express'
 import RequestLoadMapper from '../mapper/load'
-import transactionService from '../../bankTransaction/cieloTransactionServiceTest'
+import transactionService from '../../bankTransaction/cieloTransactionService'
 import cancelTransactionService from '../../bankTransaction/cieloCancelationService'
 import OrderLoadMapper from '../order/mapper/load'
-import deliveryReturnService from '../../delivery/loggiDeliveryTest'
+import deliveryReturnService from '../../delivery/loggiReturnDeliveryService'
 import deliveryAuthService from '../../delivery/loggiLogin/service'
 import emailService from '../../email/service'
 import RequestStatusUpdateMapper from '../mapper/updateStatus'
@@ -17,8 +17,8 @@ import DeliveryType from '../../delivery/db/deliveryType'
 import deliveryType from '../../delivery/db/deliveryType';
 import PaymentAuthorizationService from '../payment/mapper/new';
 import paymentStatus from '../../request/payment/paymentStatus';
-import transactionCaptureService from '../../bankTransaction/cieloCaptureServiceMock';
-import timeService from '../../time/workTimeServiceMock'
+import transactionCaptureService from '../../bankTransaction/cieloCaptureService';
+import timeService from '../../time/workTimeService'
 
 const api = ({ config, db }) => {
 
@@ -32,7 +32,7 @@ const api = ({ config, db }) => {
       
 			errorDealer({
 				message: 'Horário fora do expediente',
-				data: checkCurrentTime.currentTime,
+				data: timeService.currentTime(),
 			}, res, STATUS_UNAUTHORIZED)
 			
 			res.end()
@@ -62,6 +62,15 @@ const api = ({ config, db }) => {
 					if (!order) {
 						errorDealer({
 							message: "Pagamento não existe",
+							data: null
+						}, res, STATUS_INVALID_REQUEST)
+			
+						return
+					}
+
+					if(order.isOrderComplete) {
+						errorDealer({
+							message: "Pagamento já foi realizado",
 							data: null
 						}, res, STATUS_INVALID_REQUEST)
 			
