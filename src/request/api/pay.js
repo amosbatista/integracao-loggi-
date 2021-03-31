@@ -17,7 +17,7 @@ import DeliveryType from '../../delivery/db/deliveryType'
 import deliveryType from '../../delivery/db/deliveryType';
 import PaymentAuthorizationService from '../payment/mapper/new';
 import paymentStatus from '../../request/payment/paymentStatus';
-import transactionCaptureService from '../../bankTransaction/cieloCaptureService';
+import transactionCaptureService from '../../bankTransaction/cieloCaptureServiceMock';
 import timeService from '../../time/workTimeServiceMock'
 
 const api = ({ config, db }) => {
