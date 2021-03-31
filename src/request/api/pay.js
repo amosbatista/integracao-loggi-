@@ -68,15 +68,6 @@ const api = ({ config, db }) => {
 						return
 					}
 
-					if(order.isOrderComplete) {
-						errorDealer({
-							message: "Pagamento já foi realizado",
-							data: null
-						}, res, STATUS_INVALID_REQUEST)
-			
-						return
-					}
-
 					const paymentAuthorizationService = new PaymentAuthorizationService();
 
 					const paymentData = {
