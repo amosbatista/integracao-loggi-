@@ -3,7 +3,7 @@ import purchaseService from '../../delivery/loggiEstimateDeliveryService'
 import authService from '../../delivery/loggiLogin/service'
 import calcService from '../purchaseCalculator'
 import logService from '../log/logGenerator'
-import timeService from '../../time/workTimeService'
+import timeService from '../../time/workTimeServiceMock'
 
 export default ({ config, db }) => {
 	let api = Router();

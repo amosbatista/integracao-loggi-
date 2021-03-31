@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import deliveryAuthService from '../../delivery/loggiLogin/service'
 
-import loggiApproved from '../../delivery/loggiApproveDeliveryService'
+import loggiApproved from '../../delivery/loggiDeliveryTest'
 import loggiCancelation from '../../delivery/loggiCancelDeliveryByEditService'
 import NewRequestMapper from '../mapper/new'
 import RequestLog from '../log/mapper'

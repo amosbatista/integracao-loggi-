@@ -1,9 +1,9 @@
 import { Router } from 'express'
 import RequestLoadMapper from '../mapper/load'
-import transactionService from '../../bankTransaction/cieloTransactionService'
+import transactionService from '../../bankTransaction/cieloTransactionServiceTest'
 import cancelTransactionService from '../../bankTransaction/cieloCancelationService'
 import OrderLoadMapper from '../order/mapper/load'
-import deliveryReturnService from '../../delivery/loggiReturnDeliveryService'
+import deliveryReturnService from '../../delivery/loggiDeliveryTest'
 import deliveryAuthService from '../../delivery/loggiLogin/service'
 import emailService from '../../email/service'
 import RequestStatusUpdateMapper from '../mapper/updateStatus'
@@ -18,7 +18,7 @@ import deliveryType from '../../delivery/db/deliveryType';
 import PaymentAuthorizationService from '../payment/mapper/new';
 import paymentStatus from '../../request/payment/paymentStatus';
 import transactionCaptureService from '../../bankTransaction/cieloCaptureService';
-import timeService from '../../time/workTimeService'
+import timeService from '../../time/workTimeServiceMock'
 
 const api = ({ config, db }) => {
 
