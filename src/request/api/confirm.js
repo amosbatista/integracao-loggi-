@@ -16,7 +16,7 @@ export default ({ config, db }) => {
 
     const checkCurrentTime = timeService.isWorkTime();
 		
-    if(!checkCurrentTime.isOnWorkTime){
+    if(!checkCurrentTime){
       const err = {
         message: 'Horário fora do expediente',
         data: checkCurrentTime.currentTime,

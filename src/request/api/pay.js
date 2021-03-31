@@ -28,7 +28,7 @@ const api = ({ config, db }) => {
 
 		const checkCurrentTime = timeService.isWorkTime();
 		
-    if(!checkCurrentTime.isOnWorkTime){
+    if(!checkCurrentTime){
       
 			errorDealer({
 				message: 'Horário fora do expediente',
