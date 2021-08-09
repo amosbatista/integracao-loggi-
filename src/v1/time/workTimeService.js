@@ -7,5 +7,9 @@ export default {
     const workClosing = moment(process.env.CLOSING_TIME, 'HH:mm');
 
     return moment().isBetween(workOpenning, workClosing);
+  },
+
+  currentTime: () => {
+    return moment().format('HH:mm');
   }
 }
