@@ -3,7 +3,7 @@ import RequestLoadMapper from '../mapper/load'
 import transactionService from '../../bankTransaction/cieloTransactionService'
 import cancelTransactionService from '../../bankTransaction/cieloCancelationService'
 import OrderLoadMapper from '../order/mapper/load'
-import deliveryReturnService from '../../delivery/loggiReturnDeliveryService'
+import deliveryReturnService from '../../delivery/loggiDeliveryTest'
 import deliveryAuthService from '../../delivery/loggiLogin/service'
 import emailService from '../../email/service'
 import RequestStatusUpdateMapper from '../mapper/updateStatus'
@@ -25,6 +25,9 @@ const api = ({ config, db }) => {
 	let api = Router();
 
 	api.post('/', (req, res) => {
+		const STATUS_INVALID_REQUEST = 400
+		const STATUS_REQUEST_ACCEPT = 202
+		const STATUS_SERVER_ERROR = 500
 
 		const checkCurrentTime = timeService.isWorkTime();
 		
@@ -33,7 +36,7 @@ const api = ({ config, db }) => {
 			errorDealer({
 				message: 'Horário fora do expediente',
 				data: checkCurrentTime.currentTime,
-			}, res, STATUS_UNAUTHORIZED)
+			}, res, STATUS_SERVER_ERROR)
 			
 			res.end()
 			
@@ -125,7 +128,8 @@ const api = ({ config, db }) => {
 								request.clientEmail,
 								[
 									`O pagamento do pedido foi realizado com sucesso!`,
-									`ID do pedido: ${request.id}`,
+									`ID do pedido: ${deliveryData.loggiOrderId}`,
+									`ID do sistema delivery: ${request.id}`,
 									`Valor pago: ${request.totalPurchase}`,
 									`Código de transação bancária: ${transactionReturnedData.Payment.PaymentId}`,
 									`Aguarde um pouco para o cartório receber o pagamento e enviar o pedido.`
@@ -179,7 +183,7 @@ const api = ({ config, db }) => {
 									status: paymentStatus.CONFIRMED,
 								})
 
-								res.status(STATUS_REQUEST_ACCEPT).send({
+								res.status(STATUS_REQUEST_ACCEPT).json({
 									transactionId: transactionReturnedData.Payment.PaymentId
 								})
 								res.end()
@@ -197,7 +201,6 @@ const api = ({ config, db }) => {
 							errorDealer(err, res)
 						})
 					}).catch((err) => {
-						cancelPayment(err.data, paymentAuthorizationService, request.id, paymentStatus.REFUSED)
 						errorDealer(err, res)
 					})
 				}).catch((err) => {errorDealer(err, res)} )
@@ -207,11 +210,6 @@ const api = ({ config, db }) => {
 
 	return api;
 }
-
-const STATUS_INVALID_REQUEST = 400
-const STATUS_UNAUTHORIZED = 401
-const STATUS_REQUEST_ACCEPT = 202
-const STATUS_SERVER_ERROR = 500
 
 const validateBody = (body) => {
 	if (!body.requestId){
@@ -224,9 +222,9 @@ const validateBody = (body) => {
 }
 
 
-const errorDealer = (err, res, status=STATUS_SERVER_ERROR) => {
+const errorDealer = (err, res, status) => {
   console.log(err.message, err.data)
-  res.status(status).send(err.message)
+  res.status(status || 500).json(err.message)
   res.end()
 }
 

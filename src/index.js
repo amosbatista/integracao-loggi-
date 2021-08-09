@@ -4,8 +4,8 @@ import cors from 'cors';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import initializeDb from './db';
-import middleware from './middleware';
-import requestApi from './request/api';
+import requestApiV1 from '../src/v1/request/api';
+import requestApiV2 from '../src/v2/request/api';
 import config from './config.json';
 import dotenv from 'dotenv';
 
@@ -35,11 +35,9 @@ app.use(bodyParser.json({
 // connect to db
 initializeDb( db => {
 
-	// internal middleware
-	app.use(middleware({ config, db }));
-
 	// api router
-	app.use('/api', requestApi({ config, db }));
+	app.use('/api/v1/', requestApiV1({ config, db }));
+	app.use('/api/v2/', requestApiV2({ config, db }));
 
 	app.server.listen(process.env.PORT || config.port, () => {
 		console.log(`Started on port ${app.server.address().port}`);
