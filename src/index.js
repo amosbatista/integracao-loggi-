@@ -4,8 +4,8 @@ import cors from 'cors';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import initializeDb from './db';
-import requestApiV1 from '../src/v1/request/api';
-import requestApiV2 from '../src/v2/request/api';
+import requestApiV1 from './v1/request/api';
+import requestApiV2 from './v2/request/api';
 import config from './config.json';
 import dotenv from 'dotenv';
 

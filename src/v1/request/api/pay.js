@@ -32,7 +32,7 @@ const api = ({ config, db }) => {
       
 			errorDealer({
 				message: 'Horário fora do expediente',
-				data: checkCurrentTime.currentTime,
+				data: timeService.currentTime(),
 			}, res, STATUS_UNAUTHORIZED)
 			
 			res.end()
