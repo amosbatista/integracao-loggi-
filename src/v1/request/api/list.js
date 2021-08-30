@@ -1,10 +1,9 @@
 import { Router } from 'express'
 
 import RequestListMapper from '../mapper/loadAllByMysql'
-import deliveryStatusService from '../../delivery/loggiDeliveryStatusService'
+import deliveryStatusService from '../../delivery/clickEntregas/clickEntregasLoadOrderService'
 
 import deliveryTypes from '../../delivery/db/deliveryType'
-import deliveryAuthService from '../../delivery/loggiLogin/service'
 import requestStatus from '../status'
 
 const api = ({ config, db }) => {
@@ -12,16 +11,6 @@ const api = ({ config, db }) => {
 	let api = Router();
 
 	api.post('/', async (req, res) => {
-
-    const STATUS_UNAUTHORIZED = 401
-
-    const authData = await deliveryAuthService().catch( (err) => {
-      const message = 'Tentativa não autorizada de listar pedidos'
-      console.log(message, err)
-      res.status(STATUS_UNAUTHORIZED).send(err.message)
-      res.end()
-      throw new Error(message)
-    })
 
     const requestListMapper = new RequestListMapper()
 
@@ -61,12 +50,12 @@ const api = ({ config, db }) => {
           translated: "Desconhecido"
         }
         if(request.status == requestStatus.AT_RECEIVE){
-          const deliveryStatus = await deliveryStatusService(request.delivery.toReceive.packageId, authData)
+          const deliveryStatus = await deliveryStatusService(request.delivery.toReceive.deliveryId)
 
           request.delivery.status = deliveryStatus;
         }
         if(request.status == requestStatus.READY_TO_RETURN){
-          const deliveryStatus = await deliveryStatusService(request.delivery.toReturn.packageId, authData)
+          const deliveryStatus = await deliveryStatusService(request.delivery.toReturn.deliveryId)
 
           request.delivery.status = deliveryStatus;
         }

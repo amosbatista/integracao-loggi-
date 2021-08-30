@@ -104,7 +104,7 @@ const api = ({ config, db }) => {
           `<strong>O novo valor do serviço ficou em: </strong>${formatedValues.realServiceValue}`,
           `<strong>Novo valor total: </strong>${formatedValues.totalPurchase}`,
           `<strong>Motivo da mudança: </strong>${req.body.orderData.reasonToDifference}`,
-          `Para poder recebẽ-lo de volta, você deve realizar o pagamento. Clique no link abaixo para visualizar o formulário onde você informará os dados de pagamento:`,
+          `Para poder recebe-lo de volta, você deve realizar o pagamento. Clique no link abaixo para visualizar o formulário onde você informará os dados de pagamento:`,
           `<a href="https://20cartorio.com.br/delivery/#/payment/${request.id}"> <strong>https://20cartorio.com.br/delivery/#/payment/${request.id}</strong> </a>`
         ]
 
