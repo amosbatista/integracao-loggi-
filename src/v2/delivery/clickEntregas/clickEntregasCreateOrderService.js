@@ -17,7 +17,7 @@ const service = (addressData, servicesData) => {
         "points": [
             {
                 "note": "${addressData.addressComplement}",
-                "address":"${addressData.completeAddress}"
+                "address":"${addressData.completeAddress}",
                 "contact_person":{
                     "name": "${servicesData.clientName}",
                     "phone":"${servicesData.clientPhone}"
@@ -43,7 +43,7 @@ const service = (addressData, servicesData) => {
       if(err){
         reject({
           message: 'Erro ao fazer requisição para criar entrega na API da Click Entregas',
-          object: JSON.stringify(err)
+          object: JSON.stringify(apiRes.body)
         })
 
         return
@@ -52,13 +52,13 @@ const service = (addressData, servicesData) => {
       if(apiRes.body.errors){
         reject({
           message: 'Erro interno da API Click Entregas ao criar entrega',
-          object: JSON.stringify(apiRes.body.errors)
+          object: JSON.stringify(apiRes.body.errors.text)
         })
 
         return
       }
 
-      if(apiRes.body.warnings.length > 0){
+      if(apiRes.body.warnings &&  apiRes.body.warnings.length > 0){
         reject({
           message: 'Está faltando informações para finalizar a entrega.',
           object: apiRes.body.parameter_warnings
@@ -69,7 +69,7 @@ const service = (addressData, servicesData) => {
       
       resolve({
         "loggiOrderId": apiRes.body.order.order_id,
-        "packageId": apiRes.body.order.order_id.points[0].point_id,
+        "packageId": apiRes.body.order.points[0].point_id,
       })
       
     })

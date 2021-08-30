@@ -1,5 +1,5 @@
 import httpReq from 'superagent'
-import log from '../request/log/logGenerator'
+import log from '../../request/log/logGenerator'
 import notaryAddress from '../../notary/entity'
 
 const service = (addressData) => {
@@ -25,7 +25,7 @@ const service = (addressData) => {
       if(err){
         reject({
           message: 'Erro ao fazer requisição para calcular entrega na API da Click Entregas',
-          object: JSON.stringify(err)
+          object: JSON.stringify(apiRes.body)
         })
 
         return
@@ -36,16 +36,7 @@ const service = (addressData) => {
       if(apiRes.body.errors){
         reject({
           message: 'Erro interno da API Click Entregas ao realizar requisição',
-          object: JSON.stringify(apiRes.body.errors)
-        })
-
-        return
-      }
-
-      if(apiRes.body.warnings.length > 0){
-        reject({
-          message: 'Está faltando informações para fazer o cálculo.',
-          object: apiRes.body.parameter_warnings
+          object: JSON.stringify(apiRes.body.errors.text)
         })
 
         return

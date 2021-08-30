@@ -60,7 +60,7 @@ const service = (addressData, auth) => {
       if(err){
         reject({
           message: 'Erro ao fazer requisição na API da Loggi',
-          object: JSON.stringify(err)
+          object: JSON.stringify(apiRes.body)
         })
 
         return
@@ -72,7 +72,7 @@ const service = (addressData, auth) => {
       if(apiRes.body.errors){
         reject({
           message: 'Erro interno da API Loggi ao realizar requisição',
-          object: JSON.stringify(apiRes.body.errors)
+          object: JSON.stringify(apiRes.body.errors.text)
         })
 
         return

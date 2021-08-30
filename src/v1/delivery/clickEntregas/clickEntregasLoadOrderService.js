@@ -19,7 +19,7 @@ const service = (orderId) => {
       if(err){
         reject({
           message: `Erro ao carregar pedido ${orderId}`,
-          object: JSON.stringify(err)
+          object: JSON.stringify(apiRes.body)
         })
 
         return
@@ -28,13 +28,13 @@ const service = (orderId) => {
       if(apiRes.body.errors){
         reject({
           message: `Erro interno do sistema ao carregar pedido ${orderId}`,
-          object: JSON.stringify(apiRes.body.errors)
+          object: JSON.stringify(apiRes.body.errors.text)
         })
 
         return
       }
 
-      if(apiRes.body.warnings.length > 0){
+      if(apiRes.body.warnings &&  apiRes.body.warnings.length > 0){
         reject({
           message: `Está faltando informações para carregar o pedido ${orderId}.`,
           object: apiRes.body.parameter_warnings

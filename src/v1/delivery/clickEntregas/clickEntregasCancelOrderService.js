@@ -17,7 +17,7 @@ const service = (orderId) => {
       if(err){
         reject({
           message: `Erro ao fazer cancelamento de pedido ${orderId} na API da Click Entregas`,
-          object: JSON.stringify(err)
+          object: JSON.stringify(apiRes.body)
         })
 
         return
@@ -26,13 +26,13 @@ const service = (orderId) => {
       if(apiRes.body.errors){
         reject({
           message: `Erro interno da API Click Entregas ao cancelar pedido ${orderId}`,
-          object: JSON.stringify(apiRes.body.errors)
+          object: JSON.stringify(apiRes.body.errors.text)
         })
 
         return
       }
 
-      if(apiRes.body.warnings.length > 0){
+      if(apiRes.body.warnings &&  apiRes.body.warnings.length > 0){
         reject({
           message: `Está faltando informações para cancelar o pedido ${orderId}.`,
           object: apiRes.body.parameter_warnings
