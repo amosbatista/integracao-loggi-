@@ -1,8 +1,7 @@
 import { Router } from 'express'
-import deliveryAuthService from '../../delivery/loggiLogin/service'
 
-import loggiApproved from '../../delivery/loggiApproveDeliveryService'
-import loggiCancelation from '../../delivery/loggiCancelDeliveryByEditService'
+import deliveryApproved from '../../delivery/clickEntregas/clickEntregasCreateOrderService'
+import deliveryCancelation from '../../delivery/clickEntregas/clickEntregasCancelOrderService'
 import NewRequestMapper from '../mapper/new'
 import RequestLog from '../log/mapper'
 import RequestStatus from '../status'
@@ -24,27 +23,7 @@ export default ({ config, db }) => {
 
     const STATUS_SERVER_ERROR = 500
 
-    const authData = await deliveryAuthService().catch( (err) => {
-      const message = 'Erro ao autenticar no serviço de delivery.'
-      console.log(message, err)
-      res.status(STATUS_SERVER_ERROR).json(err.message)
-      res.end()
-      throw new Error(message)
-    })
-
     logService('Approve request', req.body)
-    
-    const loggiData = await loggiApproved(
-      req.body.addressData, 
-      req.body.servicesData, 
-      req.body.paymentData, 
-      authData.toString()
-    ).catch((err)=>{
-      console.log(err.message, err.data)
-      res.status(STATUS_SERVER_ERROR).json(err.message)
-      res.end()
-      throw new Error(err.message)
-    })
 
     const token = req.header("Authorization");
     const tokenService = new TokenService();
@@ -73,9 +52,9 @@ export default ({ config, db }) => {
       res.end()
       throw new Error(message)
     }
-
+    
+    
     const newRequestMapper = new NewRequestMapper()
-console.log("token", userFromToken)
     const request = await newRequestMapper.save({
       userId: userFromToken.id,
       clientName: userFromToken.name,
@@ -92,7 +71,16 @@ console.log("token", userFromToken)
       status: RequestStatus.AT_RECEIVE
     }).catch( async (err) => {
       console.log(err.message, err.data)
-      await loggiCancelation(loggiData.loggiOrderId, loggiData.packageId, authData)
+      res.status(STATUS_SERVER_ERROR).json(err.message)
+      res.end()
+      throw new Error(err.message)
+    })
+    
+    const loggiData = await deliveryApproved(
+      req.body.addressData, 
+      req.body.servicesData, 
+    ).catch((err)=>{
+      console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()
       throw new Error(err.message)
@@ -106,7 +94,7 @@ console.log("token", userFromToken)
       packageId: loggiData.packageId,
       type: deliveryType.TO_RECEIVE
     }).catch( async (err) => {
-      await loggiCancelation(loggiData.loggiOrderId, loggiData.packageId, authData)
+      await deliveryCancelation(loggiData.loggiOrderId)
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()
@@ -126,7 +114,7 @@ console.log("token", userFromToken)
     })
 
     await Promise.all(requestServicesSavePromises).catch(async (err) => {
-      await loggiCancelation(loggiData.loggiOrderId, loggiData.packageId, authData)
+      await deliveryCancelation(loggiData.loggiOrderId)
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()
@@ -156,7 +144,7 @@ console.log("token", userFromToken)
       ]
     )
     await emailService(emailContent).catch(async  (err) => {
-      await loggiCancelation(loggiData.loggiOrderId, loggiData.packageId, authData)
+      await deliveryCancelation(loggiData.loggiOrderId)
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()

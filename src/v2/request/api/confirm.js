@@ -1,6 +1,5 @@
 import { Router } from 'express'
-import purchaseService from '../../delivery/loggiEstimateDeliveryService'
-import authService from '../../delivery/loggiLogin/service'
+import purchaseService from '../../delivery/clickEntregas/clickEntregasEstimateService'
 import calcService from '../purchaseCalculator'
 import logService from '../log/logGenerator'
 import timeService from '../../time/workTimeService'
@@ -28,33 +27,25 @@ export default ({ config, db }) => {
       return;
     }
 
-    authService().then( (authData) => {
+    logService('Confirm request', req.body)
+    
+    purchaseService(req.body.addressData)
+    .then((apiRes) => {
 
-      logService('Confirm request', req.body)
-      
-      purchaseService(req.body.addressData, authData.toString())
-      .then((apiRes) => {
+      const servicesSum = req.body.servicesData.services.reduce( (total, current ) => {
+        return total + (current.value * current.amount) 
+      }, 0)
 
-        const servicesSum = req.body.servicesData.services.reduce( (total, current ) => {
-          return total + (current.value * current.amount) 
-        }, 0)
+      const returnMultiplier = 2
+      const deliveryTax = apiRes.estimatedCost * returnMultiplier
+      const purchaseData = calcService(servicesSum, deliveryTax)
 
-        const returnMultiplier = 2
-        const deliveryTax = apiRes.estimatedCost * returnMultiplier
-        const purchaseData = calcService(servicesSum, deliveryTax)
-
-        res.json(purchaseData)
-        res.end()
-      })
-      .catch((err) => {
-        res.status(STATUS_SERVER_ERROR).json(err.message)
-        logService(err.message, err.object)
-        res.end()
-      })
-
-    }).catch( (err) => {
-      logService(err.message, err.data)
+      res.json(purchaseData)
+      res.end()
+    })
+    .catch((err) => {
       res.status(STATUS_SERVER_ERROR).json(err.message)
+      logService(err.message, err.object)
       res.end()
     })
 	});
