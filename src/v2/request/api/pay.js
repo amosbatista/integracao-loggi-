@@ -220,7 +220,7 @@ const validateBody = (body) => {
 
 
 const errorDealer = (err, res, status) => {
-  console.log(err.message, err.data)
+  console.log("Error at pay", err)
   res.status(status || 500).json(err.message)
   res.end()
 }

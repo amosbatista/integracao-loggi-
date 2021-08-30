@@ -12,6 +12,6 @@ const notaryData = {
   completeAddress: 'R. Joaquim Floriano, 889 - Itaim Bibi, São Paulo - SP, 04534-011, Brazil',
   complement: "",
   contactName: "Alcione",
-  contactPhone: "551199999999",
+  contactPhone: "5511985716231",
 }
 export default notaryData

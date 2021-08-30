@@ -80,12 +80,22 @@ const api = ({ config, db }) => {
           translated: "Desconhecido"
         }
         if(request.status == requestStatus.AT_RECEIVE){
-          const deliveryStatus = await deliveryStatusService(request.delivery.toReceive.deliveryId)
+          const deliveryStatus = await deliveryStatusService(request.delivery.toReceive.deliveryId).catch( () => {
+            return {
+              name: "unknown",
+              translated: "Desconhecido"
+            }
+        })
 
           request.delivery.status = deliveryStatus;
         }
         if(request.status == requestStatus.READY_TO_RETURN){
-          const deliveryStatus = await deliveryStatusService(request.delivery.toReturn.deliveryId,)
+          const deliveryStatus = await deliveryStatusService(request.delivery.toReturn.deliveryId,).catch( () => {
+            return {
+              name: "unknown",
+              translated: "Desconhecido"
+            }
+        })
 
           request.delivery.status = deliveryStatus;
         }

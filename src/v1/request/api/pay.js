@@ -222,7 +222,7 @@ const validateBody = (body) => {
 
 
 const errorDealer = (err, res, status=STATUS_SERVER_ERROR) => {
-  console.log(err.message, err.data)
+  console.log("Error at pay", err)
   res.status(status).send(err.message)
   res.end()
 }
