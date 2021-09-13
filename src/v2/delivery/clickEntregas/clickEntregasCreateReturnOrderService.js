@@ -16,7 +16,7 @@ const service = (addressData, servicesData, requestId) => {
         "is_contact_person_notification_enabled": ${MUST_ENABLE_NOTIFICATION},
         "points": [
             {
-                "note": "Procurar por Izabel. Informar código de retirada ${requestId}"
+                "note": "Procurar por Izabel. Informar código de retirada ${requestId}",
                 "address": "${notaryAddress.completeAddress}",
                 "contact_person":{
                     "name": "${notaryAddress.contactName}",
@@ -30,7 +30,7 @@ const service = (addressData, servicesData, requestId) => {
                     "name": "${servicesData.clientName}",
                     "phone":"${servicesData.clientPhone}"
                 }
-            },
+            }
         ]
     }
     `
