@@ -8,7 +8,8 @@ const service = (address) => {
     httpReq.get(`${process.env.GOOGLE_GEOCODE_API}?address=${encoder(address)}&key=${key}`)
     .set('Content-Type', "application/json")
     .end((err, apiRes) => {
-      
+      console.log(err)
+      console.log(apiRes)
       if(err){
         reject({
           message: "Erro ao fazer geolocalização",
