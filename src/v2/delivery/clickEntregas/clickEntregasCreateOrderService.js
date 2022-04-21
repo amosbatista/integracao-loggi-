@@ -43,7 +43,7 @@ const service = (addressData, servicesData) => {
       if(err){
         reject({
           message: 'Erro ao fazer requisição para criar entrega na API da Click Entregas',
-          object: JSON.stringify(apiRes.body)
+          data: JSON.stringify(apiRes.body)
         })
 
         return
@@ -52,7 +52,7 @@ const service = (addressData, servicesData) => {
       if(apiRes.body.errors){
         reject({
           message: 'Erro interno da API Click Entregas ao criar entrega',
-          object: JSON.stringify(apiRes.body.errors.text)
+          data: JSON.stringify(apiRes.body.errors.text)
         })
 
         return
@@ -61,7 +61,7 @@ const service = (addressData, servicesData) => {
       if(apiRes.body.warnings &&  apiRes.body.warnings.length > 0){
         reject({
           message: 'Está faltando informações para finalizar a entrega.',
-          object: apiRes.body.parameter_warnings
+          data: apiRes.body.parameter_warnings
         })
 
         return

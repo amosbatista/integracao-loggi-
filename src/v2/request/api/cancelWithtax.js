@@ -2,16 +2,17 @@ import { Router } from 'express'
 
 import TokenService from '../../auth/cripto/JWTTokenService';
 
-import RequestLoadMapper from '../../request/mapper/load';
-import RequestUpdateMapper from '../../request/mapper/updateStatus';
-import RequestStatuses from '../../request/status';
+import RequestLoadMapper from '../mapper/load';
+import RequestUpdateMapper from '../mapper/updateStatus';
+import RequestStatuses from '../status';
 
 import DeliveryLoadMapper from '../../delivery/db/mappers/load';
 import DeliveryStatuses from '../../delivery/db/deliveryType';
-//import DeliveryCompanyLoadOrderService from '../../delivery/clickEntregas/clickEntregasLoadOrderService';
-import DeliveryCompanyLoadOrderService from '../../delivery/clickEntregas/clickEntregasLoadOrderServiceMock';
-//import DeliveryCompanyCanceldOrderService from '../../delivery/clickEntregas/clickEntregasCancelOrderService';
-import DeliveryCompanyCanceldOrderService from '../../delivery/clickEntregas/clickEntregasCancelOrderServiceMock';
+//import DeliveryCompanyCanceldOrderService from '../../delivery/clickEntregas/clickEntregasLoadOrderService';
+import DeliveryCompanyCanceldOrderService from '../../delivery/clickEntregas/clickEntregasLoadOrderServiceMock';
+
+import LoadCardMapper from '../../cardControl/mapper/load';
+import PaymentHelper from '../services/PaymentHelper';
 
 import emailService from '../../email/service'
 import emailHelper from '../../email/emailHelper'
@@ -24,7 +25,6 @@ export default ({ config, db }) => {
     const STATUS_UNAUTHORIZED = 401;
     const STATUS_INVALID_REQUEST = 400
     const STATUS_REQUEST_ACCEPT = 202
-    const STATUS_SEE_OTHER = 303
     const STATUS_SERVER_ERROR = 500
 
     
@@ -48,7 +48,7 @@ export default ({ config, db }) => {
 
       throw new Error(message)
     }
-    const requestId = req.body.requestId;
+    const requestId = req.body.requestId;    
     
     
     const requestLoadMapper = new RequestLoadMapper();
@@ -99,80 +99,97 @@ export default ({ config, db }) => {
 
       throw new Error(message)
     }
-        
     const deliveryReceiveData = deliveryReceiveDataValues.dataValues;
-    const deliveryStatusFromCompany = await DeliveryCompanyLoadOrderService(deliveryReceiveData.deliveryId).catch(err => {
+    
+    await DeliveryCompanyCanceldOrderService(deliveryReceiveData.deliveryId).catch((err) => {
       console.log(err.message, err.data)
-      console.log(`Entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`)
+      console.log(`Entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`);
       res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()
 
       throw new Error(err.message)
     });
     
-    if(!deliveryStatusFromCompany.name) {
-      const message = `Não foi possível ler o status da entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`
-      console.log(message)
-      res.status(STATUS_INVALID_REQUEST).json(message)
+    
+    const loadCardMapper = new LoadCardMapper();
+    const cardData = await loadCardMapper.load(userFromToken.id).catch((err) => {
+      console.log(err.message, err.data)
+      console.log(`Entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`);
+      res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()
 
-      throw new Error(message)
+      throw new Error(err.message)
+    });
+    
+    
+    const CANCEL_TAX = 10.00;
+    
+    const paymentData = {
+      "CardToken": cardData.cardHash,
+      "totalAmount": CANCEL_TAX,
+      "cvv": req.body.paymentData.cvv,
+      "brand": cardData.cardBrand
     }
     
-    if(deliveryStatusFromCompany.name != "active" && 
-      deliveryStatusFromCompany.name != "delayed"
-    ) {
+    const paymentHelper = new PaymentHelper();
+				
+    const transactionReturnedData = await paymentHelper.Pay(paymentData).catch((err)=>{
+      res.status(STATUS_SERVER_ERROR).json(err)
+      console.log(`Entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`);
+      res.end()
+      throw new Error(err)
+    });
+    
+    
+    const requestUpdateMapper = new RequestUpdateMapper();
       
-      await DeliveryCompanyCanceldOrderService(deliveryReceiveData.deliveryId).catch((err) => {
-        console.log(err.message, err.data)
-        console.log(`Entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`);
-        res.status(STATUS_SERVER_ERROR).json(err.message)
-        res.end()
-
-        throw new Error(err.message)
-      });
-      
-      const requestUpdateMapper = new RequestUpdateMapper();
-      
-      requestUpdateMapper.update({
-        id: requestId
-      }, RequestStatuses.CANCELED).catch(err => {
-        console.log(err.message, err.data)
-        console.log(`Entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`);
-        res.status(STATUS_SERVER_ERROR).json(err.message)
-        res.end()
-
-        throw new Error(err.message)
-      });
-      
-      const emailContent = emailHelper(
-        "Cancelamento de pedido", 
-        userFromToken.name, 
-        userFromToken.email,
-        [
-          "Informamos que o seguinte pedido foi cancelado com sucesso:",
-          `ID do pedido: ${requestId}`,
-        ]
-      )
-      await emailService(emailContent).catch(async  (err) => {
-        console.log(err.message, err.data)
-        res.status(STATUS_SERVER_ERROR).json(err.message)
-        res.end()
-        throw new Error(err.message)
-      })
-      res.status(STATUS_REQUEST_ACCEPT).send("Pedido foi cancelado, sem cobrança de taxas extras.")
+    requestUpdateMapper.update({
+      id: requestId
+    }, RequestStatuses.CANCELED).catch(async err => {
+      await paymentHelper.Cancel();
+      console.log(err.message, err.data)
+      console.log(`Entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`);
+      res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()
 
-      return;
-    } else {
-      const message = `É necessário pagar a taxa de cancelamento da entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`
-      console.log(message)
-      res.status(STATUS_SEE_OTHER).json(message)
+      throw new Error(err.message)    
+    });
+    
+    
+    await paymentHelper.Capture().catch((err)=>{
+      res.status(STATUS_SERVER_ERROR).json(err)
+      console.log(`Entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`);
+      res.end()
+      throw new Error(err)
+    });
+    
+    
+    const emailContent = emailHelper(
+      "Cancelamento do pedido.",
+      userFromToken.name, 
+      userFromToken.email,
+      [
+        `O seu pedido foi cancelado, mediante taxa de cancelamento.`,
+        `ID do pedido: ${requestId}`,
+        `Valor pago: ${paymentData.totalAmount}`,
+        `Código de transação bancária: ${transactionReturnedData.Payment.PaymentId}`,
+      ]
+    )
+    await emailService(emailContent).catch((err) => {
+      console.log(err.message, err.data)
+      res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()
 
-      throw new Error(message)
-    }
+      throw new Error(err.message)
+    });
+    
+    
+    
+    res.status(STATUS_REQUEST_ACCEPT).send("Pedido foi cancelado, mediante cobrança de taxas extras.")
+    res.end()
+    
   })
   
   return api;
 }
+

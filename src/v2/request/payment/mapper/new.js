@@ -22,6 +22,7 @@ const service = class {
           returnCode: payment.returnCode,
           returnMessage: payment.returnMessage,
           status: payment.status,
+          cardHash: payment.cardHash
         })
         .then((newPayment)=>{
           resolve(newPayment)

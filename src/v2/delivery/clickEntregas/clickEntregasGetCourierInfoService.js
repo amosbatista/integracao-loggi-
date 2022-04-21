@@ -10,7 +10,7 @@ const service = (orderId) => {
       }
     `
 
-    httpReq.post(`${process.env.CLICK_ENTREGAS_API}/create-order`)
+    httpReq.post(`${process.env.CLICK_ENTREGAS_API}/courier`)
     .send(query)
     .set('X-DV-Auth-Token', process.env.CLICK_ENTREGAS_TOKEN)
     .set('Content-Type', 'application/json')
@@ -18,7 +18,7 @@ const service = (orderId) => {
       
       if(err){
         reject({
-          message: `Erro ao carregar pedido ${orderId}`,
+          message: `Erro ao pesquisar o status do delivery da ordem de entrega ${orderId}`,
           data: JSON.stringify(apiRes.body)
         })
 
@@ -27,7 +27,7 @@ const service = (orderId) => {
 
       if(apiRes.body.errors){
         reject({
-          message: `Erro interno do sistema ao carregar pedido ${orderId}`,
+          message: `Erro interno do sistema ao carregar pedido ${orderId} para status`,
           data: JSON.stringify(apiRes.body.errors.text)
         })
 
@@ -36,7 +36,7 @@ const service = (orderId) => {
 
       if(apiRes.body.warnings &&  apiRes.body.warnings.length > 0){
         reject({
-          message: `Está faltando informações para carregar o pedido ${orderId}.`,
+          message: `Está faltando informações para pesquisar o status do pedido ${orderId}.`,
           data: apiRes.body.parameter_warnings
         })
 
@@ -44,10 +44,11 @@ const service = (orderId) => {
       }
       
       resolve({
-          name: apiRes.body.order.status,
-          translated: apiRes.body.order.status_description,
-        })
-      
+        name: `${apiRes.body.courier.name} ${apiRes.body.courier.surname}`,
+        phone: `${phone}`,
+        latitude: Number.parseFloat(apiRes.body.courier.latitude),
+        longitude: Number.parseFloat(apiRes.body.courier.longitude),
+      })
     })
   })
 }

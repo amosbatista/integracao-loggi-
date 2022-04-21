@@ -44,7 +44,7 @@ const service = (addressData, servicesData, requestId) => {
       if(err){
         reject({
           message: 'Erro ao fazer requisição para criar devolução na API da Click Entregas',
-          object: JSON.stringify(apiRes.body)
+          data: JSON.stringify(apiRes.body)
         })
 
         return
@@ -53,7 +53,7 @@ const service = (addressData, servicesData, requestId) => {
       if(apiRes.body.errors){
         reject({
           message: 'Erro interno da API Click Entregas ao criar devolução',
-          object: JSON.stringify(apiRes.body.errors.text)
+          data: JSON.stringify(apiRes.body.errors.text)
         })
 
         return
@@ -62,7 +62,7 @@ const service = (addressData, servicesData, requestId) => {
       if(apiRes.body.warnings &&  apiRes.body.warnings.length > 0){
         reject({
           message: 'Está faltando informações para finalizar a devolução.',
-          object: apiRes.body.parameter_warnings
+          data: apiRes.body.parameter_warnings
         })
 
         return

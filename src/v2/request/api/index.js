@@ -10,6 +10,11 @@ import list from './list';
 import purchaseValue from './purchaseValue';
 import detail from './detail';
 import geo from './geo';
+import cancel from './cancel';
+import cancelWithTax from './cancelWithtax';
+import checkPaymentMethod from './checkPaymentMethod';
+import savePaymentMethod from './savePaymentMethod';
+import courierPosition from './courierPosition';
 import testDomain from './test-api-without-domain'
 
 import middleware from '../../middleware'
@@ -36,6 +41,11 @@ export default ({ config, db }) => {
 	api.use('/geo', geo({ config, db }));
 	api.use('/testdomain', testDomain({config, db}));
 	api.use('/auth', auth({config, db}));
+	api.use('/cancel-tax', cancelWithTax({config, db}));
+	api.use('/check-card', checkPaymentMethod({config, db}));
+	api.use('/save-card', savePaymentMethod({config, db}));
+	api.use('/cancel', cancel({config, db}));
+  api.use('/position', courierPosition({config, db}));
 
 	// perhaps expose some API metadata at the root
 	api.post('/', (req, res) => {

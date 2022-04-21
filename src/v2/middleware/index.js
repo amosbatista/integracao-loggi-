@@ -17,6 +17,11 @@ export default ({ config, db }) => {
 	api.use('/geo', authenticatedRouteMiddleware({ config, db }));
 	api.use('/testdomain', authenticatedRouteMiddleware({config, db}));
 	api.use('/auth/load', authenticatedRouteMiddleware({config, db}));
+	api.use('/cancel-tax', authenticatedRouteMiddleware({config, db}));
+	api.use('/check-card', authenticatedRouteMiddleware({config, db}));
+	api.use('/save-card', authenticatedRouteMiddleware({config, db}));
+	api.use('/cancel', authenticatedRouteMiddleware({config, db}));
+  api.use('/position', authenticatedRouteMiddleware({config, db}));
 
 	return api;
 }
