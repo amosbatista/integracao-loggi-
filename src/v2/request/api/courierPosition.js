@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
-//import deliveryCourierPositionService from '../../delivery/clickEntregas/clickEntregasGetCourierInfoService'
-import deliveryCourierPositionService from '../../delivery/clickEntregas/clickEntregasGetCourierInfoServiceMock'
+import deliveryCourierPositionService from '../../delivery/clickEntregas/clickEntregasGetCourierInfoService'
+//import deliveryCourierPositionService from '../../delivery/clickEntregas/clickEntregasGetCourierInfoServiceMock'
 import TokenService from '../../auth/cripto/JWTTokenService';
 
 export default ({ config, db }) => {
@@ -38,10 +38,10 @@ export default ({ config, db }) => {
     
     const deliveryData = await deliveryCourierPositionService(deliveryId).catch( err => {
       console.log(err.message, err.data)
-      res.status(STATUS_SERVER_ERROR).json(message)
+      res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()
 
-      throw new Error(message)
+      throw new Error(err.message)
     })
 
     
