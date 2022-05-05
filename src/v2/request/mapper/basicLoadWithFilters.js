@@ -98,7 +98,7 @@ const service = class {
         D_RET.type = 'to_return'
       ${ whereContent }
       ORDER BY 
-        R.id
+        R.id DESC
       LIMIT ${pageLimit ? pageLimit : 10} OFFSET ${pageNumber ? (pageNumber - 1) * pageLimit : 0}
     `;
 

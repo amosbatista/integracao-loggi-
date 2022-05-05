@@ -11,6 +11,9 @@ const model = {
   cardHolder: {
     type: Sequelize.STRING
   },
+  cardHash: {
+    type: Sequelize.STRING
+  },
   authorizationCode: {
     type: Sequelize.STRING
   },

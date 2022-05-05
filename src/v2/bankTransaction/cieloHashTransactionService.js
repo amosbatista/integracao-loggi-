@@ -1,23 +1,9 @@
 import httpReq from 'superagent'
 
-// {
-//   totalAmount: 0
-//   creditCard: {
-//    cardNumber: this.cardNumber,
-//    nameFromCard: this.nameFromCard,
-//    validate: this.validate,
-//    cvv: this.cvv,
-//    brand: ''
-//  }
-//}
-
 const validate = (paymentData) => {
   
   return paymentData.totalAmount &&
-  paymentData.cardNumber &&
-  paymentData.nameFromCard &&
-  paymentData.validate &&
-  paymentData.cvv &&
+  paymentData.CardToken &&
   paymentData.brand
 }
 
@@ -29,7 +15,7 @@ const service = (paymentData) => {
 
     if(!validate(paymentData)) {
       reject({
-        message: "Existem campos faltando para efetuar o pagamento"
+        message: "Existem campos faltando para efetuar o pagamento com cartão salvo"
       })
     }
 
@@ -38,20 +24,13 @@ const service = (paymentData) => {
     httpReq.post(process.env.CIELO_API_REQUEST + "/1/sales")
     .send(JSON.stringify({
       "MerchantOrderId": process.env.CIELO_API_MERCHANTID,
-      "Customer":{
-         "Name": paymentData.nameFromCard
-      },
       "Payment":{
         "Type":"CreditCard",
         "Amount": Math.round(paymentData.totalAmount * decimalConversorFactor),
         "Installments": creditCardInstallments,
         "CreditCard":{
-          "CardNumber":paymentData.cardNumber,
-          "Holder": paymentData.nameFromCard,
-          "ExpirationDate": paymentData.validate,
-          "SecurityCode":paymentData.cvv,
-          "Brand": paymentData.brand,
-          "SaveCard": true,
+          "CardToken":paymentData.CardToken,
+          "Brand": paymentData.brand
         }
       }
     }))
@@ -63,7 +42,7 @@ const service = (paymentData) => {
       
       if(err){
         reject({
-          message: "Erro ao efetuar pagamento do operador.",
+          message: "Erro ao efetuar pagamento com cartão salvo.",
           data: err
         })
       }
@@ -77,7 +56,7 @@ const service = (paymentData) => {
           apiRes.body.Payment.ReturnCode != transactionStatusApproved2 && 
           apiRes.body.Payment.ReturnCode != transactionStatusApproved_ZeroAuth) {
           reject({
-            message: `A transação não funcionou: ${apiRes.body.Payment.ReturnMessage}`,
+            message: `A transação com cartão salvo não funcionou: ${apiRes.body.Payment.ReturnMessage}`,
             data: apiRes.body
           })
         }

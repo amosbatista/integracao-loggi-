@@ -1,8 +1,11 @@
 import { Router } from 'express'
 
-import deliveryApproved from '../../delivery/clickEntregas/clickEntregasCreateOrderService'
-import deliveryCancelation from '../../delivery/clickEntregas/clickEntregasCancelOrderService'
+import deliveryApproved from '../../delivery/clickEntregas/clickEntregasCreateOrderServiceMock'
+//import deliveryApproved from '../../delivery/clickEntregas/clickEntregasCreateOrderService'
+import deliveryCancelation from '../../delivery/clickEntregas/clickEntregasCancelOrderServiceMock'
+//import deliveryCancelation from '../../delivery/clickEntregas/clickEntregasCancelOrderService'
 import NewRequestMapper from '../mapper/new'
+import UpdateRequestMapper from '../mapper/updateStatus'
 import RequestLog from '../log/mapper'
 import RequestStatus from '../status'
 import emailService from '../../email/service'
@@ -14,6 +17,11 @@ import currencyFormat from '../../helpers/formatCurrency'
 import logService from '../log/logGenerator'
 import TokenService from '../../auth/cripto/JWTTokenService';
 import UserStatusCheckMapper from '../mapper/isUserWithTransitingRequest';
+import PaymentAuthorizationService from '../payment/mapper/new';
+import PaymentStatus from '../payment/paymentStatus';
+import LoadCardMapper from '../../cardControl/mapper/load';
+
+import PaymentHelper from '../services/PaymentHelper';
 
 export default ({ config, db }) => {
 
@@ -53,7 +61,7 @@ export default ({ config, db }) => {
       throw new Error(message)
     }
     
-    
+    const updateStatusRequest = new UpdateRequestMapper();
     const newRequestMapper = new NewRequestMapper()
     const request = await newRequestMapper.save({
       userId: userFromToken.id,
@@ -74,13 +82,70 @@ export default ({ config, db }) => {
       res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()
       throw new Error(err.message)
+    });
+    
+    const loadCardMapper = new LoadCardMapper();
+    const cardData = await loadCardMapper.load(userFromToken.id).catch(async (err) => {
+      console.log(err.message, err.data)
+      await updateStatusRequest.update(request, RequestStatus.CANCELED).catch(cancelErr => {
+        console.log(cancelErr.message, cancelErr.data)
+      })
+      res.status(STATUS_SERVER_ERROR).json(err.message)
+      res.end()
+
+      throw new Error(err.message)
+    });
+    
+    
+    const HALF_DELIVERY_FACTOR = 2;
+    
+    const paymentData = {
+      "CardToken": cardData.cardHash,
+      "totalAmount": request.deliveryTax / HALF_DELIVERY_FACTOR,
+      "cvv": req.body.paymentData.cvv,
+      "brand": cardData.cardBrand
+    }
+    
+    const paymentHelper = new PaymentHelper();
+      
+    const transactionReturnedData = await paymentHelper.Pay(paymentData).catch(async (err)=>{
+      await updateStatusRequest.update(request, RequestStatus.CANCELED).catch(cancelErr => {
+        console.log(cancelErr.message, cancelErr.data)
+      })
+      res.status(STATUS_SERVER_ERROR).json(err)
+      res.end()
+      throw new Error(err)
+    });
+    
+    const paymentAuthorizationService = new PaymentAuthorizationService();
+    
+    await paymentAuthorizationService.save(request.id, {
+      cardHash: cardData.cardHash,
+      authorizationCode: transactionReturnedData.Payment.AuthorizationCode,
+      paymentId: transactionReturnedData.Payment.PaymentId,
+      transactionStatus: transactionReturnedData.Payment.Status,
+      returnCode: transactionReturnedData.Payment.ReturnCode,
+      returnMessage: transactionReturnedData.Payment.ReturnMessage,
+      status: PaymentStatus.AUTHORIZED,
+    }).catch ( async (approvationError) => {
+      console.log('Erro ao aprovar compra na base de dados.', approvationError)
+      await updateStatusRequest.update(request, RequestStatus.CANCELED).catch(cancelErr => {
+        console.log(cancelErr.message, cancelErr.data)
+      })
+      res.status(STATUS_SERVER_ERROR).json(approvationError)
+      res.end()
+      throw new Error(approvationError)
     })
     
     const loggiData = await deliveryApproved(
       req.body.addressData, 
       req.body.servicesData, 
-    ).catch((err)=>{
+    ).catch(async (err)=>{
       console.log(err.message, err.data)
+      await updateStatusRequest.update(request, RequestStatus.CANCELED).catch(cancelErr => {
+        console.log(cancelErr.message, cancelErr.data)
+      })
+      await paymentHelper.Cancel();
       res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()
       throw new Error(err.message)
@@ -94,7 +159,11 @@ export default ({ config, db }) => {
       packageId: loggiData.packageId,
       type: deliveryType.TO_RECEIVE
     }).catch( async (err) => {
+      await updateStatusRequest.update(request, RequestStatus.CANCELED).catch(cancelErr => {
+        console.log(cancelErr.message, cancelErr.data)
+      })
       await deliveryCancelation(loggiData.loggiOrderId)
+      await paymentHelper.Cancel();
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()
@@ -114,12 +183,28 @@ export default ({ config, db }) => {
     })
 
     await Promise.all(requestServicesSavePromises).catch(async (err) => {
+      await updateStatusRequest.update(request, RequestStatus.CANCELED).catch(cancelErr => {
+        console.log(cancelErr.message, cancelErr.data)
+      })
       await deliveryCancelation(loggiData.loggiOrderId)
+      await paymentHelper.Cancel();
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()
       throw new Error(err.message)
     })
+    
+    const paymentId = await paymentHelper.Capture().catch(async (err) => {
+      await updateStatusRequest.update(request, RequestStatus.CANCELED).catch(cancelErr => {
+        console.log(cancelErr.message, cancelErr.data)
+      })
+      await deliveryCancelation(loggiData.loggiOrderId)
+      await paymentHelper.Cancel();
+      res.status(STATUS_SERVER_ERROR).json(err.message)
+      res.end()
+      throw new Error(err.message)
+    })
+    
 
     const formatedValues = {
       deliveryTax: currencyFormat(req.body.paymentData.deliveryTax),
@@ -133,18 +218,19 @@ export default ({ config, db }) => {
       userFromToken.email,
       [
         "Informamos que o pedido foi efetuado com sucesso. Segue os dados dele:",
-        `ID do pedido: ${loggiData.loggiOrderId}`,
-        `ID do sistema delivery: ${request.id}`,
+        `ID do sistema delivery: ${loggiData.loggiOrderId}`,
+        `ID do pedido: ${request.id}`,
         `Endereço de retirada: ${req.body.addressData.completeAddress} - ${req.body.addressData.addressComplement}`,
         `Taxa de entrega: ${formatedValues.deliveryTax}`,
         `Total dos serviços: ${formatedValues.servicesSum}`,
         `Taxa de transação bancária: ${formatedValues.transactionOperationTax}`,
         `Total geral: ${formatedValues.totalAmount}`,
+        `Código do pagamento efetuado (só de ida): ${paymentId}`,
+        `Cartão utilizado na compra: ${cardData.cardNumber}`,
         "Observação: Se houver qualquer diferença em relação aos serviços e à documentação enviada, o valor final será alterado."
       ]
     )
     await emailService(emailContent).catch(async  (err) => {
-      await deliveryCancelation(loggiData.loggiOrderId)
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()
@@ -156,13 +242,14 @@ export default ({ config, db }) => {
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()
-      return
+      throw new Error(err.message)
     })
     
     res.json({
       isProcessOk: true,
       loggiOrderId: loggiData.loggiOrderId,
-      requestId: request.id
+      requestId: request.id,
+      paymentId
     })
     res.end()
   })
