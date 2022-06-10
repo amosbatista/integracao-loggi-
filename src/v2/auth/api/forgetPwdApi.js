@@ -43,7 +43,7 @@ export default ({ config, db }) => {
       email,
       uuid: v4()
     };
-    const MINUTES_TO_EXPIRE = 2;
+    const MINUTES_TO_EXPIRE = 10;
     const jWTTokenService = new JWTTokenService();
     const signed = jWTTokenService.signWithMinutes(objToSign, MINUTES_TO_EXPIRE);
     
@@ -59,6 +59,7 @@ export default ({ config, db }) => {
         "Caso não tenha solicitado a recuperação da senha, favor desconsiderar este email."
       ]
     );
+    console.log(email, objToSign.uuid);
 
     await emailService(emailContent).catch((err) => {
       console.log(err.message, err.data)
