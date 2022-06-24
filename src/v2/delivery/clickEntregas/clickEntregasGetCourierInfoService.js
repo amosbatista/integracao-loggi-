@@ -35,7 +35,12 @@ const service = (orderId) => {
 
         return
       }
-      
+      console.log("motoboy", {
+        name: `${apiRes.body.courier.name} ${apiRes.body.courier.surname}`,
+        phone: `${apiRes.body.courier.phone}`,
+        latitude: Number.parseFloat(apiRes.body.courier.latitude),
+        longitude: Number.parseFloat(apiRes.body.courier.longitude),
+      })
       resolve({
         name: `${apiRes.body.courier.name} ${apiRes.body.courier.surname}`,
         phone: `${apiRes.body.courier.phone}`,
