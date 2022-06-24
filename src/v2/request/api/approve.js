@@ -1,9 +1,9 @@
 import { Router } from 'express'
 
-import deliveryApproved from '../../delivery/clickEntregas/clickEntregasCreateOrderServiceMock'
-//import deliveryApproved from '../../delivery/clickEntregas/clickEntregasCreateOrderService'
-import deliveryCancelation from '../../delivery/clickEntregas/clickEntregasCancelOrderServiceMock'
-//import deliveryCancelation from '../../delivery/clickEntregas/clickEntregasCancelOrderService'
+//import deliveryApproved from '../../delivery/clickEntregas/clickEntregasCreateOrderServiceMock'
+import deliveryApproved from '../../delivery/clickEntregas/clickEntregasCreateOrderService'
+//import deliveryCancelation from '../../delivery/clickEntregas/clickEntregasCancelOrderServiceMock'
+import deliveryCancelation from '../../delivery/clickEntregas/clickEntregasCancelOrderService'
 import NewRequestMapper from '../mapper/new'
 import UpdateRequestMapper from '../mapper/updateStatus'
 import RequestLog from '../log/mapper'
