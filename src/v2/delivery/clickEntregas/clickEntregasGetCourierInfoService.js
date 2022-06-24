@@ -4,14 +4,7 @@ const service = (orderId) => {
 
   return new Promise ( (resolve, reject) => {
 
-    const query = `
-      {
-        "order_id": ${orderId}
-      }
-    `
-
-    httpReq.post(`${process.env.CLICK_ENTREGAS_API}/courier`)
-    .send(query)
+    httpReq.get(`${process.env.CLICK_ENTREGAS_API}/courier?order_id=${orderId}`)
     .set('X-DV-Auth-Token', process.env.CLICK_ENTREGAS_TOKEN)
     .set('Content-Type', 'application/json')
     .end((err, apiRes) => {
@@ -45,7 +38,7 @@ const service = (orderId) => {
       
       resolve({
         name: `${apiRes.body.courier.name} ${apiRes.body.courier.surname}`,
-        phone: `${phone}`,
+        phone: `${apiRes.body.courier.phone}`,
         latitude: Number.parseFloat(apiRes.body.courier.latitude),
         longitude: Number.parseFloat(apiRes.body.courier.longitude),
       })
