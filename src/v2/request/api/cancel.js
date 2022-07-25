@@ -8,10 +8,10 @@ import RequestStatuses from '../../request/status';
 
 import DeliveryLoadMapper from '../../delivery/db/mappers/load';
 import DeliveryStatuses from '../../delivery/db/deliveryType';
-//import DeliveryCompanyLoadOrderService from '../../delivery/clickEntregas/clickEntregasLoadOrderService';
-import DeliveryCompanyLoadOrderService from '../../delivery/clickEntregas/clickEntregasLoadOrderServiceMock';
-//import DeliveryCompanyCanceldOrderService from '../../delivery/clickEntregas/clickEntregasCancelOrderService';
-import DeliveryCompanyCanceldOrderService from '../../delivery/clickEntregas/clickEntregasCancelOrderServiceMock';
+import DeliveryCompanyLoadOrderService from '../../delivery/clickEntregas/clickEntregasLoadOrderService';
+//import DeliveryCompanyLoadOrderService from '../../delivery/clickEntregas/clickEntregasLoadOrderServiceMock';
+import DeliveryCompanyCanceldOrderService from '../../delivery/clickEntregas/clickEntregasCancelOrderService';
+//import DeliveryCompanyCanceldOrderService from '../../delivery/clickEntregas/clickEntregasCancelOrderServiceMock';
 
 import emailService from '../../email/service'
 import emailHelper from '../../email/emailHelper'

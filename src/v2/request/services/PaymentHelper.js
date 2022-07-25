@@ -51,7 +51,7 @@ class PaymentHelperService {
   }
   
   ProcessError (errorData) {
-    console.log(`${errorData.message}: ${errorData.data}` );
+    console.log(`${errorData.message}: ${JSON.stringify(errorData.data)}` );
   }
 }
 
