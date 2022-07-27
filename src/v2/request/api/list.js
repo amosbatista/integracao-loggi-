@@ -4,6 +4,8 @@ import RequestListMapper from '../mapper/basicLoadWithFilters'
 import deliveryStatusService from '../../delivery/clickEntregas/clickEntregasLoadOrderService'
 //import deliveryStatusService from '../../delivery/clickEntregas/clickEntregasLoadOrderServiceMock'
 
+import RequestUpdateMapper from '../mapper/updateStatus'
+
 import deliveryTypes from '../../delivery/db/deliveryType'
 import requestStatus from '../status'
 import TokenService from '../../auth/cripto/JWTTokenService';
@@ -55,6 +57,8 @@ const api = ({ config, db }) => {
       return request
     });
 
+    const reqUpdateMapper = new RequestUpdateMapper()
+
     const requestWithDeliveryPromises = requestsWithTransaction.map( (request) => {
 
       return new Promise(async (resolve, reject) => {
@@ -91,7 +95,7 @@ const api = ({ config, db }) => {
           request.delivery.status = deliveryStatus;
         }
         if(request.status == requestStatus.READY_TO_RETURN){
-          const deliveryStatus = await deliveryStatusService(request.delivery.toReturn.deliveryId,).catch( () => {
+          const deliveryStatus = await deliveryStatusService(request.delivery.toReturn.deliveryId).catch( () => {
             return {
               name: "unknown",
               translated: "Desconhecido"
@@ -100,6 +104,18 @@ const api = ({ config, db }) => {
 
           request.delivery.status = deliveryStatus;
         }
+
+
+        
+        if(request.status == requestStatus.RETURNED) {
+          
+          if(request.delivery.status.name == 'completed' || 
+            request.delivery.status.name == 'canceled' ||
+            request.delivery.status.name == 'draft') {
+              await reqUpdateMapper.update(request.id, requestStatus.FINISHED).catch((err) => {errorDealer(err, res)} );
+          }
+        }
+        
 
         request.orderData = {
           proposedValue: request.proposedValue,

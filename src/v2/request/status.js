@@ -4,6 +4,7 @@ const status = {
   WAITING_PAYMENT: 'waiting_payment',
   READY_TO_RETURN: 'ready_to_return',
   RETURNED: 'returned',
+  FINISHED: 'finished',
   CANCELED: 'canceled'
 }
 
