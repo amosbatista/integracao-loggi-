@@ -12,13 +12,14 @@ import TokenService from '../../auth/cripto/JWTTokenService';
 import userTypes from '../../auth/db/types';
 import types from '../../auth/db/types'
 
+const STATUS_SERVER_ERROR = 500
+
 const api = ({ config, db }) => {
 
 	let api = Router();
 
 	api.post('/', async (req, res) => {
 
-    const STATUS_SERVER_ERROR = 500
     const PAGE_LIMIT = 10
 
     const token = req.header("Authorization");
@@ -85,7 +86,8 @@ const api = ({ config, db }) => {
           translated: "Desconhecido"
         }
         if(request.status == requestStatus.AT_RECEIVE){
-          const deliveryStatus = await deliveryStatusService(request.delivery.toReceive.deliveryId).catch( () => {
+          const deliveryStatus = await deliveryStatusService(request.delivery.toReceive.deliveryId).catch( (err) => {
+            console.log(err.message, err.data)
             return {
               name: "unknown",
               translated: "Desconhecido"
@@ -95,7 +97,8 @@ const api = ({ config, db }) => {
           request.delivery.status = deliveryStatus;
         }
         if(request.status == requestStatus.READY_TO_RETURN){
-          const deliveryStatus = await deliveryStatusService(request.delivery.toReturn.deliveryId).catch( () => {
+          const deliveryStatus = await deliveryStatusService(request.delivery.toReturn.deliveryId).catch( (err) => {
+            console.log(err.message, err.data)
             return {
               name: "unknown",
               translated: "Desconhecido"
@@ -106,13 +109,14 @@ const api = ({ config, db }) => {
         }
 
 
-        
         if(request.status == requestStatus.RETURNED) {
-          
+
           if(request.delivery.status.name == 'completed' || 
             request.delivery.status.name == 'canceled' ||
-            request.delivery.status.name == 'draft') {
-              await reqUpdateMapper.update(request.id, requestStatus.FINISHED).catch((err) => {errorDealer(err, res)} );
+            request.delivery.status.name == 'draft' ||
+            request.delivery.status.name == 'unknown') {
+              await reqUpdateMapper.update(request, requestStatus.FINISHED).catch((err) => {errorDealer(err, res)} );
+              request.status = requestStatus.FINISHED
           }
         }
         
