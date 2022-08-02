@@ -89,19 +89,19 @@ const api = ({ config, db }) => {
           const deliveryStatus = await deliveryStatusService(request.delivery.toReceive.deliveryId).catch( (err) => {
             console.log(err.message, err.data)
             return {
-              name: "unknown",
-              translated: "Desconhecido"
+              name: "error",
+              translated: "Erro no delivery"
             }
         })
 
           request.delivery.status = deliveryStatus;
         }
-        if(request.status == requestStatus.READY_TO_RETURN){
+        if(request.status == requestStatus.RETURNED){
           const deliveryStatus = await deliveryStatusService(request.delivery.toReturn.deliveryId).catch( (err) => {
             console.log(err.message, err.data)
             return {
-              name: "unknown",
-              translated: "Desconhecido"
+              name: "error",
+              translated: "Erro no delivery"
             }
         })
 
