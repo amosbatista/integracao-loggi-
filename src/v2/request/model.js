@@ -48,7 +48,8 @@ const entity = {
       Status.WAITING_PAYMENT,
       Status.READY_TO_RETURN,
       Status.RETURNED,
-      Status.CANCELED
+      Status.CANCELED,
+      Status.FINISHED
     )
   },
   createdAt: {

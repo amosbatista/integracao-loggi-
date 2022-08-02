@@ -15,7 +15,8 @@ import cancelWithTax from './cancelWithtax';
 import checkPaymentMethod from './checkPaymentMethod';
 import savePaymentMethod from './savePaymentMethod';
 import courierPosition from './courierPosition';
-import testDomain from './test-api-without-domain'
+import testDomain from './test-api-without-domain';
+import version from './apiVersion';
 
 import middleware from '../../middleware'
 	
@@ -46,6 +47,7 @@ export default ({ config, db }) => {
 	api.use('/save-card', savePaymentMethod({config, db}));
 	api.use('/cancel', cancel({config, db}));
   api.use('/position', courierPosition({config, db}));
+	api.use('/version', version({config, db}));
 
 	// perhaps expose some API metadata at the root
 	api.post('/', (req, res) => {

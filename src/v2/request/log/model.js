@@ -9,7 +9,8 @@ const model = {
       RequestStatus.WAITING_PAYMENT,
       RequestStatus.READY_TO_RETURN,
       RequestStatus.RETURNED,
-      RequestStatus.CANCELED
+      RequestStatus.CANCELED,
+      RequestStatus.FINISHED,
     )
   },
   newStatus: {
@@ -19,7 +20,8 @@ const model = {
       RequestStatus.WAITING_PAYMENT,
       RequestStatus.READY_TO_RETURN,
       RequestStatus.RETURNED,
-      RequestStatus.CANCELED
+      RequestStatus.CANCELED,
+      RequestStatus.FINISHED
     )
   },
   requestId: {
