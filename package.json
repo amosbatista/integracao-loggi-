@@ -33,6 +33,7 @@
   "currentDeveloper": "Amós Batista <amos.silva@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@babel/cli": "^7.18.10",
     "body-parser": "^1.13.3",
     "compression": "^1.5.2",
     "cors": "^2.7.1",
