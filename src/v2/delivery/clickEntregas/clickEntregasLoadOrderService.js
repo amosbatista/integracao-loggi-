@@ -19,7 +19,7 @@ const service = (orderId) => {
       if(err){
         reject({
           message: `Erro ao carregar pedido ${orderId}`,
-          data: JSON.stringify(apiRes.body)
+          data: JSON.stringify(err)
         })
 
         return
