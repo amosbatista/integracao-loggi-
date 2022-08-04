@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 import initializeDb from './db';
 import requestApiV1 from './v1/request/api';
 import requestApiV2 from './v2/request/api';
-import config from './config.json';
+import config from './config';
 import dotenv from 'dotenv';
 
 dotenv.load();

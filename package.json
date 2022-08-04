@@ -5,8 +5,8 @@
   "main": "dist",
   "scripts": {
     "dev": "nodemon -w src --exec \"babel-node src --presets @babel/env\"",
-    "build": "npm install && babel-node src -s -D dist --presets @babel/env",
-    "start": "babel-node src -s -D dist && node dist",
+    "build": "babel src -d dist --presets @babel/env",
+    "start": "node dist/index.js",
     "prestart": "npm run -s build",
     "lint": "eslint src",
     "test": "./node_modules/mocha/bin/mocha \"./src/test/**/*.js\" --require babel-register --reporter spec || exit 0"
@@ -55,8 +55,6 @@
     "@babel/node": "^7.17.10",
     "@babel/plugin-transform-runtime": "^7.18.5",
     "@babel/preset-env": "^7.18.2",
-    "babel-cli": "^6.9.0",
-    "babel-core": "^6.9.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
     "babel-register": "^6.26.0",
