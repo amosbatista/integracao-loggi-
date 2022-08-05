@@ -43,7 +43,7 @@ const service = (addressData, servicesData) => {
       if(err){
         reject({
           message: 'Erro ao fazer requisição para criar entrega na API da Click Entregas',
-          data: JSON.stringify(apiRes.body)
+          data: JSON.stringify(err)
         })
 
         return
