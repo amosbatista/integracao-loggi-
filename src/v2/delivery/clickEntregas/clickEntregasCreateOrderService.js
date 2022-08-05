@@ -1,5 +1,6 @@
 import httpReq from 'superagent'
 import notaryAddress from '../../notary/entity'
+import phoneFormatHelper from './phoneFormatHelper';
 
 const DESCRICAO = "Documentos a serem retirados e levados para o 20º cartório.";
 const PESO_TOTAL = "2";
@@ -20,7 +21,7 @@ const service = (addressData, servicesData) => {
                 "address":"${addressData.completeAddress}",
                 "contact_person":{
                     "name": "${servicesData.clientName}",
-                    "phone":"${servicesData.clientPhone}"
+                    "phone":"${phoneFormatHelper(servicesData.clientPhone)}"
                 }
             },
             {
