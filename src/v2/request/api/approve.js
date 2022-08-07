@@ -137,9 +137,14 @@ export default ({ config, db }) => {
       throw new Error(approvationError)
     })
     
+    const servicesData = {
+      clientName: request.clientName,
+      clientPhone: req.body.servicesData.clientPhone
+    }
+
     const loggiData = await deliveryApproved(
       req.body.addressData, 
-      req.body.servicesData, 
+      servicesData, 
     ).catch(async (err)=>{
       console.log(err.message, err.data)
       await updateStatusRequest.update(request, RequestStatus.CANCELED).catch(cancelErr => {
