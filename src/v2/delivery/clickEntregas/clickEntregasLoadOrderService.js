@@ -4,17 +4,12 @@ const service = (orderId) => {
 
   return new Promise ( (resolve, reject) => {
 
-    const query = `
-      {
-        "order_id": ${orderId}
-      }
-    `
 
-    httpReq.post(`${process.env.CLICK_ENTREGAS_API}/create-order`)
-    .send(query)
-    .set('X-DV-Auth-Token', process.env.CLICK_ENTREGAS_TOKEN)
-    .set('Content-Type', 'application/json')
-    .end((err, apiRes) => {
+    httpReq.get(`${process.env.CLICK_ENTREGAS_API}}/orders?order_id=${orderId}`)
+      .send(query)
+      .set('X-DV-Auth-Token', process.env.CLICK_ENTREGAS_TOKEN)
+      .set('Content-Type', 'application/json')
+      .end((err, apiRes) => {
       
       if(err){
         reject({
@@ -43,9 +38,12 @@ const service = (orderId) => {
         return
       }
       
+      const ONLY_FIRST_ORDER = 0;
+      const order =  apiRes.body.orders[ONLY_FIRST_ORDER];
+
       resolve({
-          name: apiRes.body.order.status,
-          translated: apiRes.body.order.status_description,
+          name: order.status,
+          translated: order.status_description,
         })
       
     })
