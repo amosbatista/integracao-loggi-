@@ -8,7 +8,7 @@ import RequestStatuses from '../status';
 
 import DeliveryLoadMapper from '../../delivery/db/mappers/load';
 import DeliveryStatuses from '../../delivery/db/deliveryType';
-import DeliveryCompanyCanceldOrderService from '../../delivery/clickEntregas/clickEntregasLoadOrderService';
+import DeliveryCompanyCanceldOrderService from '../../delivery/clickEntregas/clickEntregasCancelOrderService';
 //import DeliveryCompanyCanceldOrderService from '../../delivery/clickEntregas/clickEntregasLoadOrderServiceMock';
 
 import LoadCardMapper from '../../cardControl/mapper/load';
