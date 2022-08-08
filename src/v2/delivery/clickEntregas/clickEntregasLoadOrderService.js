@@ -5,7 +5,7 @@ const service = (orderId) => {
   return new Promise ( (resolve, reject) => {
 
 
-    httpReq.get(`${process.env.CLICK_ENTREGAS_API}}/orders?order_id=${orderId}`)
+    httpReq.get(`${process.env.CLICK_ENTREGAS_API}/orders?order_id=${orderId}`)
       .set('X-DV-Auth-Token', process.env.CLICK_ENTREGAS_TOKEN)
       .set('Content-Type', 'application/json')
       .end((err, apiRes) => {
