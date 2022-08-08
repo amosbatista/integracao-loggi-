@@ -6,7 +6,6 @@ const service = (orderId) => {
 
 
     httpReq.get(`${process.env.CLICK_ENTREGAS_API}/orders?order_id=${orderId}`)
-      .send(query)
       .set('X-DV-Auth-Token', process.env.CLICK_ENTREGAS_TOKEN)
       .set('Content-Type', 'application/json')
       .end((err, apiRes) => {
