@@ -7,6 +7,7 @@ const service = (paymentData) => {
       message: "Erro ao efetuar pagamento com cartão salvo.",
       data: err
     })*/
+    console.log ("Valor que está sendo passado no cartão: ", paymentData.totalAmount)
     resolve({
       Payment: {
         AuthorizationCode: "1111",

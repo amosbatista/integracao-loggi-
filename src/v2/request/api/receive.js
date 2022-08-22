@@ -7,6 +7,11 @@ import requestStatus from '../status'
 import LogMapper from '../log/mapper'
 import emailHelper from '../../email/emailHelper'
 
+import NewPaymentModel from '../payment/mapper/new';
+import LoadAprovedPaymentModel from '../payment/mapper/loadJustConfirmed';
+import PaymentStatus from '../payment/paymentStatus';
+import PaymentHelper from '../services/PaymentHelper';
+
 export default ({ config, db }) => {
 	let api = Router();
 
@@ -25,7 +30,7 @@ export default ({ config, db }) => {
 
     const loadMapper = new LoadMappper()
 
-    loadMapper.load(req.body.requestId).then( (request) => {
+    loadMapper.load(req.body.requestId).then( async (request) => {
 
       if(!request){
         res.status(STATUS_INVALID_REQUEST).json("Pedido não foi localizado na base de dados")
@@ -33,6 +38,37 @@ export default ({ config, db }) => {
 
         return
       }
+      const requestId = req.body.requestId;
+
+      const loadAprovedPaymentModel = new LoadAprovedPaymentModel();
+      const aprovedPayment = await loadAprovedPaymentModel.load(requestId).catch(err => {
+        console.log(err.message, err.data)
+        res.status(STATUS_SERVER_ERROR).json(err.message)
+        res.end()
+
+        throw new Error(err)
+      })
+
+      const paymentHelper = new PaymentHelper();
+      await paymentHelper.Capture(aprovedPayment.paymentId).catch(err => {
+        console.log(err)
+        res.status(STATUS_SERVER_ERROR).json(err)
+        res.end()
+
+        throw new Error(err)
+      })
+
+      const newPaymentModel = new NewPaymentModel();
+      const newPaymentPromise = newPaymentModel.save(request.id, {
+        cardNumber: aprovedPayment.CardNumber,
+        cardHolder: aprovedPayment.Holder,
+        authorizationCode: aprovedPayment.AuthorizationCode,
+        paymentId: aprovedPayment.PaymentId,
+        transactionStatus: aprovedPayment.Status,
+        returnCode: aprovedPayment.ReturnCode,
+        returnMessage: aprovedPayment.ReturnMessage,
+        status: PaymentStatus.CONFIRMED,
+      })
 
       const updateStatusMapper = new UpdateStatusMappper()
       const updateStatusPromise = updateStatusMapper.update(request, requestStatus.AT_FINISH)
@@ -55,7 +91,8 @@ export default ({ config, db }) => {
       Promise.all([
         updateStatusPromise,
         emailSendPromise,
-        logPromise
+        logPromise,
+        newPaymentPromise
       ])
       .then( () => {
         res.status(STATUS_REQUEST_ACCEPT)

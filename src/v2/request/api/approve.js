@@ -198,18 +198,6 @@ export default ({ config, db }) => {
       res.end()
       throw new Error(err.message)
     })
-    
-    const paymentId = await paymentHelper.Capture().catch(async (err) => {
-      await updateStatusRequest.update(request, RequestStatus.CANCELED).catch(cancelErr => {
-        console.log(cancelErr.message, cancelErr.data)
-      })
-      await deliveryCancelation(loggiData.loggiOrderId)
-      await paymentHelper.Cancel();
-      res.status(STATUS_SERVER_ERROR).json(err.message)
-      res.end()
-      throw new Error(err.message)
-    })
-    
 
     const formatedValues = {
       deliveryTax: currencyFormat(req.body.paymentData.deliveryTax),
@@ -230,7 +218,7 @@ export default ({ config, db }) => {
         `Total dos serviços: ${formatedValues.servicesSum}`,
         `Taxa de transação bancária: ${formatedValues.transactionOperationTax}`,
         `Total geral: ${formatedValues.totalAmount}`,
-        `Código do pagamento efetuado (só de ida): ${paymentId}`,
+        `Código do pagamento efetuado (só de ida): ${transactionReturnedData.Payment.PaymentId}`,
         `Cartão utilizado na compra: ${cardData.cardNumber}`,
         "Observação: Se houver qualquer diferença em relação aos serviços e à documentação enviada, o valor final será alterado."
       ]

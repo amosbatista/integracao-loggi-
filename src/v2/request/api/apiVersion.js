@@ -2,7 +2,7 @@ import { Router } from 'express'
 
 export default ({ config, db }) => {
 
-  const VERSION = '2.15';
+  const VERSION = '2.16';
 
 	let api = Router();
 
