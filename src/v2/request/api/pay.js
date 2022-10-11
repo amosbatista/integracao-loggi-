@@ -122,7 +122,7 @@ const processor = ({ config, db }) => {
 				
 
 
-				paymentAuthorizationService.save(request.id, {
+				paymentAuthorizationService.save(request.id, requestStatus.READY_TO_RETURN, {
 					cardHash: cardData.cardHash,
 					authorizationCode: transactionReturnedData.Payment.AuthorizationCode,
 					paymentId: transactionReturnedData.Payment.PaymentId,
@@ -199,7 +199,7 @@ const processor = ({ config, db }) => {
 						transactionCapturePromise,
 					]).then( () => {
 
-						paymentAuthorizationService.save(request.id, {
+						paymentAuthorizationService.save(request.id, requestStatus.READY_TO_RETURN, {
 							cardHash: cardData.cardHash,
 							authorizationCode: transactionReturnedData.Payment.AuthorizationCode,
 							paymentId: transactionReturnedData.Payment.PaymentId,

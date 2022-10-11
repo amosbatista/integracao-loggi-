@@ -22,8 +22,8 @@ const service = (orderId) => {
     // delayed
     // new
     resolve({
-      name: "new",
-      translated: "new",
+      name: "active",
+      translated: "active",
     })
     
   })

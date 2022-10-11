@@ -6,7 +6,7 @@ const service = class {
     this.requestConnection = dbConnection('requestPayment', model)
   }
 
-  save(requestId, payment) {
+  save(requestId, requestStatus, payment) {
     
     return new Promise((resolve, reject)=> {
       let requestConnection = this.requestConnection
@@ -14,6 +14,7 @@ const service = class {
       requestConnection.sync().then( () => {
         requestConnection.create({
           requestId,
+          requestStatus,
           cardNumber: payment.cardNumber,
           cardHolder: payment.cardHolder,
           authorizationCode: payment.authorizationCode,

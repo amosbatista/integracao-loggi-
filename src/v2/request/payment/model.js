@@ -29,6 +29,9 @@ const model = {
   returnMessage: {
     type: Sequelize.STRING
   },
+  requestStatus: {
+    type: Sequelize.STRING
+  },
   status: {
     type: Sequelize.ENUM(
       Status.AUTHORIZED,

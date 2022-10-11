@@ -8,7 +8,7 @@ import LogMapper from '../log/mapper'
 import emailHelper from '../../email/emailHelper'
 
 import NewPaymentModel from '../payment/mapper/new';
-import LoadAprovedPaymentModel from '../payment/mapper/loadJustConfirmed';
+import LoadAprovedPaymentModel from '../payment/mapper/loadAuthorizedPaymentFromAtReceiveDelivery';
 import PaymentStatus from '../payment/paymentStatus';
 import PaymentHelper from '../services/PaymentHelper';
 

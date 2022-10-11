@@ -12,6 +12,7 @@ import detail from './detail';
 import geo from './geo';
 import cancel from './cancel';
 import cancelWithTax from './cancelWithtax';
+import confirmCancell from './confirmCancellation';
 import checkPaymentMethod from './checkPaymentMethod';
 import savePaymentMethod from './savePaymentMethod';
 import courierPosition from './courierPosition';
@@ -46,6 +47,7 @@ export default ({ config, db }) => {
 	api.use('/check-card', checkPaymentMethod({config, db}));
 	api.use('/save-card', savePaymentMethod({config, db}));
 	api.use('/cancel', cancel({config, db}));
+	api.use('/confirm-cancel', confirmCancell({config, db}));
   api.use('/position', courierPosition({config, db}));
 	api.use('/version', version({config, db}));
 

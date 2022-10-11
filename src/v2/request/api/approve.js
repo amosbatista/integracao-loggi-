@@ -116,10 +116,12 @@ export default ({ config, db }) => {
       res.end()
       throw new Error(err)
     });
+
+    const paymentId = transactionReturnedData.Payment.PaymentId;
     
     const paymentAuthorizationService = new PaymentAuthorizationService();
     
-    await paymentAuthorizationService.save(request.id, {
+    await paymentAuthorizationService.save(request.id, RequestStatus.AT_RECEIVE, {
       cardHash: cardData.cardHash,
       authorizationCode: transactionReturnedData.Payment.AuthorizationCode,
       paymentId: transactionReturnedData.Payment.PaymentId,

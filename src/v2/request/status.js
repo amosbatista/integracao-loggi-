@@ -5,7 +5,8 @@ const status = {
   READY_TO_RETURN: 'ready_to_return',
   RETURNED: 'returned',
   FINISHED: 'finished',
-  CANCELED: 'canceled'
+  CANCELED: 'canceled',
+  WAITING_CANCELLATION_CHECK: 'waiting_cancel_check',
 }
 
 export default status

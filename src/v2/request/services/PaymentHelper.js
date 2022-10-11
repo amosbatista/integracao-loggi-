@@ -60,6 +60,17 @@ class PaymentHelperService {
       throw new Error(`Erro ao cancelar compra ${this.transactionReturnedData.Payment.PaymentId}`)
     }
   }
+
+  async Cancel (transactionId) {
+    try {
+      await cancelTransactionService(transactionId);
+    }
+    catch(errorData) {
+      this.ProcessError(errorData);
+      
+      throw new Error(`Erro ao cancelar compra pré-salva ${transactionId}`)
+    }
+  }
   
   ProcessError (errorData) {
     console.log(`${errorData.message}: ${JSON.stringify(errorData.data)}` );
