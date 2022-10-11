@@ -10,7 +10,8 @@ const service = (paymentId) => {
       data: err
     })
     */
-      
+    
+    console.log("capture code", paymentId)
     resolve()
 
   })

@@ -1,6 +1,7 @@
 import model from '../model'
 import dbConnection from '../../../database/helper'
 import paymentStatus from '../paymentStatus'
+import requestStatus from '../../status'
 
 const service = class {
 
@@ -18,6 +19,7 @@ const service = class {
         paymentModel.findAll({
           where: { 
             requestId,
+            requestStatus: requestStatus.AT_RECEIVE
           }
         })
         .then((payments)=>{
