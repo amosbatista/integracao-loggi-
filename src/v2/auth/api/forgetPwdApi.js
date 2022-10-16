@@ -55,7 +55,7 @@ export default ({ config, db }) => {
       "cliente",
       email,[
         "Foi solicitado um e-mail para recuperação de senha. Segue o link abaixo:",
-        `<a href="https://20cartorio.com.br/delivery-2-0/#/recovery/${objToSign.uuid}"><strong>https://20cartorio.com.br/delivery-2-0/#/recovery/${objToSign.uuid}</strong></a>`,
+        `<a href="https://20cartorio.com.br/delivery/#/recovery/${objToSign.uuid}"><strong>https://20cartorio.com.br/delivery/#/recovery/${objToSign.uuid}</strong></a>`,
         "Caso não tenha solicitado a recuperação da senha, favor desconsiderar este email."
       ]
     );
