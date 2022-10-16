@@ -123,14 +123,16 @@ export default ({ config, db }) => {
       deliveryStatusFromCompany.name != "delayed"
     ) {
       
-      await DeliveryCompanyCanceldOrderService(deliveryReceiveData.deliveryId).catch((err) => {
-        console.log(err.message, err.data)
-        console.log(`Entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`);
-        res.status(STATUS_SERVER_ERROR).json(err.message)
-        res.end()
+      if(deliveryStatusFromCompany.name != "canceled") {
+        await DeliveryCompanyCanceldOrderService(deliveryReceiveData.deliveryId).catch((err) => {
+          console.log(err.message, err.data)
+          console.log(`Entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`);
+          res.status(STATUS_SERVER_ERROR).json(err.message)
+          res.end()
 
-        throw new Error(err.message)
-      });
+          throw new Error(err.message)
+        }); 
+      }
       
       const requestUpdateMapper = new RequestUpdateMapper();
       
