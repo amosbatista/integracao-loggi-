@@ -50,7 +50,8 @@ const service = class {
         D_RET.requestId = R.id AND
         D_RET.type = 'to_return'
       ORDER BY 
-        R.id
+        R.id desc
+      LIMIT 100
     `)
   }
 }
