@@ -16,6 +16,8 @@ import confirmCancell from './confirmCancellation';
 import checkPaymentMethod from './checkPaymentMethod';
 import savePaymentMethod from './savePaymentMethod';
 import courierPosition from './courierPosition';
+import updateDeliveryStatusCallBack from './updateDeliveryStatusCallBack'
+
 import testDomain from './test-api-without-domain';
 import version from './apiVersion';
 
@@ -49,6 +51,7 @@ export default ({ config, db }) => {
 	api.use('/cancel', cancel({config, db}));
 	api.use('/confirm-cancel', confirmCancell({config, db}));
   api.use('/position', courierPosition({config, db}));
+	api.use('/callback-update-delivery', updateDeliveryStatusCallBack({config, db}));
 	api.use('/version', version({config, db}));
 
 	// perhaps expose some API metadata at the root

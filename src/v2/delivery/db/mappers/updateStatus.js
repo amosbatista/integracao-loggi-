@@ -1,6 +1,5 @@
-import model from '../model'
+import model from '../../../../v1/delivery/db/model'
 import dbConnection from '../../../database/helper'
-import deliveryype from "../deliveryType"
 
 const service = class {
 
@@ -8,27 +7,32 @@ const service = class {
     this.deliveryConnection = dbConnection('delivery', model)
   }
 
-  save(deliveryData) {
+  update(deliveryId, status) {
+    console.log(deliveryId, status)
 
     return new Promise((resolve, reject)=> {
       let deliveryConnection = this.deliveryConnection
       
       deliveryConnection.sync().then( () => {
 
-        deliveryConnection.create({
-          requestId: deliveryData.requestId,
-          deliveryId: deliveryData.deliveryId,
-          packageId: deliveryData.packageId,
-          type: deliveryData.type || type.TO_RECEIVE,
-        })
-        .then((newDelivery)=>{
+        deliveryConnection.update(
+          {
+            deliveryStatus: status
+          },
+          {
+            where: {
+              deliveryId
+            }
+          }
+        )
+        .then(()=>{
           deliveryConnection.sequelize.close()
-          resolve(newDelivery)
+          resolve()
         })
         .catch((err)=>{
           deliveryConnection.sequelize.close()
           reject({
-            message: `Erro ao salvar os dados da transportadora para o pedido ${deliveryData.requestId}.`,
+            message: `Erro ao atualizar delivery ${deliveryId} no banco de dados`,
             data: err
           })
         })

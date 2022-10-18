@@ -12,6 +12,9 @@ const entity = {
   packageId:{
     type: Sequelize.STRING
   },
+  deliveryStatus:{
+    type: Sequelize.STRING
+  },
   type: Sequelize.ENUM(
     deliveryType.TO_RECEIVE,
     deliveryType.TO_RETURN

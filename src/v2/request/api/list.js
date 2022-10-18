@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 import RequestListMapper from '../mapper/basicLoadWithFilters'
-import deliveryStatusService from '../../delivery/clickEntregas/clickEntregasLoadOrderService'
+//import deliveryStatusService from '../../delivery/clickEntregas/clickEntregasLoadOrderService'
 //import deliveryStatusService from '../../delivery/clickEntregas/clickEntregasLoadOrderServiceMock'
 
 import RequestUpdateMapper from '../mapper/updateStatus'
@@ -85,27 +85,18 @@ const api = ({ config, db }) => {
           name: "unknown",
           translated: "Desconhecido"
         }
+        
         if(request.status == requestStatus.AT_RECEIVE){
-          const deliveryStatus = await deliveryStatusService(request.delivery.toReceive.deliveryId).catch( (err) => {
-            console.log(err.message, err.data)
-            return {
-              name: "error",
-              translated: "Erro no delivery"
-            }
-        })
-
-          request.delivery.status = deliveryStatus;
+          request.delivery.status = {
+            name: request["deliveryReturn_deliveryStatus"],
+            translated: request["deliveryReturn_deliveryStatus"],
+          };
         }
         if(request.status == requestStatus.RETURNED){
-          const deliveryStatus = await deliveryStatusService(request.delivery.toReturn.deliveryId).catch( (err) => {
-            console.log(err.message, err.data)
-            return {
-              name: "error",
-              translated: "Erro no delivery"
-            }
-        })
-
-          request.delivery.status = deliveryStatus;
+          request.delivery.status = {
+            name: request["deliveryReturn_deliveryStatus"],
+            translated: request["deliveryReturn_deliveryStatus"],
+          };
         }
 
 
