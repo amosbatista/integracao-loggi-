@@ -8,7 +8,7 @@ import RequestStatuses from '../../request/status';
 
 import DeliveryLoadMapper from '../../delivery/db/mappers/load';
 import DeliveryStatuses from '../../delivery/db/deliveryType';
-import DeliveryCompanyLoadOrderService from '../../delivery/clickEntregas/clickEntregasLoadOrderService';
+//import DeliveryCompanyLoadOrderService from '../../delivery/clickEntregas/clickEntregasLoadOrderService';
 //import DeliveryCompanyLoadOrderService from '../../delivery/clickEntregas/clickEntregasLoadOrderServiceMock';
 import DeliveryCompanyCanceldOrderService from '../../delivery/clickEntregas/clickEntregasCancelOrderService';
 //import DeliveryCompanyCanceldOrderService from '../../delivery/clickEntregas/clickEntregasCancelOrderServiceMock';
@@ -101,7 +101,7 @@ export default ({ config, db }) => {
     }
         
     const deliveryReceiveData = deliveryReceiveDataValues.dataValues;
-    const deliveryStatusFromCompany = await DeliveryCompanyLoadOrderService(deliveryReceiveData.deliveryId).catch(err => {
+    /*const deliveryStatusFromCompany = await DeliveryCompanyLoadOrderService(deliveryReceiveData.deliveryId).catch(err => {
       console.log(err.message, err.data)
       console.log(`Entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`)
       res.status(STATUS_SERVER_ERROR).json(err.message)
@@ -117,13 +117,13 @@ export default ({ config, db }) => {
       res.end()
 
       throw new Error(message)
-    }
+    }*/
     
-    if(deliveryStatusFromCompany.name != "active" && 
-      deliveryStatusFromCompany.name != "delayed"
+    if(deliveryReceiveData.deliveryStatus != "active" && 
+      deliveryReceiveData.deliveryStatus != "delayed"
     ) {
       
-      if(deliveryStatusFromCompany.name != "canceled") {
+      if(deliveryReceiveData.deliveryStatus != "canceled") {
         await DeliveryCompanyCanceldOrderService(deliveryReceiveData.deliveryId).catch((err) => {
           console.log(err.message, err.data)
           console.log(`Entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`);

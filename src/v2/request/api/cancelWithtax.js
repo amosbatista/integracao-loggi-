@@ -9,7 +9,7 @@ import RequestStatuses from '../status';
 import DeliveryLoadMapper from '../../delivery/db/mappers/load';
 import DeliveryStatuses from '../../delivery/db/deliveryType';
 import DeliveryCompanyCanceldOrderService from '../../delivery/clickEntregas/clickEntregasCancelOrderService';
-import DeliveryCompanyLoadOrderService from '../../delivery/clickEntregas/clickEntregasLoadOrderService';
+//import DeliveryCompanyLoadOrderService from '../../delivery/clickEntregas/clickEntregasLoadOrderService';
 //import DeliveryCompanyCanceldOrderService from '../../delivery/clickEntregas/clickEntregasLoadOrderServiceMock';
 
 import LoadCardMapper from '../../cardControl/mapper/load';
@@ -105,15 +105,15 @@ export default ({ config, db }) => {
     }
     const deliveryReceiveData = deliveryReceiveDataValues.dataValues;
 
-    const deliveryStatusFromCompany = await DeliveryCompanyLoadOrderService(deliveryReceiveData.deliveryId).catch(err => {
+    /*const deliveryStatusFromCompany = await DeliveryCompanyLoadOrderService(deliveryReceiveData.deliveryId).catch(err => {
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()
 
       throw new Error(err.message)
-    });
+    });*/
     
-    if(deliveryStatusFromCompany.name != "canceled") { 
+    if(deliveryReceiveData.deliveryStatus != "canceled") { 
       await DeliveryCompanyCanceldOrderService(deliveryReceiveData.deliveryId).catch((err) => {
         console.log(err.message, err.data)
         console.log(`Entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`);
