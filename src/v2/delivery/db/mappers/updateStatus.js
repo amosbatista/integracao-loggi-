@@ -8,7 +8,6 @@ const service = class {
   }
 
   update(deliveryId, status) {
-    console.log(deliveryId, status)
 
     return new Promise((resolve, reject)=> {
       let deliveryConnection = this.deliveryConnection
