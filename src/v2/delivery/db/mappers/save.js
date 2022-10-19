@@ -1,6 +1,6 @@
 import model from '../model'
 import dbConnection from '../../../database/helper'
-import type from "../deliveryType"
+import deliveryType from "../deliveryType"
 
 const service = class {
 
@@ -19,7 +19,8 @@ const service = class {
           requestId: deliveryData.requestId,
           deliveryId: deliveryData.deliveryId,
           packageId: deliveryData.packageId,
-          type: deliveryData.type || type.TO_RECEIVE
+          type: deliveryData.type || deliveryType.TO_RECEIVE,
+          deliveryStatus: "new"
         })
         .then((newDelivery)=>{
           deliveryConnection.sequelize.close()

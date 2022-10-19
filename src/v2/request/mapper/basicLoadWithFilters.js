@@ -80,10 +80,12 @@ const service = class {
         D_REC.packageId as deliveryReceive_packageId,
         D_REC.type as deliveryReceive_type,
         D_REC.createdAt as deliveryReceive_createdAt,
+        D_REC.deliveryStatus as deliveryReceive_deliveryStatus,
         D_RET.deliveryId as deliveryReturn_deliveryId,
         D_RET.packageId as deliveryReturn_packageId,
         D_RET.type as deliveryReturn_type,
-        D_RET.createdAt as deliveryReturn_createdAt
+        D_RET.createdAt as deliveryReturn_createdAt,
+        D_RET.deliveryStatus as deliveryReturn_deliveryStatus
       FROM
         requests R
       INNER JOIN services S on

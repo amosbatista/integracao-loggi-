@@ -7,8 +7,7 @@ const service = class {
     this.deliveryModel = dbConnection('delivery', model)
   }
 
-  load(requestId) {
-    const LIMIT = 100;
+  load(deliveryId) {
 
     return new Promise((resolve, reject)=> {
       let deliveryModel = this.deliveryModel
@@ -16,10 +15,8 @@ const service = class {
       deliveryModel.sync().then( () => {
 
         deliveryModel.findAll({
-          limit: LIMIT,
-          order: ['id', 'desc'],
           where: { 
-            requestId
+            deliveryId
           }
         })
         .then((delivery)=>{
@@ -29,7 +26,7 @@ const service = class {
         .catch((err)=>{
           deliveryModel.sequelize.close()
           reject({
-            message: `Erro ao carregar os dados da transportadora do pedido ${delivery.requestId}.`,
+            message: `Erro ao carregar os dados da transportadora do delivery ${deliveryId}.`,
             data: err
           })
         })
