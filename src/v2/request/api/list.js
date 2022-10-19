@@ -88,8 +88,8 @@ const api = ({ config, db }) => {
         
         if(request.status == requestStatus.AT_RECEIVE){
           request.delivery.status = {
-            name: request["deliveryReturn_deliveryStatus"],
-            translated: request["deliveryReturn_deliveryStatus"],
+            name: request["deliveryReceive_deliveryStatus"],
+            translated: request["deliveryReceive_deliveryStatus"],
           };
         }
         if(request.status == requestStatus.RETURNED){
