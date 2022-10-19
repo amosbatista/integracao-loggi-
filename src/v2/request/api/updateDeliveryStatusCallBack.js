@@ -13,7 +13,8 @@ const api = ({ config, db }) => {
 	let api = Router();
 
 	api.post('/', async (req, res) => {
-    
+        console.log("callback call", req.body)
+
         const deliveryId = req.body.delivery.delivery_id;
         const deliveryStatus = req.body.delivery.status;
 
