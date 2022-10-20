@@ -26,7 +26,7 @@ const service = class {
         .catch((err)=>{
           deliveryModel.sequelize.close()
           reject({
-            message: `Erro ao carregar os dados da transportadora do pedido ${delivery.requestId}.`,
+            message: `Erro ao carregar os dados da transportadora do pedido ${requestId}.`,
             data: err
           })
         })
