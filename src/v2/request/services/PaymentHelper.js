@@ -1,12 +1,12 @@
-/*import transactionCaptureService from '../../bankTransaction/cieloCaptureService';
-import transactionService from '../../bankTransaction/cieloTransactionService';
-import transactionHashService from '../../bankTransaction/cieloHashTransactionService';
-import cancelTransactionService from '../../bankTransaction/cieloCancelationService';*/
-
 import transactionCaptureService from '../../bankTransaction/cieloCaptureService';
 import transactionService from '../../bankTransaction/cieloTransactionService';
 import transactionHashService from '../../bankTransaction/cieloHashTransactionService';
 import cancelTransactionService from '../../bankTransaction/cieloCancelationService';
+
+/*import transactionCaptureService from '../../bankTransactionMock/cieloCaptureService';
+import transactionService from '../../bankTransactionMock/cieloTransactionService';
+import transactionHashService from '../../bankTransactionMock/cieloHashTransactionService';
+import cancelTransactionService from '../../bankTransactionMock/cieloCancelationService';*/
 
 
 class PaymentHelperService {
@@ -28,18 +28,23 @@ class PaymentHelperService {
     }
   }
   
-  async Capture () {
-    try {
-      await transactionCaptureService(this.transactionReturnedData.Payment.PaymentId);
-    }
-    catch(errorData) {
-      this.ProcessError(errorData);
-      
-      throw new Error(`Erro ao processar captura de compra ${this.transactionReturnedData.Payment.PaymentId}`)
-    }
-  }
+
 
   async Capture (transactionId) {
+
+    if(!transactionId) {
+      try {
+        await transactionCaptureService(this.transactionReturnedData.Payment.PaymentId);
+      }
+      catch(errorData) {
+        this.ProcessError(errorData);
+        
+        throw new Error(`Erro ao processar captura de compra ${this.transactionReturnedData.Payment.PaymentId}`)
+      }
+
+      return;
+    }
+
     try {
       await transactionCaptureService(transactionId);
     }
@@ -49,19 +54,21 @@ class PaymentHelperService {
       throw new Error(`Erro ao capturar compra pré-salva da transação ${transactionId}`)
     }
   }
-  
-  async Cancel () {
-    try {
-      await cancelTransactionService(this.transactionReturnedData.Payment.PaymentId);
-    }
-    catch(errorData) {
-      this.ProcessError(errorData);
-      
-      throw new Error(`Erro ao cancelar compra ${this.transactionReturnedData.Payment.PaymentId}`)
-    }
-  }
+
 
   async Cancel (transactionId) {
+    if(!transactionId) {
+      try {
+        await cancelTransactionService(this.transactionReturnedData.Payment.PaymentId);
+      }
+      catch(errorData) {
+        this.ProcessError(errorData);
+        
+        throw new Error(`Erro ao cancelar compra ${this.transactionReturnedData.Payment.PaymentId}`)
+      }
+
+      return;
+    }
     try {
       await cancelTransactionService(transactionId);
     }
