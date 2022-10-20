@@ -59,7 +59,7 @@ export default ({ config, db }) => {
       })
 
       const newPaymentModel = new NewPaymentModel();
-      const newPaymentPromise = newPaymentModel.save(request.id, {
+      const newPaymentPromise = newPaymentModel.save(request.id, requestStatus.AT_FINISH,  {
         cardNumber: aprovedPayment.CardNumber,
         cardHolder: aprovedPayment.Holder,
         authorizationCode: aprovedPayment.AuthorizationCode,
