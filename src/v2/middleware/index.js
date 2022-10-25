@@ -22,6 +22,7 @@ export default ({ config, db }) => {
 	api.use('/save-card', authenticatedRouteMiddleware({config, db}));
 	api.use('/cancel', authenticatedRouteMiddleware({config, db}));
   api.use('/position', authenticatedRouteMiddleware({config, db}));
+	api.use('/confirm-cancel', authenticatedRouteMiddleware({config, db}));
 
 	return api;
 }
