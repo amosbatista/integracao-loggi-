@@ -16,8 +16,6 @@ const api = ({ config, db }) => {
 	let api = Router();
 
 	api.post('/', async (req, res) => {
-        console.log("callback call", req.body)
-
         let deliveryId = "";
         let deliveryStatus = ""; 
 
