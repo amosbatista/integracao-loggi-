@@ -112,9 +112,11 @@ export default ({ config, db }) => {
       await updateStatusRequest.update(request, RequestStatus.CANCELED).catch(cancelErr => {
         console.log(cancelErr.message, cancelErr.data)
       })
-      res.status(STATUS_SERVER_ERROR).json(err)
+      res.status(STATUS_SERVER_ERROR).json({
+        message: err,
+        data: null
+      })
       res.end()
-      throw new Error(err)
     });
 
     const paymentId = transactionReturnedData.Payment.PaymentId;

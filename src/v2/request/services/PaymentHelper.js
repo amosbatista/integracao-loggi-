@@ -24,7 +24,7 @@ class PaymentHelperService {
     catch(errorData) {
       this.ProcessError(errorData);
       
-      throw new Error("Erro ao processar compra com cartão.")
+      throw new Error(`Erro ao processar compra com cartão: ${errorData.message}`)
     }
   }
   
@@ -39,7 +39,7 @@ class PaymentHelperService {
       catch(errorData) {
         this.ProcessError(errorData);
         
-        throw new Error(`Erro ao processar captura de compra ${this.transactionReturnedData.Payment.PaymentId}`)
+        throw new Error(`Erro ao processar captura de compra ${this.transactionReturnedData.Payment.PaymentId}: ${errorData.message}`)
       }
 
       return;
@@ -51,7 +51,7 @@ class PaymentHelperService {
     catch(errorData) {
       this.ProcessError(errorData);
       
-      throw new Error(`Erro ao capturar compra pré-salva da transação ${transactionId}`)
+      throw new Error(`Erro ao capturar compra pré-salva da transação ${transactionId}: ${errorData.message}`)
     }
   }
 
@@ -64,7 +64,7 @@ class PaymentHelperService {
       catch(errorData) {
         this.ProcessError(errorData);
         
-        throw new Error(`Erro ao cancelar compra ${this.transactionReturnedData.Payment.PaymentId}`)
+        throw new Error(`Erro ao cancelar compra ${this.transactionReturnedData.Payment.PaymentId}: ${errorData.message}`)
       }
 
       return;
@@ -75,7 +75,7 @@ class PaymentHelperService {
     catch(errorData) {
       this.ProcessError(errorData);
       
-      throw new Error(`Erro ao cancelar compra pré-salva ${transactionId}`)
+      throw new Error(`Erro ao cancelar compra pré-salva ${transactionId}: ${errorData.message}`)
     }
   }
   
