@@ -50,7 +50,7 @@ export default ({ config, db }) => {
       })
 
       const paymentHelper = new PaymentHelper();
-      await paymentHelper.Capture(aprovedPayment.paymentId).catch(err => {
+      await paymentHelper.Cancel(aprovedPayment.paymentId).catch(err => {
         console.log(err)
         res.status(STATUS_SERVER_ERROR).json(err)
         res.end()

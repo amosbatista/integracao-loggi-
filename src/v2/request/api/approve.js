@@ -97,11 +97,11 @@ export default ({ config, db }) => {
     });
     
     
-    const HALF_DELIVERY_FACTOR = 2;
+    const CANCEL_TAX = 10;
     
     const paymentData = {
       "CardToken": cardData.cardHash,
-      "totalAmount": request.deliveryTax / HALF_DELIVERY_FACTOR,
+      "totalAmount": CANCEL_TAX,
       "cvv": req.body.paymentData.cvv,
       "brand": cardData.cardBrand
     }

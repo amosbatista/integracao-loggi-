@@ -124,66 +124,11 @@ export default ({ config, db }) => {
       });
     }
     
-    
-    const loadCardMapper = new LoadCardMapper();
-    const cardData = await loadCardMapper.load(userFromToken.id).catch((err) => {
-      console.log(err.message, err.data)
-      console.log(`Entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`);
-      res.status(STATUS_SERVER_ERROR).json(err.message)
-      res.end()
-
-      throw new Error(err.message)
-    });
-    
-    
-    const CANCEL_TAX = 10.00;
-    
-    const paymentData = {
-      "CardToken": cardData.cardHash,
-      "totalAmount": CANCEL_TAX,
-      "cvv": req.body.paymentData.cvv,
-      "brand": cardData.cardBrand
-    }
-    
-    const paymentHelper = new PaymentHelper();
-				
-    const transactionReturnedData = await paymentHelper.Pay(paymentData).catch((err)=>{
-      res.status(STATUS_SERVER_ERROR).json(err)
-      console.log(`Entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`);
-      res.end()
-      throw new Error(err)
-    });
-    
-
-    const paymentAuthorizationService = new PaymentAuthorizationService();
-    
-    await paymentAuthorizationService.save(requestId, RequestStatuses.WAITING_CANCELLATION_CHECK, {
-      cardHash: paymentData.cardHash,
-      authorizationCode: transactionReturnedData.Payment.AuthorizationCode,
-      paymentId: transactionReturnedData.Payment.PaymentId,
-      transactionStatus: transactionReturnedData.Payment.Status,
-      returnCode: transactionReturnedData.Payment.ReturnCode,
-      returnMessage: transactionReturnedData.Payment.ReturnMessage,
-      status: PaymentStatus.AUTHORIZED,
-    }).catch ( async (approvationError) => {
-      await requestUpdateMapper.update({
-        id: requestId
-      }, RequestStatuses.CANCELED).catch(cancelErr => {
-        console.log(cancelErr.message, cancelErr.data)
-      })
-      await paymentHelper.Cancel();
-      console.log(approvationError.message, approvationError.data)
-      console.log(`Entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`);
-      res.status(STATUS_SERVER_ERROR).json(approvationError.message)
-      res.end() 
-    })
-    
     const requestUpdateMapper = new RequestUpdateMapper();
       
     requestUpdateMapper.update({
       id: requestId
     }, RequestStatuses.WAITING_CANCELLATION_CHECK).catch(async err => {
-      await paymentHelper.Cancel();
       console.log(err.message, err.data)
       console.log(`Entrega ${deliveryReceiveData.deliveryId}, do pedido ${requestId}.`);
       res.status(STATUS_SERVER_ERROR).json(err.message)
@@ -195,10 +140,8 @@ export default ({ config, db }) => {
       userFromToken.name, 
       userFromToken.email,
       [
-        `O seu pedido foi cancelado, mediante taxa de cancelamento.`,
+        `O seu pedido foi cancelado. O valor do cancelamento foi retido, e será devolvido caso a transportadora não cobre este valor.`,
         `ID do pedido: ${requestId}`,
-        `Valor pago: ${paymentData.totalAmount}`,
-        `Código de transação bancária: ${transactionReturnedData.Payment.PaymentId}`,
       ]
     )
     await emailService(emailContent).catch((err) => {

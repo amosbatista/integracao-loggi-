@@ -3,6 +3,8 @@ import { Router } from 'express'
 import TokenService from '../../auth/cripto/JWTTokenService';
 
 import RequestLoadMapper from '../../request/mapper/load';
+import LoadAprovedPaymentModel from '../payment/mapper/loadAuthorizedPaymentFromAtReceiveDelivery';
+import PaymentStatus from '../payment/paymentStatus';
 import RequestUpdateMapper from '../../request/mapper/updateStatus';
 import RequestStatuses from '../../request/status';
 
@@ -122,6 +124,38 @@ export default ({ config, db }) => {
     if(deliveryReceiveData.deliveryStatus != "active" && 
       deliveryReceiveData.deliveryStatus != "delayed"
     ) {
+
+      const loadAprovedPaymentModel = new LoadAprovedPaymentModel();
+      const aprovedPayment = await loadAprovedPaymentModel.load(requestId).catch(err => {
+        console.log(err.message, err.data)
+        res.status(STATUS_SERVER_ERROR).json(err.message)
+        res.end()
+
+        throw new Error(err)
+      })
+
+      const paymentHelper = new PaymentHelper();
+      await paymentHelper.Cancel(aprovedPayment.paymentId).catch(err => {
+        console.log(err)
+        res.status(STATUS_SERVER_ERROR).json(err)
+        res.end()
+
+        throw new Error(err)
+      })
+
+      const newPaymentModel = new NewPaymentModel();
+      await newPaymentModel.save(request.id, requestStatus.CANCELED,  {
+        cardNumber: aprovedPayment.CardNumber,
+        cardHolder: aprovedPayment.Holder,
+        authorizationCode: aprovedPayment.AuthorizationCode,
+        paymentId: aprovedPayment.PaymentId,
+        transactionStatus: aprovedPayment.Status,
+        returnCode: aprovedPayment.ReturnCode,
+        returnMessage: aprovedPayment.ReturnMessage,
+        status: PaymentStatus.CONFIRMED,
+      })
+
+
       
       if(deliveryReceiveData.deliveryStatus != "canceled") {
         await DeliveryCompanyCanceldOrderService(deliveryReceiveData.deliveryId).catch((err) => {
