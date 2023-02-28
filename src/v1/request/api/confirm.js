@@ -18,7 +18,7 @@ export default ({ config, db }) => {
     if(!checkCurrentTime){
       const err = {
         message: 'Horário fora do expediente',
-        data: checkCurrentTime.currentTime()
+        data: checkCurrentTime.currentTime
       }
 
       logService(err.message, err.data)
