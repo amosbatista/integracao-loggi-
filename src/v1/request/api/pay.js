@@ -113,6 +113,25 @@ const api = ({ config, db }) => {
 					}
 					
 
+					  // Solicitação para o cartório
+						const emailContentForNotary = emailHelper(
+							"Aprovação de pedido -  Solicitação pedido", 
+							'20º Cartório', 
+							[
+								'izabelfranco@20cartorio.com.br', 
+								'paulorezende@20cartorio.com.br', 
+								'contato.mkt@20cartorio.com.br'
+							],
+							[
+								"Um cliente pagou um serviço e deseja a sua devolução:",
+								`ID do pedido: ${request.id}`,
+								`Nome: ${request.clientName} `,
+								`Email: ${  request.clientEmail}`,
+								`Endereço de entrega: ${req.body.addressData.completeAddress} - ${req.body.addressData.addressComplement}`,
+							]
+						)
+						const emailToNotaryPromise =  emailService(emailContentForNotary)
+
 					const emailContent = emailHelper(
 						"Pagamento de pedido",
 						request.clientName,
@@ -141,6 +160,7 @@ const api = ({ config, db }) => {
 
 
 					Promise.all([
+						emailToNotaryPromise,
 						emailPromise,
 						requestStatusUpdatePromise,
 						requestLogPromise,

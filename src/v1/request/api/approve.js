@@ -94,6 +94,36 @@ export default ({ config, db }) => {
       res.end()
       throw new Error(err.message)
     })
+
+
+    // Solicitação para o cartório
+    const emailContentForNotary = emailHelper(
+      "Aprovação de pedido -  Solicitação pedido", 
+      '20º Cartório', 
+      [
+        'izabelfranco@20cartorio.com.br', 
+        'paulorezende@20cartorio.com.br', 
+        'contato.mkt@20cartorio.com.br',
+        'amos.silva@gmail.com'
+      ],
+      [
+        "Um cliente solicitou um serviço para o cartório:",
+        `ID do pedido: ${request.id}`,
+        `Nome: ${request.clientName} `,
+        `Email: ${  request.clientEmail}`,
+        `Endereço de retirada: ${req.body.addressData.completeAddress} - ${req.body.addressData.addressComplement}`,
+        `Taxa de entrega: ${formatedValues.deliveryTax}`,
+        `Total dos serviços: ${formatedValues.servicesSum}`,
+        `Taxa de transação bancária: ${formatedValues.transactionOperationTax}`,
+        `Total geral: ${formatedValues.totalAmount}`,
+      ]
+    )
+    await emailService(emailContentForNotary).catch(async  (err) => {
+      console.log(err.message, err.data)
+      res.status(STATUS_SERVER_ERROR).send(err.message)
+      res.end()
+      throw new Error(err.message)
+    })
     
     const requestLog = new RequestLog()
     await requestLog.save(request, RequestStatus.WAITING_DELIVERY_RECEIVE_ORDER).catch( (err) => {
