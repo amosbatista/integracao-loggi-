@@ -2,6 +2,8 @@ import { Router } from 'express';
 
 import confirm from './confirm';
 import approve from './approve';
+import deliveryReceive from './sendDeliveryToReceive';
+import deliveryReturn from './sendDeliveryToReturn';
 import finish from './finish';
 import pay from './pay';
 import receive from './receive';
@@ -18,6 +20,8 @@ export default ({ config, db }) => {
 	const noResponseCode = 501
 
 	api.use('/confirm', confirm({ config, db }));
+	api.use('/deliveryReceive', deliveryReceive({ config, db }));
+	api.use('/deliveryReturn', deliveryReturn({ config, db }));
 	api.use('/approve', approve({ config, db }));
 	api.use('/finish', finish({ config, db }));
 	api.use('/pay', pay({ config, db }));

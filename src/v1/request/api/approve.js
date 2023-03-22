@@ -1,14 +1,10 @@
 import { Router } from 'express'
 
-import deliveryApproved from '../../delivery/clickEntregas/clickEntregasCreateOrderService'
-import deliveryCancelation from '../../delivery/clickEntregas/clickEntregasCancelOrderService'
 import NewRequestMapper from '../mapper/new'
 import RequestLog from '../log/mapper'
 import RequestStatus from '../status'
 import emailService from '../../email/service'
 import emailHelper from '../../email/emailHelper'
-import DeliveryMapper from '../../delivery/db/mappers/save'
-import deliveryType from '../../delivery/db/deliveryType'
 import ServiceMapper from '../../notary/services/mapper/save'
 import currencyFormat from '../../helpers/formatCurrency'
 import logService from '../log/logGenerator'
@@ -30,16 +26,6 @@ export default ({ config, db }) => {
 
     logService('Approve request', req.body)
     
-    const loggiData = await deliveryApproved(
-      req.body.addressData, 
-      req.body.servicesData, 
-    ).catch((err)=>{
-      console.log(err.message, err.data)
-      res.status(STATUS_SERVER_ERROR).send(err.message)
-      res.end()
-      throw new Error(err.message)
-    })
-
     const newRequestMapper = new NewRequestMapper()
 
     const request = await newRequestMapper.save({
@@ -54,24 +40,8 @@ export default ({ config, db }) => {
       deliveryTax: req.body.paymentData.deliveryTax,
       servicesSum: req.body.paymentData.servicesSum,
       transactionOperationTax: req.body.paymentData.transactionOperationTax,
-      status: RequestStatus.AT_RECEIVE
+      status: RequestStatus.WAITING_DELIVERY_RECEIVE_ORDER
     }).catch( async (err) => {
-      console.log(err.message, err.data)
-      await deliveryCancelation(loggiData.loggiOrderId)
-      res.status(STATUS_SERVER_ERROR).send(err.message)
-      res.end()
-      throw new Error(err.message)
-    })
-
-    const deliveryMapper = new DeliveryMapper()
-
-    await deliveryMapper.save({
-      requestId: request.id,
-      deliveryId: loggiData.loggiOrderId,
-      packageId: loggiData.packageId,
-      type: deliveryType.TO_RECEIVE
-    }).catch( async (err) => {
-      await deliveryCancelation(loggiData.loggiOrderId, loggiData.packageId, authData)
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).send(err.message)
       res.end()
@@ -91,7 +61,6 @@ export default ({ config, db }) => {
     })
 
     await Promise.all(requestServicesSavePromises).catch(async (err) => {
-      await deliveryCancelation(loggiData.loggiOrderId, loggiData.packageId, authData)
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).send(err.message)
       res.end()
@@ -115,13 +84,11 @@ export default ({ config, db }) => {
         `Taxa de entrega: ${formatedValues.deliveryTax}`,
         `Total dos serviços: ${formatedValues.servicesSum}`,
         `Taxa de transação bancária: ${formatedValues.transactionOperationTax}`,
-        `Código da transportadora: ${loggiData.loggiOrderId}`,
         `Total geral: ${formatedValues.totalAmount}`,
         "Observação: Se houver qualquer diferença em relação aos serviços e à documentação enviada, o valor final será alterado."
       ]
     )
     await emailService(emailContent).catch(async  (err) => {
-      await deliveryCancelation(loggiData.loggiOrderId, loggiData.packageId, authData)
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).send(err.message)
       res.end()
@@ -129,7 +96,7 @@ export default ({ config, db }) => {
     })
     
     const requestLog = new RequestLog()
-    await requestLog.save(request, RequestStatus.AT_RECEIVE).catch( (err) => {
+    await requestLog.save(request, RequestStatus.WAITING_DELIVERY_RECEIVE_ORDER).catch( (err) => {
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).send(err.message)
       res.end()
@@ -138,7 +105,6 @@ export default ({ config, db }) => {
     
     res.json({
       isProcessOk: true,
-      loggiOrderId: loggiData.loggiOrderId,
       requestId: request.id
     })
     res.end()
