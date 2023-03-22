@@ -1,22 +1,19 @@
 import { Router } from 'express'
 import RequestLoadMapper from '../mapper/load'
 import transactionService from '../../bankTransaction/cieloTransactionService'
+//import transactionService from '../../bankTransactionMock/cieloTransactionService'
 import cancelTransactionService from '../../bankTransaction/cieloCancelationService'
 import OrderLoadMapper from '../order/mapper/load'
-import deliveryReturnService from '../../delivery/clickEntregas/clickEntregasCreateReturnOrderService'
 import emailService from '../../email/service'
 import RequestStatusUpdateMapper from '../mapper/updateStatus'
 import RequestLogMapper from '../log/mapper'
 import requestStatus from '../status'
 import OrderProcessedMarkerMapper from '../order/mapper/markAsOrdered'
 import emailHelper from '../../email/emailHelper'
-import deliveryCancellationService from '../../delivery/clickEntregas/clickEntregasCancelOrderService'
-import DeliveryMapper from '../../delivery/db/mappers/save'
-import DeliveryType from '../../delivery/db/deliveryType'
-import deliveryType from '../../delivery/db/deliveryType';
 import PaymentAuthorizationService from '../payment/mapper/new';
 import paymentStatus from '../../request/payment/paymentStatus';
 import transactionCaptureService from '../../bankTransaction/cieloCaptureService';
+//import transactionCaptureService from '../../bankTransactionMock/cieloCaptureService';
 import timeService from '../../time/workTimeService'
 
 const api = ({ config, db }) => {
@@ -88,7 +85,7 @@ const api = ({ config, db }) => {
 				}
 
 				transactionService(paymentData).then( (transactionReturnedData) => {
-
+					console.log("transactionReturnedData", transactionReturnedData)
 					paymentAuthorizationService.save(request.id, {
 						cardNumber: transactionReturnedData.Payment.CreditCard.CardNumber,
 						cardHolder: transactionReturnedData.Payment.CreditCard.Holder,
@@ -115,90 +112,71 @@ const api = ({ config, db }) => {
 						clientPhone: request.clientPhone
 					}
 					
-					deliveryReturnService(addressData, servicesData, request.id).then( (deliveryData) => {
 
-						const emailContent = emailHelper(
-							"Pagamento de pedido",
-							request.clientName,
-							request.clientEmail,
-							[
-								`O pagamento do pedido foi realizado com sucesso!`,
-								`ID do pedido: ${request.id}`,
-								`Valor pago: ${request.totalPurchase}`,
-								`Código de transação bancária: ${transactionReturnedData.Payment.PaymentId}`,
-								`Aguarde um pouco para o cartório receber o pagamento e enviar o pedido.`
-							]
-						)
-						const emailPromise = emailService(emailContent)
-						
-						const requestStatusUpdateMapper = new RequestStatusUpdateMapper()
-						const requestStatusUpdatePromise = requestStatusUpdateMapper.update(request, requestStatus.READY_TO_RETURN)
+					const emailContent = emailHelper(
+						"Pagamento de pedido",
+						request.clientName,
+						request.clientEmail,
+						[
+							`O pagamento do pedido foi realizado com sucesso!`,
+							`ID do pedido: ${request.id}`,
+							`Valor pago: ${request.totalPurchase}`,
+							`Código de transação bancária: ${transactionReturnedData.Payment.PaymentId}`,
+							`Aguarde um pouco para o cartório receber o pagamento e enviar o pedido.`
+						]
+					)
+					const emailPromise = emailService(emailContent)
+					
+					const requestStatusUpdateMapper = new RequestStatusUpdateMapper()
+					const requestStatusUpdatePromise = requestStatusUpdateMapper.update(request, requestStatus.WAITING_DELIVERY_RETURN_ORDER)
 
-						const requestLogMapper = new RequestLogMapper()
-						const requestLogPromise = requestLogMapper.save(request, requestStatus.READY_TO_RETURN)
+					const requestLogMapper = new RequestLogMapper()
+					const requestLogPromise = requestLogMapper.save(request, requestStatus.WAITING_DELIVERY_RETURN_ORDER)
 
-						const orderProcessedMarkerMapper = new OrderProcessedMarkerMapper()
-						const orderProcessedMarkerPromise = orderProcessedMarkerMapper.save(order)
+					const orderProcessedMarkerMapper = new OrderProcessedMarkerMapper()
+					const orderProcessedMarkerPromise = orderProcessedMarkerMapper.save(order)
 
-						const transactionCapturePromise = transactionCaptureService(transactionReturnedData.Payment.PaymentId)
-						
-						
-						console.log({
-							requestId: request.id,
-							deliveryId: deliveryData.loggiOrderId,
-							packageId: deliveryData.packageId,
-							type: DeliveryType.TO_RETURN
+					const transactionCapturePromise = transactionCaptureService(transactionReturnedData.Payment.PaymentId)
+					
+
+
+					Promise.all([
+						emailPromise,
+						requestStatusUpdatePromise,
+						requestLogPromise,
+						orderProcessedMarkerPromise,
+						transactionCapturePromise,
+					]).then( () => {
+
+						paymentAuthorizationService.save(request.id, {
+							cardNumber: transactionReturnedData.Payment.CreditCard.CardNumber,
+							cardHolder: transactionReturnedData.Payment.CreditCard.Holder,
+							authorizationCode: transactionReturnedData.Payment.AuthorizationCode,
+							paymentId: transactionReturnedData.Payment.PaymentId,
+							transactionStatus: transactionReturnedData.Payment.Status,
+							returnCode: transactionReturnedData.Payment.ReturnCode,
+							returnMessage: transactionReturnedData.Payment.ReturnMessage,
+							status: paymentStatus.CONFIRMED,
 						})
-						const deliveryMapper = new DeliveryMapper()
-						const deliveryPromise = deliveryMapper.save({
-							requestId: request.id,
-							deliveryId: deliveryData.loggiOrderId,
-							packageId: deliveryData.packageId,
-							type: deliveryType.TO_RETURN
+
+						res.status(STATUS_REQUEST_ACCEPT).send({
+							transactionId: transactionReturnedData.Payment.PaymentId
 						})
+						res.end()
 
-						Promise.all([
-							emailPromise,
-							requestStatusUpdatePromise,
-							requestLogPromise,
-							orderProcessedMarkerPromise,
-							deliveryPromise,
-							transactionCapturePromise,
-						]).then( () => {
-
-							paymentAuthorizationService.save(request.id, {
-								cardNumber: transactionReturnedData.Payment.CreditCard.CardNumber,
-								cardHolder: transactionReturnedData.Payment.CreditCard.Holder,
-								authorizationCode: transactionReturnedData.Payment.AuthorizationCode,
-								paymentId: transactionReturnedData.Payment.PaymentId,
-								transactionStatus: transactionReturnedData.Payment.Status,
-								returnCode: transactionReturnedData.Payment.ReturnCode,
-								returnMessage: transactionReturnedData.Payment.ReturnMessage,
-								status: paymentStatus.CONFIRMED,
-							})
-
-							res.status(STATUS_REQUEST_ACCEPT).send({
-								transactionId: transactionReturnedData.Payment.PaymentId
-							})
-							res.end()
-
-							return
-						}).catch( (err) => {
-							deliveryCancellationService(deliveryData.loggiOrderId)
-							cancelTransactionService(transactionReturnedData.Payment.PaymentId)
-							cancelPayment(transactionReturnedData, paymentAuthorizationService, request.id, paymentStatus.CANCELED)
-							errorDealer(err, res)
-						})
+						return
 					}).catch( (err) => {
 						cancelTransactionService(transactionReturnedData.Payment.PaymentId)
 						cancelPayment(transactionReturnedData, paymentAuthorizationService, request.id, paymentStatus.CANCELED)
 						errorDealer(err, res)
 					})
-				}).catch((err) => {
-					cancelPayment(err.data, paymentAuthorizationService, request.id, paymentStatus.REFUSED)
+				}).catch( (err) => {
+
 					errorDealer(err, res)
 				})
-			}).catch((err) => {errorDealer(err, res)} )
+			}).catch((err) => {
+				errorDealer(err, res)
+			})
 		}).catch((err) => {errorDealer(err, res)} )
 	});
 
