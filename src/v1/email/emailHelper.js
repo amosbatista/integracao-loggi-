@@ -6,9 +6,8 @@ const helper = (subject, clientName, clientEmail, contentList) => {
 
   const mailHeader = `<h2>Olá, ${clientName},</h2>`
   const mailFooter = `
-    <p>Caso precise tirar alguma dúvida, ou verificar alguma falha no seu pedido, favor entrar em contato</p>
     <p>Obrigado</p>
-    <h5>20º Cartório</h5>
+    <h5>Equipe 20º Cartório Itaim Bibi</h5>
   `
 
   return {

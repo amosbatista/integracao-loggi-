@@ -78,14 +78,12 @@ export default ({ config, db }) => {
       request.clientName, 
       request.clientEmail,
       [
-        "Informamos que o pedido foi efetuado com sucesso. Segue os dados dele:",
-        `ID do pedido: ${request.id}`,
-        `Endereço de retirada: ${req.body.addressData.completeAddress} - ${req.body.addressData.addressComplement}`,
-        `Taxa de entrega: ${formatedValues.deliveryTax}`,
-        `Total dos serviços: ${formatedValues.servicesSum}`,
-        `Taxa de transação bancária: ${formatedValues.transactionOperationTax}`,
-        `Total geral: ${formatedValues.totalAmount}`,
-        "Observação: Se houver qualquer diferença em relação aos serviços e à documentação enviada, o valor final será alterado."
+        "O horário de funcionamento do atendimento Delivery é de segunda a sexta-feira das 09:00 às 16:00 (exceto feriados). Pedidos realizados após às 16:00, serão realizados no dia seguinte a partir das 09:00.",
+        '',
+        'Seu pedido foi recebido e está em processamento.',
+        'Após a finalização do serviço, enviaremos um novo e-mail, com o link para pagamento.',
+        'Após a comprovação do pagamento, será enviado um novo motoboy até o endereço de solicitação para a devolução dos documentos.',
+        "Caso precise tirar alguma dúvida, ou verificar alguma falha no seu pedido, favor entrar em contato pelo e-mail contato.mkt@20cartorio.com.br ou via telefone: 11 3078-1836.."
       ]
     )
     await emailService(emailContent).catch(async  (err) => {
