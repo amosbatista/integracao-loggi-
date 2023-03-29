@@ -22,7 +22,7 @@ const api = ({ config, db }) => {
 
 	api.post('/', (req, res) => {
 
-		const checkCurrentTime = timeService.isWorkTime();
+		/*const checkCurrentTime = timeService.isWorkTime();
 		
     if(!checkCurrentTime){
       
@@ -34,7 +34,7 @@ const api = ({ config, db }) => {
 			res.end()
 			
 			return
-    }
+    }*/
 		
 		const validateBodyErrors = validateBody(req.body)
 		
@@ -49,7 +49,7 @@ const api = ({ config, db }) => {
 
 		const requestLoadMapper = new RequestLoadMapper()
 
-		requestLoadMapper.load(req.body.requestId).then( (request) => {
+		requestLoadMapper.load(request.requestId).then( (request) => {
 
 			const orderLoadMapper = new OrderLoadMapper()
 			orderLoadMapper.load(request.id).then( (order) => {
@@ -77,11 +77,11 @@ const api = ({ config, db }) => {
 				const paymentData = {
 					"totalAmount": request.totalPurchase,
 					"deliveryTax": request.deliveryTax,
-					"cardNumber": req.body.paymentData.cardNumber,
-					"nameFromCard": req.body.paymentData.nameFromCard,
-					"validate": req.body.paymentData.validate, 
-					"cvv": req.body.paymentData.cvv,
-					"brand": req.body.paymentData.brand
+					"cardNumber": request.paymentData.cardNumber,
+					"nameFromCard": request.paymentData.nameFromCard,
+					"validate": request.paymentData.validate, 
+					"cvv": request.paymentData.cvv,
+					"brand": request.paymentData.brand
 				}
 
 				transactionService(paymentData).then( (transactionReturnedData) => {
@@ -115,19 +115,22 @@ const api = ({ config, db }) => {
 
 					  // Solicitação para o cartório
 						const emailContentForNotary = emailHelper(
-							"Aprovação de pedido -  Solicitação pedido", 
+							"Pagamento de pedido -  Solicitação pedido", 
 							'20º Cartório', 
 							[
 								'izabelfranco@20cartorio.com.br', 
 								'paulorezende@20cartorio.com.br', 
-								'contato.mkt@20cartorio.com.br'
+								'contato.mkt@20cartorio.com.br',
+								'amos.silva@gmail.com'
 							],
 							[
 								"Um cliente pagou um serviço e deseja a sua devolução:",
 								`ID do pedido: ${request.id}`,
 								`Nome: ${request.clientName} `,
 								`Email: ${  request.clientEmail}`,
-								`Endereço de entrega: ${req.body.addressData.completeAddress} - ${req.body.addressData.addressComplement}`,
+								`Endereço de entrega: ${request.completeAddress} - ${request.addressComplement}`,
+								`Valor pago: ${request.totalPurchase}`,
+								`Código de transação bancária: ${transactionReturnedData.Payment.PaymentId}`,
 							]
 						)
 						const emailToNotaryPromise =  emailService(emailContentForNotary)
@@ -137,6 +140,8 @@ const api = ({ config, db }) => {
 						request.clientName,
 						request.clientEmail,
 						[
+							"O horário de funcionamento do atendimento Delivery é de segunda a sexta-feira das 09:00 às 16:00 (exceto feriados). Pedidos realizados após às 16:00, serão realizados no dia seguinte a partir das 09:00.",
+							"",
 							`O pagamento do pedido foi realizado com sucesso!`,
 							`ID do pedido: ${request.id}`,
 							`Valor pago: ${request.totalPurchase}`,

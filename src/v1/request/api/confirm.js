@@ -13,7 +13,7 @@ export default ({ config, db }) => {
     const STATUS_UNAUTHORIZED = 401
     const STATUS_SERVER_ERROR = 500
 
-    const checkCurrentTime = timeService.isWorkTime();
+    /*const checkCurrentTime = timeService.isWorkTime();
 		
     if(!checkCurrentTime){
       const err = {
@@ -26,7 +26,7 @@ export default ({ config, db }) => {
       res.end()
 
       return;
-    }
+    }*/
 
     logService('Confirm request', req.body)
     
