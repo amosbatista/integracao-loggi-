@@ -49,7 +49,7 @@ const api = ({ config, db }) => {
 
 		const requestLoadMapper = new RequestLoadMapper()
 
-		requestLoadMapper.load(request.requestId).then( (request) => {
+		requestLoadMapper.load(req.body.requestId).then( (request) => {
 
 			const orderLoadMapper = new OrderLoadMapper()
 			orderLoadMapper.load(request.id).then( (order) => {
