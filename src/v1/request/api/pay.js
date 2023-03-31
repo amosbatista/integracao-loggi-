@@ -77,11 +77,11 @@ const api = ({ config, db }) => {
 				const paymentData = {
 					"totalAmount": request.totalPurchase,
 					"deliveryTax": request.deliveryTax,
-					"cardNumber": request.paymentData.cardNumber,
-					"nameFromCard": request.paymentData.nameFromCard,
-					"validate": request.paymentData.validate, 
-					"cvv": request.paymentData.cvv,
-					"brand": request.paymentData.brand
+					"cardNumber": req.body.paymentData.cardNumber,
+					"nameFromCard": req.body.paymentData.nameFromCard,
+					"validate": req.body.paymentData.validate, 
+					"cvv": req.body.paymentData.cvv,
+					"brand": req.body.paymentData.brand
 				}
 
 				transactionService(paymentData).then( (transactionReturnedData) => {
