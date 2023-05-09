@@ -10,25 +10,15 @@ export default ({ config, db }) => {
     const STATUS_UNAUTHORIZED = 401
     const STATUS_SERVER_ERROR = 500
 
-    const id = req.query.userId
-
-     if(!id) {
-      const message = 'O Id é obrigatório.'
-      console.log(message)
-      res.status(STATUS_UNAUTHORIZED).json(message)
-      res.end()
-      throw new Error(message)
-    }
-
     const loadUserMapper = new LoadUserMapper();
-    const user = await loadUserMapper.load(id).catch((err) => {
+    const users = await loadUserMapper.loadAll().catch((err) => {
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()
       throw new Error(err.message)
     });
 
-    res.json(user)
+    res.json(users)
     res.end()
   })
 

@@ -58,7 +58,7 @@ export default ({ config, db }) => {
     }
 
     const newUserMapper = new NewUserMapper();
-    await newUserMapper.save({
+    await newUserMapper.saveNew({
       name: user.name,
       email: user.email,
       pwd: hash(user.pwd),

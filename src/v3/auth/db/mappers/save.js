@@ -8,7 +8,7 @@ const service = class {
     this.usersConnection = dbConnection('users', model)
   }
 
-  save(userData) {
+  saveNew(userData) {
 
     return new Promise((resolve, reject)=> {
       let usersConnection = this.usersConnection
@@ -35,6 +35,123 @@ const service = class {
       })
     })
     
+  }
+
+  promoteToAdmin(userId) {
+    return new Promise((resolve, reject)=> {
+      let usersConnection = this.usersConnection
+      
+      usersConnection.sync().then( () => {
+
+        usersConnection.update({
+          userType: types.ADMIN,
+        }, {
+          returning: true, 
+          where: {
+            id: userId
+          }
+        })
+        .then((newUser)=>{
+          usersConnection.sequelize.close()
+          resolve(newUser)
+        })
+        .catch((err)=>{
+          usersConnection.sequelize.close()
+          reject({
+            message: `Erro ao promover o usuário para admin.`,
+            data: err
+          })
+        })
+      })
+    })
+  }
+
+  depromoteFromAdmin(userId) {
+    return new Promise((resolve, reject)=> {
+      let usersConnection = this.usersConnection
+      
+      usersConnection.sync().then( () => {
+
+        usersConnection.update({
+          userType: types.COMMON,
+        }, {
+          returning: true, 
+          where: {
+            id: userId
+          }
+        })
+        .then((newUser)=>{
+          usersConnection.sequelize.close()
+          resolve(newUser)
+        })
+        .catch((err)=>{
+          usersConnection.sequelize.close()
+          reject({
+            message: `Erro ao despromiver o usuário.`,
+            data: err
+          })
+        })
+      })
+    })
+  }
+
+  update(user) {
+    return new Promise((resolve, reject)=> {
+      let usersConnection = this.usersConnection
+      
+      usersConnection.sync().then( () => {
+
+        usersConnection.update({
+          name: user.name,
+          email: user.email,
+        }, {
+          returning: true, 
+          where: {
+            id: user.id
+          }
+        })
+        .then((newUser)=>{
+          usersConnection.sequelize.close()
+          resolve(newUser)
+        })
+        .catch((err)=>{
+          usersConnection.sequelize.close()
+          reject({
+            message: `Erro ao atualizar os dados do usuário.`,
+            data: err
+          })
+        })
+      })
+    })
+  }
+
+  updatePwd(user) {
+    return new Promise((resolve, reject)=> {
+      let usersConnection = this.usersConnection
+      
+      usersConnection.sync().then( () => {
+
+        usersConnection.update({
+          pwd: user.pwd,
+        }, {
+          returning: true, 
+          where: {
+            id: user.id
+          }
+        })
+        .then((newUser)=>{
+          usersConnection.sequelize.close()
+          resolve(newUser)
+        })
+        .catch((err)=>{
+          usersConnection.sequelize.close()
+          reject({
+            message: `Erro ao atualizar a senha do usuário.`,
+            data: err
+          })
+        })
+      })
+    })
   }
 }
 

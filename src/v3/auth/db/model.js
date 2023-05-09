@@ -23,7 +23,8 @@ const entity = {
   userType: {
     type: Sequelize.ENUM(
       userTypes.COMMON,
-      userTypes.OPERATOR
+      userTypes.CREATOR,
+      userTypes.ADMIN
     ),
     allowNull: false,
   }

@@ -14,7 +14,8 @@ const service = class {
       
       model.sync().then( () => {
 
-        model.findAll({
+        model.findOne({
+          attributes: ['id', 'name', 'email', 'userType', 'createdAt', 'updatedAt'],
           where: { 
             id
           }
@@ -32,7 +33,31 @@ const service = class {
         })
       })
     })
-    
+  }
+
+  loadAll() {
+
+    return new Promise((resolve, reject)=> {
+      let model = this.model
+      
+      model.sync().then( () => {
+
+        model.findAll({
+          attributes: ['id', 'name', 'email', 'userType', 'createdAt', 'updatedAt'],
+        })
+        .then((users)=>{
+          model.sequelize.close()
+          resolve(users)
+        })
+        .catch((err)=>{
+          model.sequelize.close()
+          reject({
+            message: `Erro ao carregar lista de usuários.`,
+            data: err
+          })
+        })
+      })
+    })
   }
 }
 

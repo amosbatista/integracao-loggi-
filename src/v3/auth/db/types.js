@@ -1,4 +1,5 @@
 export default {
   COMMON: 'common',
-  OPERATOR: 'operator',
+  CREATOR: 'creator',
+  ADMIN: 'admin',
 }
