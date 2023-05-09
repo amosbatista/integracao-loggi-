@@ -4,7 +4,7 @@ import dbConnection from '../../../database/helper'
 const service = class {
 
   constructor () {
-    this.model = dbConnection('users', model)
+    this.model = dbConnection('creators', model)
   }
 
   load(id) {
@@ -15,9 +15,35 @@ const service = class {
       model.sync().then( () => {
 
         model.findOne({
-          attributes: ['id', 'name', 'email', 'userType', 'createdAt', 'updatedAt'],
           where: { 
             id
+          }
+        })
+        .then((user)=>{
+          model.sequelize.close()
+          resolve(user)
+        })
+        .catch((err)=>{
+          model.sequelize.close()
+          reject({
+            message: `Erro ao carregar o criador ${id}.`,
+            data: err
+          })
+        })
+      })
+    })
+  }
+
+  loadByUserId(userId) {
+
+    return new Promise((resolve, reject)=> {
+      let model = this.model
+      
+      model.sync().then( () => {
+
+        model.findOne({
+          where: { 
+            userId
           }
         })
         .then((user)=>{
@@ -27,32 +53,7 @@ const service = class {
         .catch((err)=>{
           model.sequelize.close()
           reject({
-            message: `Erro ao carregar os dados do usuário ${id}.`,
-            data: err
-          })
-        })
-      })
-    })
-  }
-
-  loadAll() {
-
-    return new Promise((resolve, reject)=> {
-      let model = this.model
-      
-      model.sync().then( () => {
-
-        model.findAll({
-          attributes: ['id', 'name', 'email', 'userType', 'createdAt', 'updatedAt'],
-        })
-        .then((users)=>{
-          model.sequelize.close()
-          resolve(users)
-        })
-        .catch((err)=>{
-          model.sequelize.close()
-          reject({
-            message: `Erro ao carregar lista de usuários.`,
+            message: `Erro ao carregar o criador de userId ${userId}.`,
             data: err
           })
         })

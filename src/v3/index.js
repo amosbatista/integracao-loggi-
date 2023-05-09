@@ -4,6 +4,7 @@ import middleware from './middleware'
 
 import version from './apiVersion';	
 import auth from './auth/api/index';
+import creator from './creator/api/index';
 
 export default ({ config, db }) => {
 	process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -14,6 +15,7 @@ export default ({ config, db }) => {
 	api.use(middleware({ config, db }));
 
 	api.use('/auth', auth({config, db}));
+	api.use('/creator', creator({config, db}));
 	api.use('/version', version({config, db}));
 
 	// perhaps expose some API metadata at the root

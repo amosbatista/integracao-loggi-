@@ -1,5 +1,9 @@
 import { Router } from 'express'
+
 import LoadUserMapper from '../db/mappers/load';
+import CreatorMapper from '../../creator/db/mappers/load';
+
+import TYPES from '../db/types';
 import SearchByEmailMapper from '../db/mappers/searchByEmail';
 
 export default ({ config, db }) => {
@@ -28,6 +32,17 @@ export default ({ config, db }) => {
       throw new Error(err.message)
     });
 
+    if(user.userType === TYPES.CREATOR) {
+      const creatorMapper = new CreatorMapper();
+
+      user.creator = await creatorMapper.loadByUserId(id).catch((err) => {
+        console.log(err.message, err.data)
+        res.status(STATUS_SERVER_ERROR).json(err.message)
+        res.end()
+        throw new Error(err.message)
+      });
+    }
+    
     res.json(user)
     res.end()
   })

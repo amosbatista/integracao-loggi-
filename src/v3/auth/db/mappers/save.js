@@ -66,6 +66,66 @@ const service = class {
     })
   }
 
+
+  promoteToCreator(userId) {
+    return new Promise((resolve, reject)=> {
+      let usersConnection = this.usersConnection
+      
+      usersConnection.sync().then( () => {
+
+        usersConnection.update({
+          userType: types.CREATOR,
+        }, {
+          returning: true, 
+          where: {
+            id: userId
+          }
+        })
+        .then((newUser)=>{
+          usersConnection.sequelize.close()
+          resolve(newUser)
+        })
+        .catch((err)=>{
+          usersConnection.sequelize.close()
+          reject({
+            message: `Erro ao promover o usuário para criador.`,
+            data: err
+          })
+        })
+      })
+    })
+  }
+
+  depromoteFromCreator(userId) {
+    return new Promise((resolve, reject)=> {
+      let usersConnection = this.usersConnection
+      
+      usersConnection.sync().then( () => {
+
+        usersConnection.update({
+          userType: types.COMMON,
+        }, {
+          returning: true, 
+          where: {
+            id: userId
+          }
+        })
+        .then((newUser)=>{
+          usersConnection.sequelize.close()
+          resolve(newUser)
+        })
+        .catch((err)=>{
+          usersConnection.sequelize.close()
+          reject({
+            message: `Erro ao despromover o usuário de criador.`,
+            data: err
+          })
+        })
+      })
+    })
+  }
+
+
   depromoteFromAdmin(userId) {
     return new Promise((resolve, reject)=> {
       let usersConnection = this.usersConnection
