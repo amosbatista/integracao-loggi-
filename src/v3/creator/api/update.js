@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import CreatorMapper from '../db/mappers/save'
+import Base64ToBuffer from '../../../v2/helpers/Base64ToBuffer';
 
 export default ({ config, db }) => {
 
@@ -16,7 +17,13 @@ export default ({ config, db }) => {
       throw new Error(message)
     }
 
-    const creator = req.body;
+    const creator = {
+      "id": req.body.id,
+      "userId": req.body.userId,
+      "description": req.body.description,
+      "enabled": req.body.enabled,
+      "avatar": Base64ToBuffer(req.body.avatar)
+    };
 
     const creatorMaper = new CreatorMapper();
     await creatorMaper.update(creator).catch((err) => {

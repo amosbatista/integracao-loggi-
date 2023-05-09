@@ -5,6 +5,7 @@ import CreatorMapper from '../../creator/db/mappers/load';
 
 import TYPES from '../db/types';
 import SearchByEmailMapper from '../db/mappers/searchByEmail';
+import BufferToBase64 from '../../../v2/helpers/BufferToBase64';
 
 export default ({ config, db }) => {
 
@@ -35,14 +36,22 @@ export default ({ config, db }) => {
     if(user.userType === TYPES.CREATOR) {
       const creatorMapper = new CreatorMapper();
 
-      user.creator = await creatorMapper.loadByUserId(id).catch((err) => {
+      const userCreator = await creatorMapper.loadByUserId(id).catch((err) => {
         console.log(err.message, err.data)
         res.status(STATUS_SERVER_ERROR).json(err.message)
         res.end()
         throw new Error(err.message)
       });
+
+      user.creator = {
+        "id": userCreator.id,
+        "userId": userCreator.userId,
+        "description": userCreator.description,
+        "enabled": userCreator.enabled,
+        "avatar": BufferToBase64(userCreator.avatar)
+      }
     }
-    
+
     res.json(user)
     res.end()
   })
