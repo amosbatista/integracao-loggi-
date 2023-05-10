@@ -37,7 +37,12 @@ const service = class {
       
       usersConnection.sync().then( () => {
 
-        usersConnection.update(creator, {
+        usersConnection.update(
+          creator.avatar ? creator : {
+            creatorId: creator.userId,
+            name: creator.description,
+            description: creator.enabled,
+          } , {
           returning: true, 
           where: {
             id: creator.id
