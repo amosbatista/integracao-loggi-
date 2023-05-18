@@ -8,7 +8,7 @@ export default ({ config, db }) => {
 	api.patch('/', async (req, res) => {
     const STATUS_SERVER_ERROR = 500
 
-    if(!req.query.id) {
+    if(!req.query.userId) {
       const message = 'O ID é obrigatório.'
       console.log(message)
       res.status(STATUS_SERVER_ERROR).json(message)
@@ -17,7 +17,7 @@ export default ({ config, db }) => {
     }
 
     const userMapper = new UserMapper();    
-    await userMapper.promoteToAdmin(req.query.id);
+    await userMapper.promoteToAdmin(req.query.userId);
 
     res.json("Usuário promovido para admin.")
     res.end()
