@@ -5,12 +5,11 @@ import userMappingFromDb from '../auth/db/mappers/modelHelper';
 export default ({ config, db }) => {
 	let api = Router();
     
-		api.post('/', async (req, res, next) => {
+		api.all('/', async (req, res, next) => {
       const STATUS_UNAUTHORIZED = 401
 
-      const token = req.header("Authorization");
+      const token = req.header("Authorization").replace("Bearer ", '');
       const tokenService = new TokenService();
-      
       const decoded = await tokenService.verify(token).catch((err) => {
         const message = 'Erro de autenticação'
         console.log(message, err)

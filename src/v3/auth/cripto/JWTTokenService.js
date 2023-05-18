@@ -6,8 +6,8 @@ export default class {
   sign(objectToSign) {
     return jwt.sign(
       objectToSign, 
-      process.env.TOKEN_SECRET, {
-        expiresIn: process.env.TOKEN_EXPIRES_MINUTES * 60
+      process.env.THOT_TOKEN_SECRET, {
+        expiresIn: process.env.THOT_TOKEN_EXPIRES_MINUTES * 60
       }
     )
   }
@@ -15,7 +15,7 @@ export default class {
   signWithMinutes(objectToSign, minutesToExpire) {
     return jwt.sign(
       objectToSign, 
-      process.env.TOKEN_SECRET, {
+      process.env.THOT_TOKEN_SECRET, {
         expiresIn: minutesToExpire * 60
       }
     )
@@ -27,10 +27,9 @@ export default class {
       if (!token) {
         reject ("Não foi providenciado token de autenticação");
       }
-      
       jwt.verify(
         token, 
-        process.env.TOKEN_SECRET,
+        process.env.THOT_TOKEN_SECRET,
         (err, decoded) => {
           if (err) {
             console.log(err)

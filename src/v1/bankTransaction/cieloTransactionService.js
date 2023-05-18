@@ -63,7 +63,7 @@ const service = (paymentData) => {
       if(err){
         reject({
           message: "Erro ao efetuar pagamento do operador.",
-          data: err
+          //data: err
         })
       }
 
@@ -77,7 +77,7 @@ const service = (paymentData) => {
           apiRes.body.Payment.ReturnCode != transactionStatusApproved_ZeroAuth) {
           reject({
             message: `A transação não funcionou: ${apiRes.body.Payment.ReturnMessage}`,
-            data: apiRes.body
+            //data: apiRes.body
           })
         }
         else {

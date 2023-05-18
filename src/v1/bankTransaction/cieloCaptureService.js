@@ -20,7 +20,7 @@ const service = (paymentId) => {
       if(err){
         reject({
           message: `Erro ao efetuar captura do pagamento ${paymentId}.`,
-          data: err
+          //data: err
         })
       }
 
@@ -34,7 +34,7 @@ const service = (paymentId) => {
           apiRes.body.ReturnCode != transactionStatusApproved_ZeroAuth) {
           reject({
             message: `A transação para captura não funcionou para o pagamento ${paymentId}: ${apiRes.body.ReturnMessage}`,
-            data: apiRes.body
+            //data: apiRes.body
           })
         }
         else {

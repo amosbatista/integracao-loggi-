@@ -5,7 +5,7 @@ export default ({ config, db }) => {
 
 	let api = Router();
 
-	api.get('/', async (req, res) => {
+	api.patch('/', async (req, res) => {
     const STATUS_SERVER_ERROR = 500
 
     if(!req.query.id) {
