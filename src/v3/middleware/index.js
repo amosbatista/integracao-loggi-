@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import authenticatedRouteMiddleware from './authenticatedRouteMiddleware';
+import authenticatedRouteMiddleware from './passBy.middleware';
 
 export default ({ config, db }) => {
 	let api = Router();
