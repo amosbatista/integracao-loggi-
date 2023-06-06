@@ -40,23 +40,25 @@ const service = class {
       let model = this.model
       
       model.sync().then( () => {
-
         model.findAll({
           where: { 
             comicId
-          }
-        })
-        .then((comics)=>{
-          model.sequelize.close()
-          resolve(comics)
-        })
-        .catch((err)=>{
+          },
+          order: [
+            ['pagePosition', 'ASC'],
+          ]
+        }).catch((err)=>{
           model.sequelize.close()
           reject({
             message: `Erro ao carregar a obra do criador ${comicId}.`,
             data: err
           })
         })
+        .then((comics)=>{
+          model.sequelize.close()
+          resolve(comics)
+        })
+        
       })
     })
   }

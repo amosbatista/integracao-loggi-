@@ -8,7 +8,11 @@ const entity = {
   pageContent:{
     type: Sequelize.BLOB('medium'),
     allowNull: false
-  }
+  },
+  pagePosition:{
+    type: Sequelize.INTEGER,
+    allowNull: true
+  },
 }
 
 export default entity

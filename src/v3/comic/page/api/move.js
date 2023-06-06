@@ -1,39 +1,40 @@
 import { Router } from 'express'
-import ComicDeleteMapper from '../db/mappers/delete'
-import PageDeleteMapper from '../page/db/mappers/delete'
+import PageMapper from '../db/mappers/save'
 
 export default ({ config, db }) => {
 
 	let api = Router();
 
-	api.delete('/', async (req, res) => {
+	api.patch('/', async (req, res) => {
     const STATUS_UNAUTHORIZED = 401
     const STATUS_SERVER_ERROR = 500
 
-    if(!req.query.comicId) {
-      console.log("A obra é obrigatória.")
+
+    if(!req.body.pageFrom) {
+      console.log("A definição da página anterior é obrigatória.")
       res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()
       throw new Error(err.message)
     }
 
-    const pageDeleteMapper = new PageDeleteMapper();
-    await pageDeleteMapper.deleteFromComic(req.query.comicId).catch((err) => {
+    if(!req.body.pageTo) {
+      console.log("A definição da próxima página é obrigatória.")
+      res.status(STATUS_SERVER_ERROR).json(err.message)
+      res.end()
+      throw new Error(err.message)
+    }
+
+    const pageMapper = new PageMapper();
+
+    await pageMapper.movePosition(req.body.pageFrom, req.body.pageTo).catch((err) => {
       console.log(err.message, err.data)
       res.status(STATUS_SERVER_ERROR).json(err.message)
       res.end()
       throw new Error(err.message)
     });
 
-    const comicDeleteMapper = new ComicDeleteMapper();
-    await comicDeleteMapper.delete(req.query.comicId).catch((err) => {
-      console.log(err.message, err.data)
-      res.status(STATUS_SERVER_ERROR).json(err.message)
-      res.end()
-      throw new Error(err.message)
-    });
     
-    res.json("Obra foi excluída com sucesso.")
+    res.json("A página foi movida com sucesso.")
     res.end()
   })
 

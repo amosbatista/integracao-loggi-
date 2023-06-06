@@ -32,7 +32,11 @@ export default ({ config, db }) => {
     const allPagesFromComic = await pageLoadMapper.loadAllFromComic(comicId);
 
     const allPagesFormatted = allPagesFromComic.map(page => {
-      return BufferToBase64(page.pageContent)
+      return {
+        pageContent: BufferToBase64(page.pageContent),
+        pagePosition: page.pagePosition,
+        id: page.id, 
+      }
     });
 
     res.json({
