@@ -42,7 +42,7 @@ const service = class {
             creatorId: comic.creatorId,
             name: creator.name,
             description: comic.description,
-            enabled: comic.enabled
+            enabled: comic.enabled,
           } , {
           returning: true, 
           where: {
@@ -55,7 +55,7 @@ const service = class {
         .catch((err)=>{
           connection.sequelize.close()
           reject({
-            message: `Erro ao atualizar uma obra.`,
+            message: `Erro ao atualizar a obra ${comic.id}`,
             data: err
           })
         })
