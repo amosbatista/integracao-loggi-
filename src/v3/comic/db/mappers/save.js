@@ -48,14 +48,44 @@ const service = class {
           where: {
             id: comic.id
           }
-        }).then((newComic)=>{
+        }).then((updatedComic)=>{
           connection.sequelize.close()
-          resolve(newComic)
+          resolve(updatedComic[1][0])
         })
         .catch((err)=>{
           connection.sequelize.close()
           reject({
             message: `Erro ao atualizar a obra ${comic.id}`,
+            data: err
+          })
+        })
+      })
+    })
+    
+  }
+
+  setStatus(comic, status) {
+
+    return new Promise((resolve, reject)=> {
+      let connection = this.dbConnection
+      
+      connection.sync().then( () => {
+        connection.update(
+          {
+            enabled: status
+          } , {
+          returning: true, 
+          where: {
+            id: comic.id
+          }
+        }).then((updatedComic)=>{
+          connection.sequelize.close()
+          resolve(updatedComic[0])
+        })
+        .catch((err)=>{
+          connection.sequelize.close()
+          reject({
+            message: `Erro ao ${status ? 'habilidar' : 'desabilitar'} a obra ${comic.id}`,
             data: err
           })
         })

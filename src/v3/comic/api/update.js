@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import ComicSaveMapper from '../db/mappers/save'
 import Base64ToBuffer from '../../../v2/helpers/Base64ToBuffer';
+import BufferToBase64 from '../../../v2/helpers/BufferToBase64';
 
 export default ({ config, db }) => {
 
@@ -38,8 +39,10 @@ export default ({ config, db }) => {
       res.end()
       throw new Error(err.message)
     });
+
+    savedComic.frontPage = BufferToBase64(savedComic.frontPage)
     
-    res.json("O quadrinho foi atualizado com sucesso.")
+    res.json(savedComic)
     res.end()
   })
 
