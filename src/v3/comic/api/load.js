@@ -14,10 +14,11 @@ export default ({ config, db }) => {
     const comicId = req.query.comicId;
 
     if(!comicId) {
-      console.log("A obra é obrigatória.")
-      res.status(STATUS_SERVER_ERROR).json(err.message)
+      const message = "A obra é obrigatória.";
+      console.log(message)
+      res.status(STATUS_SERVER_ERROR).json(message)
       res.end()
-      throw new Error(err.message)
+      throw new Error(message)
     }
 
     const comicLoadMapper = new ComicLoadMapper();

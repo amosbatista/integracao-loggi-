@@ -11,10 +11,11 @@ export default ({ config, db }) => {
     const STATUS_SERVER_ERROR = 500
 
     if(!req.query.comicId) {
-      console.log("A obra é obrigatória.")
-      res.status(STATUS_SERVER_ERROR).json(err.message)
+      const message = "A obra é obrigatória.";
+      console.log(message)
+      res.status(STATUS_SERVER_ERROR).json(message)
       res.end()
-      throw new Error(err.message)
+      throw new Error(message)
     }
 
     const pageDeleteMapper = new PageDeleteMapper();

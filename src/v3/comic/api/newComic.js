@@ -18,17 +18,18 @@ export default ({ config, db }) => {
       frontPage: Base64ToBuffer(req.body.frontPage),
     }
     if(!comic.creatorId) {
-      console.log("O criador é obrigatório.")
-      res.status(STATUS_SERVER_ERROR).json(err.message)
+      const message = "O criador é obrigatório.";
+      res.status(STATUS_SERVER_ERROR).json(message)
       res.end()
-      throw new Error(err.message)
+      throw new Error(message)
     }
 
     if(!comic.name) {
-      console.log("O nome do quadrinho é obrigatório.")
-      res.status(STATUS_SERVER_ERROR).json(err.message)
+      const message = "O nome do quadrinho é obrigatório.";
+      console.log(message)
+      res.status(STATUS_SERVER_ERROR).json(message)
       res.end()
-      throw new Error(err.message)
+      throw new Error(message)
     }
 
     const comicSaveMapper = new ComicSaveMapper();
