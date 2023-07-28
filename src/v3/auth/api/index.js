@@ -8,6 +8,7 @@ import updatePwd from './updatePwd';
 import update from './update';
 import promoteToAdmin from './promoteToAdmin';
 import depromoteFromAdmin from './depromoteFromAdmin';
+import disable from './disable';
 
 export default ({ config, db }) => {
 	let api = Router();
@@ -20,6 +21,7 @@ export default ({ config, db }) => {
 	api.use('/promote-admin', promoteToAdmin({config, db}))	
 	api.use('/depromote-admin', depromoteFromAdmin({config, db}))	
   api.use('/', auth({config, db}))
+	api.use('/', disable({config, db}))
 
 	return api;
 }

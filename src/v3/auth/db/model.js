@@ -27,7 +27,12 @@ const entity = {
       userTypes.ADMIN
     ),
     allowNull: false,
-  }
+  },
+  disabled:{
+    type: Sequelize.BOOLEAN,
+    allowNull: true,
+    default: false
+  },
 }
 
 export default entity

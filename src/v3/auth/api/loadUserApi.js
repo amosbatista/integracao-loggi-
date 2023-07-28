@@ -13,6 +13,7 @@ export default ({ config, db }) => {
 
 	api.get('/', async (req, res) => {
     const STATUS_UNAUTHORIZED = 401
+    const STATUS_NOT_FOUND = 402
     const STATUS_SERVER_ERROR = 500
 
     const id = req.query.userId
@@ -33,6 +34,12 @@ export default ({ config, db }) => {
       throw new Error(err.message)
     });
 
+    if(!user) {
+      res.status(STATUS_NOT_FOUND).json('Usuário não encontrado')
+      res.end()
+
+      return api;
+    }
     if(user.userType === TYPES.CREATOR) {
       const creatorMapper = new CreatorMapper();
 

@@ -1,5 +1,6 @@
 import model from '../model'
 import dbConnection from '../../../database/helper'
+const { Op } = require("sequelize");
 
 const service = class {
 
@@ -16,7 +17,10 @@ const service = class {
 
         model.findAll({
           where: { 
-            email, pwd
+            email, pwd,
+            [Op.not]: [
+              { disabled: true } 
+            ] 
           }
         })
         .then((user)=>{

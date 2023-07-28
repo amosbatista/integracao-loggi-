@@ -185,6 +185,35 @@ const service = class {
     })
   }
 
+  disable(userId) {
+    return new Promise((resolve, reject)=> {
+      let usersConnection = this.usersConnection
+      
+      usersConnection.sync().then( () => {
+
+        usersConnection.update({
+          disabled: true
+        }, {
+          returning: true, 
+          where: {
+            id: userId
+          }
+        })
+        .then(()=>{
+          usersConnection.sequelize.close()
+          resolve()
+        })
+        .catch((err)=>{
+          usersConnection.sequelize.close()
+          reject({
+            message: `Erro ao desativar usuário ${userId}`,
+            data: err
+          })
+        })
+      })
+    })
+  }
+
   updatePwd(user) {
     return new Promise((resolve, reject)=> {
       let usersConnection = this.usersConnection

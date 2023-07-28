@@ -1,5 +1,6 @@
 import model from '../model'
 import dbConnection from '../../../database/helper'
+const { Op } = require("sequelize");
 
 const service = class {
 
@@ -17,12 +18,15 @@ const service = class {
         model.findOne({
           attributes: ['id', 'name', 'email', 'userType', 'createdAt', 'updatedAt'],
           where: { 
-            id
+            id,
+            [Op.not]: [
+              { disabled: true } 
+            ]            
           }
         })
         .then((user)=>{
           model.sequelize.close()
-          resolve(user.dataValues)
+          resolve(user ? user.dataValues : null)
         })
         .catch((err)=>{
           model.sequelize.close()
@@ -43,7 +47,7 @@ const service = class {
       model.sync().then( () => {
 
         model.findAll({
-          attributes: ['id', 'name', 'email', 'userType', 'createdAt', 'updatedAt'],
+          attributes: ['id', 'name', 'email', 'disabled', 'userType', 'createdAt', 'updatedAt'],
         })
         .then((users)=>{
           model.sequelize.close()
