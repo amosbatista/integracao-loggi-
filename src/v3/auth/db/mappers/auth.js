@@ -18,8 +18,9 @@ const service = class {
         model.findAll({
           where: { 
             email, pwd,
-            [Op.not]: [
-              { disabled: true } 
+            [Op.or]: [
+              { disabled: false } ,
+              { disabled: null } 
             ] 
           }
         })

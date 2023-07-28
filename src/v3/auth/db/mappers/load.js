@@ -19,9 +19,10 @@ const service = class {
           attributes: ['id', 'name', 'email', 'userType', 'createdAt', 'updatedAt'],
           where: { 
             id,
-            [Op.not]: [
-              { disabled: true } 
-            ]            
+            [Op.or]: [
+              { disabled: false } ,
+              { disabled: null } 
+            ]          
           }
         })
         .then((user)=>{
