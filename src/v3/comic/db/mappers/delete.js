@@ -12,7 +12,7 @@ const service = class {
     return new Promise((resolve, reject)=> {
       let connection = this.dbConnection
       
-      connection.sync().then( () => {
+      connection.sync({ alter: process.env.MUST_UPDATE_DATABASE_MODEL }).then( () => {
 
         connection.destroy({
           where: {

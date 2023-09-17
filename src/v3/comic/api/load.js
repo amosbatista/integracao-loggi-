@@ -34,8 +34,8 @@ export default ({ config, db }) => {
 
     const allPagesFormatted = allPagesFromComic.map(page => {
       return {
-        pageContent: BufferToBase64(page.pageContent),
         pagePosition: page.pagePosition,
+        pageURL: page.pageURL,
         id: page.id, 
       }
     });
@@ -46,7 +46,7 @@ export default ({ config, db }) => {
       "name": comic.name,
       "description": comic.description,
       "enabled": comic.enabled,
-      "frontPage": BufferToBase64(comic.frontPage),
+      "url": comic.url,
       pages: allPagesFormatted
     })
     res.end()

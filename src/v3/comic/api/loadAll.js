@@ -1,6 +1,5 @@
 import { Router } from 'express'
 import ComicLoadMapper from '../db/mappers/load'
-import BufferToBase64 from '../../../v2/helpers/BufferToBase64';
 
 export default ({ config, db }) => {
 
@@ -19,8 +18,7 @@ export default ({ config, db }) => {
     });
     
     const allComicsFormatted = allComics.map(comic => {
-      comic.frontPage = BufferToBase64(comic.frontPage)
-
+      
       return comic
     });
 

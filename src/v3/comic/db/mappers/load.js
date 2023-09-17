@@ -12,7 +12,7 @@ const service = class {
     return new Promise((resolve, reject)=> {
       let model = this.model
       
-      model.sync().then( () => {
+      model.sync({ alter: process.env.MUST_UPDATE_DATABASE_MODEL }).then( () => {
 
         model.findOne({
           where: { 
@@ -39,7 +39,7 @@ const service = class {
     return new Promise((resolve, reject)=> {
       let model = this.model
       
-      model.sync().then( () => {
+      model.sync({ alter: process.env.MUST_UPDATE_DATABASE_MODEL }).then( () => {
 
         model.findAll({
           where: { 
@@ -66,9 +66,13 @@ const service = class {
     return new Promise((resolve, reject)=> {
       let model = this.model
       
-      model.sync().then( () => {
+      model.sync({ alter: process.env.MUST_UPDATE_DATABASE_MODEL }).then( () => {
 
-        model.findAll()
+        model.findAll({
+          where: { 
+            enabled: true
+          }
+        })
         .then((comics)=>{
           model.sequelize.close()
           resolve(comics)

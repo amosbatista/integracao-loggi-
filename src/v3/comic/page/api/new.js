@@ -1,6 +1,8 @@
 import { Router } from 'express'
 import PageMapper from '../db/mappers/save'
 import Base64ToBuffer from '../../../../v2/helpers/Base64ToBuffer';
+import  uploadFileToS3 from '../../../aws/uploadFileToS3';
+import { v4 } from 'uuid';
 
 export default ({ config, db }) => {
 
@@ -11,30 +13,50 @@ export default ({ config, db }) => {
     const STATUS_SERVER_ERROR = 500
 
     if(!req.body.pageContent) {
-      console.log("A página veio vazia.")
-      res.status(STATUS_SERVER_ERROR).json(err.message)
+      const err = "A página veio vazia.";
+      console.log(err)
+      res.status(STATUS_SERVER_ERROR).json(err)
       res.end()
-      throw new Error(err.message)
+      throw new Error(err)
+    }
+
+    if(!req.body.pageFileExtension) {
+      const err = "o arquivo precisa vir com extensão.";
+      res.status(STATUS_SERVER_ERROR).json(err)
+      res.end()
+      throw new Error(err)
     }
 
     const page = {
       comicId: req.body.comicId,
       pageContent:  Base64ToBuffer(req.body.pageContent),
       pagePosition: req.body.pagePosition,
+      pageFileExtension: req.body.pageFileExtension,
     }
     if(!page.comicId) {
-      console.log("O Id da obra é obrigatório.")
-      res.status(STATUS_SERVER_ERROR).json(err.message)
+      const err = "O Id da obra é obrigatório."
+      console.log(err)
+      res.status(STATUS_SERVER_ERROR).json(err)
       res.end()
-      throw new Error(err.message)
+      throw new Error(err)
     }
 
     if(!page.pagePosition) {
-      console.log("A posição da página é obrigatória.")
-      res.status(STATUS_SERVER_ERROR).json(err.message)
+      const err = "A posição da página é obrigatória."
+      console.log(err)
+      res.status(STATUS_SERVER_ERROR).json(err)
       res.end()
-      throw new Error(err.message)
+      throw new Error(err)
     }
+    const pageHash = v4();
+    const bucketData = await uploadFileToS3(page.pageContent, `comic_${pageHash}.${page.pageFileExtension}`).catch((err) => {
+      console.log(err)
+      res.status(STATUS_SERVER_ERROR).json(err)
+      res.end()
+      throw new Error(err)
+    })    
+
+    page.pageURL = bucketData.Location;
 
     const pageMapper = new PageMapper();
 

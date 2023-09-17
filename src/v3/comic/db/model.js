@@ -20,7 +20,15 @@ const entity = {
   frontPage: {
     type: Sequelize.BLOB('medium'),
     allowNull: true
-  }
+  },
+  url: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  fileName: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
 }
 
 export default entity

@@ -13,6 +13,10 @@ const entity = {
     type: Sequelize.INTEGER,
     allowNull: true
   },
+  pageURL:{
+    type: Sequelize.STRING,
+    allowNull: true
+  },
 }
 
 export default entity

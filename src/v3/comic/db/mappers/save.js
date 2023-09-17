@@ -12,7 +12,7 @@ const service = class {
     return new Promise((resolve, reject)=> {
       let connection = this.dbConnection
       
-      connection.sync().then( () => {
+      connection.sync({ alter: process.env.MUST_UPDATE_DATABASE_MODEL }).then( () => {
 
         connection.create(comicData)
         .then((newComic)=>{
@@ -40,9 +40,11 @@ const service = class {
         connection.update(
           comic.frontPage ? comic : {
             creatorId: comic.creatorId,
-            name: creator.name,
+            name: comic.name,
             description: comic.description,
             enabled: comic.enabled,
+            url: comic.url,
+            fileName: comic.fileName
           } , {
           returning: true, 
           where: {
