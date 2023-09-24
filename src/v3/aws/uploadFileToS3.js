@@ -7,6 +7,7 @@ export default function uploadFileToS3(fileContent, fileName) {
     const s3 = new AWS.S3({
       accessKeyId: process.env.THO_S3_ACCESS_KEY,
       secretAccessKey: process.env.THO_S3_ACCESS_SECRET,
+      apiVersion: 'latest'
     });   
 
     const BUCKET_NAME = 'shared-sunday';
