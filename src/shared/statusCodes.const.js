@@ -1,0 +1,3 @@
+export const NO_RESPONSE_CODE = 501;
+export const STATUS_UNAUTHORIZED = 401
+export const STATUS_SERVER_ERROR = 500
