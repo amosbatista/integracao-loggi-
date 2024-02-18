@@ -1,14 +1,15 @@
 import httpReq from 'superagent'
+import formatHomePost from './formatHomePost'
 
 const service = () => {
 
   return new Promise ((resolve, reject) => {
 
-    const fields = "title,url,custom_excerpt,slug"
     const filters = "featured:true"
     const encodedFilters = encodeURIComponent(filters)
+    const includes = 'tags';
     
-    const url = `${process.env.SUNDAY_API}/ghost/api/v2/content/posts/?key=${process.env.SUNDAY_KEY}&fields=${fields}&filter=${encodedFilters}`;
+    const url = `${process.env.SUNDAY_API}/ghost/api/v2/content/posts/?key=${process.env.SUNDAY_KEY}&include=${includes}&filter=${encodedFilters}`;
 
     httpReq.get(url)
     .set('Content-Type', "application/json")
@@ -22,7 +23,8 @@ const service = () => {
         })
         return
       }
-      resolve(apiRes.body)
+
+      resolve(formatHomePost(apiRes.body.posts[0]))
     })
   })
 }

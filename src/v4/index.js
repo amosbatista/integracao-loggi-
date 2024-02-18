@@ -3,9 +3,7 @@ import { NO_RESPONSE_CODE } from '../shared/statusCodes.const'
 
 
 import version from './apiVersion';	
-import featured from './posts/featured.api';
-import postList from './posts/postList.api'
-import top from './posts/top.api'
+import home from './home';
 
 export default ({ config, db }) => {
 	process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -13,10 +11,7 @@ export default ({ config, db }) => {
 	let api = Router();
 	
 	api.use('/version', version({config, db}));
-	api.use('/posts', postList({config, db}));
-	api.use('/featured', featured({config, db}));
-	api.use('/top', top({config, db}));
-
+	api.use('/home', home({config, db}));
 
 	// perhaps expose some API metadata at the root
 	api.post('/', (req, res) => {
