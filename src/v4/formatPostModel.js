@@ -5,6 +5,6 @@ export default (post) => {
     title, 
     thumbnail: feature_image, 
     description: excerpt, 
-    slug 
+    url: slug 
   };      
 }
