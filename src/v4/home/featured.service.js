@@ -1,5 +1,6 @@
 import httpReq from 'superagent'
 import formatHomePost from './formatHomePost'
+import slugService from '../navigation/slugService'
 
 const service = () => {
 
@@ -24,7 +25,13 @@ const service = () => {
         return
       }
 
-      resolve(formatHomePost(apiRes.body.posts[0]))
+      const FIRST_POST = 0
+
+      resolve(
+        formatHomePost(
+          slugService(apiRes.body.posts[FIRST_POST])
+        )
+      )
     })
   })
 }

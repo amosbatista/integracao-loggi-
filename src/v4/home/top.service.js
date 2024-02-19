@@ -1,5 +1,6 @@
 import httpReq from 'superagent'
 import formatHomePost from './formatHomePost';
+import slugService from '../navigation/slugService'
 
 const service = () => {
 
@@ -34,12 +35,17 @@ const service = () => {
       ));
 
       resolve({
-        featured: formatHomePost(featured),
+        featured: formatHomePost(
+          slugService(featured)
+        ),
         others: res
           .filter(post => (
             post.id !== featured.id))
           .reduce((final, post) => {
-            final.push (formatHomePost(post));
+            final.push (
+              formatHomePost(
+                slugServicepost
+              ));
             return final;
           }, [])
       })
