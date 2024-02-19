@@ -7,6 +7,6 @@ export default (post) => {
     description: excerpt, 
     url: slug,
     content: html,
-    feature_image_alt
+    thumb_alt: feature_image_alt
   };      
 }
