@@ -1,5 +1,5 @@
 import httpReq from 'superagent'
-import formatHomePost from './formatHomePost'
+import formatHomePost from '../formatPostModel'
 import slugService from '../navigation/slugService'
 
 const service = () => {
