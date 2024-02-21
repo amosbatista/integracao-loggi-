@@ -44,7 +44,7 @@ const service = () => {
           .reduce((final, post) => {
             final.push (
               formatHomePost(
-                slugServicepost
+                slugService(post)
               ));
             return final;
           }, [])
