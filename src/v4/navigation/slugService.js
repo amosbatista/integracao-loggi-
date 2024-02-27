@@ -1,17 +1,18 @@
-const MAIN_CONTEXTS = {
-  VIRTUDE: 'virtude', 
-  CRISTIANISMOS: 'cristianismos', 
-  MALDITOS: 'malditos',
-  GERAL: 'noticias'
-};
+import { MAIN_CONTEXTS } from "./contextsByTag.const";
+
 
 export default (post) => {
-
   if(!post.tags) {
     return {
       ...post,
       slug: `${MAIN_CONTEXTS.GERAL}/${post.slug}`
     };
+  }
+  if (post.tags.find(tag => (tag.name === MAIN_CONTEXTS.PRINCIPAL)) ) {
+    return {
+      ...post,
+      slug: `${post.slug}`
+    }
   }
   if (post.tags.find(tag => (tag.name === MAIN_CONTEXTS.VIRTUDE)) ) {
     return {
