@@ -40,7 +40,7 @@ const service = () => {
         ),
         others: res
           .filter(post => (
-            post.id !== featured.id))
+            !featured || post.id !== featured.id))
           .reduce((final, post) => {
             final.push (
               formatHomePost(

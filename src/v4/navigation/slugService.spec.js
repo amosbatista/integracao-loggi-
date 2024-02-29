@@ -34,4 +34,17 @@ describe('slug service', () => {
 
     expect(expected.slug).toBe('primeiro-video-tiktok');
   });
+
+  it('deve retornar um post vazio quando não tiver post', () => {
+    const expected = slugService(undefined);
+
+    expect(expected).toEqual({
+      title: '',  
+      feature_image: '', 
+      excerpt: '',
+      slug: '',
+      feature_image_alt: '',
+      id: ''
+    })
+  });
 });

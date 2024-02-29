@@ -2,6 +2,16 @@ import { MAIN_CONTEXTS } from "./contextsByTag.const";
 
 
 export default (post) => {
+  if(!post) {
+    return {
+      title: '',  
+      feature_image: '', 
+      excerpt: '',
+      slug: '',
+      feature_image_alt: '',
+      id: ''
+    }
+  }
   if(!post.tags) {
     return {
       ...post,
