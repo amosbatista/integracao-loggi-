@@ -47,4 +47,10 @@ describe('slug service', () => {
       id: ''
     })
   });
+
+  it('deve configurar o slug para post do tipo "brujeria"', () => {
+    const expected = slugService(postListMock.posts[3]);
+
+    expect(expected.slug).toBe('brujeria/rituais-brujeria');
+  });
 });

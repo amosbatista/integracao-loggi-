@@ -30,6 +30,12 @@ export default (post) => {
       slug: `${MAIN_CONTEXTS.VIRTUDE}/${post.slug}`
     }
   }
+  if (post.tags.find(tag => (tag.name === MAIN_CONTEXTS.BRUJERIA)) ) {
+    return {
+      ...post,
+      slug: `${MAIN_CONTEXTS.BRUJERIA}/${post.slug}`
+    }
+  }
   if (post.tags.find(tag => (tag.name === MAIN_CONTEXTS.CRISTIANISMOS)) ) {
     return {
       ...post,
