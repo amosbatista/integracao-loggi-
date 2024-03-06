@@ -62,8 +62,6 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
     "babel-register": "^6.26.0",
-    "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
     "eslint": "^3.1.1",
     "jest": "^29.7.0",
     "mocha": "^6.1.3",

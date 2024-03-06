@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { STATUS_SERVER_ERROR } from '../../shared/statusCodes.const';
 import featuredService from './featured.service';
 import topService from './top.service';
+import highlightsService from './highlights'
 
 
 export default ({ config, db }) => {
@@ -26,9 +27,18 @@ export default ({ config, db }) => {
       throw err;
     });
 
+    const highlights = await highlightsService().catch(err => {
+      res.statusCode =  STATUS_SERVER_ERROR
+      res.json(err);
+      res.end();
+
+      throw err;
+    });
+
     res.json({
       featured,
-      top
+      top,
+      highlights
     })
     
   });
