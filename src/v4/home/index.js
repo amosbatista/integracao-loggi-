@@ -3,6 +3,9 @@ import { STATUS_SERVER_ERROR } from '../../shared/statusCodes.const';
 import featuredService from './featured.service';
 import topService from './top.service';
 import highlightsService from './highlights'
+import categoryVirtudeService from './categories-virtude'
+import categoryCristianismosService from './category-cristianismos'
+import categoryBrujeriaService from './category-brujeria'
 
 
 export default ({ config, db }) => {
@@ -10,6 +13,8 @@ export default ({ config, db }) => {
 	let api = Router();
 
 	api.get('/', async (req, res) => {
+
+    const CATEGORIES_LIMIT = 3;
 
     const featured = await featuredService().catch(err => {
       res.statusCode =  STATUS_SERVER_ERROR
@@ -35,10 +40,38 @@ export default ({ config, db }) => {
       throw err;
     });
 
+    const defaultRequest = undefined;
+    const categoryVirtude = await categoryVirtudeService(defaultRequest, CATEGORIES_LIMIT).catch(err => {
+      res.statusCode =  STATUS_SERVER_ERROR
+      res.json(err);
+      res.end();
+
+      throw err;
+    });
+    const categoryBrujeria = await categoryCristianismosService(defaultRequest, CATEGORIES_LIMIT).catch(err => {
+      res.statusCode =  STATUS_SERVER_ERROR
+      res.json(err);
+      res.end();
+
+      throw err;
+    });
+    const categoryCristianismos = await categoryBrujeriaService(defaultRequest, CATEGORIES_LIMIT).catch(err => {
+      res.statusCode =  STATUS_SERVER_ERROR
+      res.json(err);
+      res.end();
+
+      throw err;
+    });
+
     res.json({
       featured,
       top,
-      highlights
+      highlights,
+      categories: {
+        virtude: categoryVirtude,
+        brujeria: categoryBrujeria,
+        cristianismos: categoryCristianismos,
+      }
     })
     
   });
