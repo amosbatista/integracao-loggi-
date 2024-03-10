@@ -3,9 +3,9 @@ import { STATUS_SERVER_ERROR } from '../../shared/statusCodes.const';
 import featuredService from './featured.service';
 import topService from './top.service';
 import highlightsService from './highlights'
-import categoryVirtudeService from './categories-virtude'
-import categoryCristianismosService from './category-cristianismos'
-import categoryBrujeriaService from './category-brujeria'
+import categoryVirtudeService from '../categories/categories-virtude'
+import categoryCristianismosService from '../categories/category-cristianismos'
+import categoryBrujeriaService from '../categories/category-brujeria'
 
 
 export default ({ config, db }) => {
