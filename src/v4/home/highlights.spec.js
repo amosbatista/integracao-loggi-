@@ -1,5 +1,5 @@
 import Service from './highlights'
-import mock from './mock/highlights'
+import mock from '../categories/mock/highlights'
 
 describe('highlights service', () => {
 

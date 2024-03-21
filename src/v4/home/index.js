@@ -6,12 +6,14 @@ import highlightsService from './highlights'
 import categoryVirtudeService from '../categories/categories-virtude'
 import categoryCristianismosService from '../categories/category-cristianismos'
 import categoryBrujeriaService from '../categories/category-brujeria'
+import cacheMiddleware from '../cache/cache.middleware';
 
 
 export default ({ config, db }) => {
 
 	let api = Router();
-
+  
+  api.use(cacheMiddleware({ config, db }));
 	api.get('/', async (req, res) => {
 
     const CATEGORIES_LIMIT = 3;
