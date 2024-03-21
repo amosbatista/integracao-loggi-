@@ -10,6 +10,7 @@ import requestApiV3 from './v3';
 import requestApiV4 from './v4';
 import config from './config';
 import dotenv from 'dotenv';
+import compression from 'compression';
 
 dotenv.load();
 
@@ -33,6 +34,9 @@ app.use(cors({
 app.use(bodyParser.json({
 	limit : config.bodyLimit
 }));
+
+// Compression 
+app.use(compression())
 
 // connect to db
 initializeDb( db => {
