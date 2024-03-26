@@ -16,8 +16,10 @@ export default ({ config, db }) => {
 
       const key = `__request__${req.originalUrl || req.url}`
       const cached = service.get(key);
+      
+      const isResponseCodeError = res.statusCode < 200 || res.statusCode > 299;
 
-      if (!cached) {
+      if (!cached || isResponseCodeError) {
         res.sendResponse = res.send;
         res.send = (body) => {
           const afterCache = service.set(key, body, TIMEOUT_HOURS)
