@@ -17,12 +17,16 @@ export default ({ config, db }) => {
       const key = `__request__${req.originalUrl || req.url}`
       const cached = service.get(key);
       
-      const isResponseCodeError = res.statusCode < 200 || res.statusCode > 299;
+      const isLastResponseCodeError = cached &&
+        cached.lastRequestCode && 
+        (cached.lastRequestCode < 200 ||
+        cached.lastRequestCode > 299);
 
-      if (!cached || isResponseCodeError) {
+      if (!cached || isLastResponseCodeError) {
         res.sendResponse = res.send;
+        res.lastRequestCode = res.statusCode;
         res.send = (body) => {
-          const afterCache = service.set(key, body, TIMEOUT_HOURS)
+          const afterCache = service.set(key, body, TIMEOUT_HOURS, res.lastRequestCode)
           res.setHeader('Cache-Control', `max-age=${afterCache.ttl}`)
           
           service.get(key)
@@ -34,6 +38,7 @@ export default ({ config, db }) => {
       }
 
       res.setHeader('Cache-Control', `max-age=${cached.ttl}`)
+      res.setHeader('Last-Status', `${cached.lastRequestCode}`)
       res.send(cached.stored);
       return;
     });

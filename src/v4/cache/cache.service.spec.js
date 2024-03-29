@@ -14,6 +14,7 @@ describe('cache service', () => {
           foo: 'bar',
         },
         createdAt: '2024-03-21T12:44:56-03:00',
+        lastRequestCode: 202
       })
     }
     const dateLibMock = () => ({
@@ -21,21 +22,23 @@ describe('cache service', () => {
     })
     const key = 'my_key'
     const service = Service(libMock, dateLibMock)
-    const result = service.set(key, objToStore, hours);
+    const result = service.set(key, objToStore, hours, 202) ;
 
     expect(result).toEqual({
       stored: {
         foo: 'bar',
       },
       createdAt: '2024-03-21T12:44:56-03:00',
-      ttl: 43200
+      ttl: 43200,
+      lastRequestCode: 202
     });
     expect(libMock.set).toBeCalledWith("my_key", {
       stored: {
         foo: 'bar',
       },
       createdAt: '2024-03-21T12:44:56-03:00',
-      "ttl": 43200
+      "ttl": 43200,
+      lastRequestCode: 202
     },
     43200);
   });
@@ -45,7 +48,8 @@ describe('cache service', () => {
       get: jest.fn().mockReturnValue({
         stored: '{\"foo\":\"bar\"}',
         createdAt: '2024-03-21T12:44:56-03:00',
-        "ttl": 43200
+        "ttl": 43200,
+        lastRequestCode: 404
       })
     }
     const key = 'my_key'
@@ -60,7 +64,8 @@ describe('cache service', () => {
         foo: 'bar',
       },
       createdAt: '2024-03-21T12:44:56-03:00',
-      ttl: 43188
+      ttl: 43188,
+      lastRequestCode: 404
     });
   });
 

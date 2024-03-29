@@ -8,16 +8,18 @@ export default (cacheLib = new NodeCache(), dateLib = moment ) => ({
     return cached ? {
       stored: JSON.parse(cached.stored),
       createdAt: cached.createdAt,
-      ttl: cached.ttl - (dateLib().diff(dateLib(cached.createdAt), 'seconds'))
+      ttl: cached.ttl - (dateLib().diff(dateLib(cached.createdAt), 'seconds')),
+      lastRequestCode: cached.lastRequestCode
     } : 
     null
   },
-  set: (key, toStore, hours) => {
+  set: (key, toStore, hours, lastRequestCode) => {
     const timeOutInSeconds = hours * 60 * 60;
     const toCache = {
       stored: toStore,
       createdAt: dateLib().format(),
-      ttl: timeOutInSeconds
+      ttl: timeOutInSeconds,
+      lastRequestCode
     };
     
     const result = cacheLib.set(
