@@ -50,14 +50,14 @@ export default ({ config, db }) => {
 
       throw err;
     });
-    const categoryBrujeria = await categoryCristianismosService(defaultRequest, CATEGORIES_LIMIT).catch(err => {
+    const categoryCristianismos = await categoryCristianismosService(defaultRequest, CATEGORIES_LIMIT).catch(err => {
       res.statusCode =  STATUS_SERVER_ERROR
       res.json(err);
       res.end();
 
       throw err;
     });
-    const categoryCristianismos = await categoryBrujeriaService(defaultRequest, CATEGORIES_LIMIT).catch(err => {
+    const categoryBrujeria = await categoryBrujeriaService(defaultRequest, CATEGORIES_LIMIT).catch(err => {
       res.statusCode =  STATUS_SERVER_ERROR
       res.json(err);
       res.end();
