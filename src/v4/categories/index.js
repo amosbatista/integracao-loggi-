@@ -30,7 +30,7 @@ export default ({ config, db }) => {
         break;
       }
       case MAIN_CONTEXTS.BRUJERIA: {
-        content = await await categoryCristianismosService(defaultRequest, CATEGORIES_LIMIT).catch(err => {
+        content = await await categoryBrujeriaService(defaultRequest, CATEGORIES_LIMIT).catch(err => {
           res.statusCode =  STATUS_SERVER_ERROR
           res.json(err);
           res.end();
@@ -40,7 +40,7 @@ export default ({ config, db }) => {
         break;
       }
       case MAIN_CONTEXTS.CRISTIANISMOS: {
-        content = await categoryBrujeriaService(defaultRequest, CATEGORIES_LIMIT).catch(err => {
+        content = await categoryCristianismosService(defaultRequest, CATEGORIES_LIMIT).catch(err => {
           res.statusCode =  STATUS_SERVER_ERROR
           res.json(err);
           res.end();
