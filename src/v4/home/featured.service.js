@@ -10,7 +10,7 @@ const service = () => {
     const encodedFilters = encodeURIComponent(filters)
     const includes = 'tags';
     
-    const url = `${process.env.SUNDAY_API}/ghost/api/vx/content/posts/?key=${process.env.SUNDAY_KEY}&include=${includes}&filter=${encodedFilters}`;
+    const url = `${process.env.SUNDAY_API}/ghost/api/v2/content/posts/?key=${process.env.SUNDAY_KEY}&include=${includes}&filter=${encodedFilters}`;
 
     httpReq.get(url)
     .set('Content-Type', "application/json")
