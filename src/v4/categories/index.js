@@ -22,7 +22,7 @@ export default ({ config, db }) => {
       case MAIN_CONTEXTS.VIRTUDE: {
         content = await categoryVirtudeService(defaultRequest, CATEGORIES_LIMIT).catch(err => {
           res.statusCode =  STATUS_SERVER_ERROR
-          res.json(err);
+          res.status(STATUS_SERVER_ERROR).send(err);
           res.end();
     
           throw err;

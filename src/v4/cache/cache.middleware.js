@@ -16,24 +16,26 @@ export default ({ config, db }) => {
 
       const key = `__request__${req.originalUrl || req.url}`
       const cached = service.get(key);
-      
-      const isLastResponseCodeError = cached &&
-        cached.lastRequestCode && 
-        (cached.lastRequestCode < 200 ||
-        cached.lastRequestCode > 299);
 
-      if (!cached || isLastResponseCodeError) {
-        res.sendResponse = res.send;
-        res.lastRequestCode = res.statusCode;
-        res.send = (body) => {
-          const afterCache = service.set(key, body, TIMEOUT_HOURS, res.lastRequestCode)
-          res.setHeader('Cache-Control', `max-age=${afterCache.ttl}`)
-          
-          service.get(key)
-          res.sendResponse(afterCache.stored)
+      res.haveCache = cached ? true : false;
+      res.sendNewResp = res.send;      
+
+      res.on('finish', function() {
+        const isResponseCodeAnOK = this.statusCode >= 200 &&
+        this.statusCode <= 299;
+
+        if (isResponseCodeAnOK && !res.haveCache) {
+          service.set(key, res.lastBody, TIMEOUT_HOURS)
         }
-        next();
+      })
 
+      if (!cached) {
+        res.send = (body) => {
+          res.lastBody = body
+          res.sendNewResp(body)
+        };
+
+        next();
         return;
       }
 

@@ -13,7 +13,7 @@ export default (cacheLib = new NodeCache(), dateLib = moment ) => ({
     } : 
     null
   },
-  set: (key, toStore, hours, lastRequestCode) => {
+  set: (key, toStore, hours, lastRequestCode = 0) => {
     const timeOutInSeconds = hours * 60 * 60;
     const toCache = {
       stored: toStore,
