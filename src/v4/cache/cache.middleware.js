@@ -40,7 +40,6 @@ export default ({ config, db }) => {
       }
 
       res.setHeader('Cache-Control', `max-age=${cached.ttl}`)
-      res.setHeader('Last-Status', `${cached.lastRequestCode}`)
       res.send(cached.stored);
       return;
     });

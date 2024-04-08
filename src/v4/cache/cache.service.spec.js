@@ -14,7 +14,6 @@ describe('cache service', () => {
           foo: 'bar',
         },
         createdAt: '2024-03-21T12:44:56-03:00',
-        lastRequestCode: 202
       })
     }
     const dateLibMock = () => ({
@@ -30,7 +29,6 @@ describe('cache service', () => {
       },
       createdAt: '2024-03-21T12:44:56-03:00',
       ttl: 43200,
-      lastRequestCode: 202
     });
     expect(libMock.set).toBeCalledWith("my_key", {
       stored: {
@@ -38,7 +36,6 @@ describe('cache service', () => {
       },
       createdAt: '2024-03-21T12:44:56-03:00',
       "ttl": 43200,
-      lastRequestCode: 202
     },
     43200);
   });
@@ -49,7 +46,6 @@ describe('cache service', () => {
         stored: '{\"foo\":\"bar\"}',
         createdAt: '2024-03-21T12:44:56-03:00',
         "ttl": 43200,
-        lastRequestCode: 404
       })
     }
     const key = 'my_key'
@@ -65,7 +61,6 @@ describe('cache service', () => {
       },
       createdAt: '2024-03-21T12:44:56-03:00',
       ttl: 43188,
-      lastRequestCode: 404
     });
   });
 
