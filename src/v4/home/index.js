@@ -7,6 +7,7 @@ import categoryVirtudeService from '../categories/categories-virtude'
 import categoryCristianismosService from '../categories/category-cristianismos'
 import categoryBrujeriaService from '../categories/category-brujeria'
 import cacheMiddleware from '../cache/cache.middleware';
+import calendarService from './calendarService';
 
 
 export default ({ config, db }) => {
@@ -65,6 +66,8 @@ export default ({ config, db }) => {
       throw err;
     });
 
+    const calendarObject = calendarService();
+
     res.json({
       featured,
       top,
@@ -73,7 +76,8 @@ export default ({ config, db }) => {
         virtude: categoryVirtude,
         brujeria: categoryBrujeria,
         cristianismos: categoryCristianismos,
-      }
+      },
+      calendar: calendarObject
     })
     
   });
