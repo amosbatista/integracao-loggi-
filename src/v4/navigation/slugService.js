@@ -48,6 +48,12 @@ export default (post) => {
       slug: `${MAIN_CONTEXTS.MALDITOS}/${post.slug}`
     }
   }
+  if (post.tags.find(tag => (tag.name === MAIN_CONTEXTS.AFORISMOS)) ) {
+    return {
+      ...post,
+      slug: `${MAIN_CONTEXTS.AFORISMOS}/${post.slug}`
+    }
+  }
 
   return {
     ...post,

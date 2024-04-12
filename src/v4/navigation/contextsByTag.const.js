@@ -4,7 +4,8 @@ const MAIN_CONTEXTS = {
   CRISTIANISMOS: 'cristianismos', 
   MALDITOS: 'malditos',
   GERAL: 'noticias',
-  PRINCIPAL: 'sunday6pm'
+  PRINCIPAL: 'sunday6pm',
+  AFORISMOS: 'aforismos'
 };
 
 export { MAIN_CONTEXTS }

@@ -8,7 +8,7 @@ import categoryCristianismosService from '../categories/category-cristianismos'
 import categoryBrujeriaService from '../categories/category-brujeria'
 import cacheMiddleware from '../cache/cache.middleware';
 import calendarService from './calendarService';
-
+import aforismosHomeService from '../aforismos/aforismos-list-home.service'
 
 export default ({ config, db }) => {
 
@@ -18,6 +18,7 @@ export default ({ config, db }) => {
 	api.get('/', async (req, res) => {
 
     const CATEGORIES_LIMIT = 3;
+    const AFORISMOS_LIMIT = 10;
 
     const featured = await featuredService().catch(err => {
       res.statusCode =  STATUS_SERVER_ERROR
@@ -68,6 +69,14 @@ export default ({ config, db }) => {
 
     const calendarObject = calendarService();
 
+    const aforismos = await aforismosHomeService(defaultRequest, AFORISMOS_LIMIT).catch(err => {
+      res.statusCode =  STATUS_SERVER_ERROR
+      res.json(err);
+      res.end();
+
+      throw err;
+    });
+
     res.json({
       featured,
       top,
@@ -77,7 +86,8 @@ export default ({ config, db }) => {
         brujeria: categoryBrujeria,
         cristianismos: categoryCristianismos,
       },
-      calendar: calendarObject
+      calendar: calendarObject,
+      aforismos
     })
     
   });
