@@ -9,6 +9,8 @@ import categoryBrujeriaService from '../categories/category-brujeria'
 import cacheMiddleware from '../cache/cache.middleware';
 import calendarService from './calendarService';
 import aforismosHomeService from '../aforismos/aforismos-list-home.service'
+import categoryAutoral from '../autoral/category.sevice'
+import pickAutoral from '../autoral/pick.service'
 
 export default ({ config, db }) => {
 
@@ -77,6 +79,22 @@ export default ({ config, db }) => {
       throw err;
     });
 
+    const categoryAutoral = await categoryAutoral(defaultRequest, CATEGORIES_LIMIT).catch(err => {
+      res.statusCode =  STATUS_SERVER_ERROR
+      res.json(err);
+      res.end();
+
+      throw err;
+    });
+
+    const pick3Autoral = await pickAutoral(defaultRequest, CATEGORIES_LIMIT).catch(err => {
+      res.statusCode =  STATUS_SERVER_ERROR
+      res.json(err);
+      res.end();
+
+      throw err;
+    });
+
     res.json({
       featured,
       top,
@@ -85,9 +103,11 @@ export default ({ config, db }) => {
         virtude: categoryVirtude,
         brujeria: categoryBrujeria,
         cristianismos: categoryCristianismos,
+        autoral: categoryAutoral,
       },
       calendar: calendarObject,
-      aforismos
+      aforismos,
+      pickAutoral: pick3Autoral
     })
     
   });
