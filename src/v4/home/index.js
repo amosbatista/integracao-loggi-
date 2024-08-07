@@ -9,7 +9,7 @@ import categoryBrujeriaService from '../categories/category-brujeria'
 import cacheMiddleware from '../cache/cache.middleware';
 import calendarService from './calendarService';
 import aforismosHomeService from '../aforismos/aforismos-list-home.service'
-import categoryAutoral from '../autoral/category.sevice'
+import categoryAutoralService from '../autoral/category.sevice'
 import pickAutoral from '../autoral/pick.service'
 
 export default ({ config, db }) => {
@@ -79,7 +79,7 @@ export default ({ config, db }) => {
       throw err;
     });
 
-    const categoryAutoral = await categoryAutoral(defaultRequest, CATEGORIES_LIMIT).catch(err => {
+    const categoryAutoral = await categoryAutoralService(defaultRequest, CATEGORIES_LIMIT).catch(err => {
       res.statusCode =  STATUS_SERVER_ERROR
       res.json(err);
       res.end();
