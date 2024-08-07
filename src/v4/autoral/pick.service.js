@@ -1,6 +1,5 @@
 import httpReq from 'superagent'
 import slugService from '../navigation/slugService'
-import { MAIN_CONTEXTS } from '../navigation/contextsByTag.const'
 
 const service = (
   req = httpReq,
@@ -10,7 +9,7 @@ const service = (
   return new Promise ((resolve, reject) => {
 
     const TAG_PICK = 'sunday6pm_pick'
-    const filters = `tag:[${MAIN_CONTEXTS.PRINCIPAL},${TAG_PICK}]`
+    const filters = `tag:${TAG_PICK}`
     const encodedFilters = encodeURIComponent(filters)
     const includes = 'tags';
     
