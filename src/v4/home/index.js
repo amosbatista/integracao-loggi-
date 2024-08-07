@@ -10,7 +10,8 @@ import cacheMiddleware from '../cache/cache.middleware';
 import calendarService from './calendarService';
 import aforismosHomeService from '../aforismos/aforismos-list-home.service'
 import categoryAutoralService from '../autoral/category.sevice'
-import pickAutoral from '../autoral/pick.service'
+import pickAutoralNoThumbService from '../autoral/pick.service'
+import pickAutoralTopService from '../autoral/pickTop2.service'
 
 export default ({ config, db }) => {
 
@@ -87,7 +88,15 @@ export default ({ config, db }) => {
       throw err;
     });
 
-    const pick3Autoral = await pickAutoral(defaultRequest, CATEGORIES_LIMIT).catch(err => {
+    const pickAutoralNoThumb = await pickAutoralNoThumbService(defaultRequest, CATEGORIES_LIMIT).catch(err => {
+      res.statusCode =  STATUS_SERVER_ERROR
+      res.json(err);
+      res.end();
+
+      throw err;
+    });
+
+    const pickAutoraTop = await pickAutoralTopService(defaultRequest, CATEGORIES_LIMIT).catch(err => {
       res.statusCode =  STATUS_SERVER_ERROR
       res.json(err);
       res.end();
@@ -107,7 +116,8 @@ export default ({ config, db }) => {
       },
       calendar: calendarObject,
       aforismos,
-      pickAutoral: pick3Autoral
+      pickAutoral: pickAutoralNoThumb,
+      pickAutoraTop: pickAutoraTop
     })
     
   });

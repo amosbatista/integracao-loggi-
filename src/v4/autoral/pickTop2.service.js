@@ -8,7 +8,7 @@ const service = (
 
   return new Promise ((resolve, reject) => {
 
-    const TAG_PICK = 'sunday6pm_pick'
+    const TAG_PICK = 'sunday6pm_pick_top'
     const filters = `tag:${TAG_PICK}`
     const encodedFilters = encodeURIComponent(filters)
     const includes = 'tags';
@@ -31,10 +31,12 @@ const service = (
       resolve(
         apiRes.body.posts.map((post) => {
 
-          const { title,  excerpt, slug, id } = slugService(post);
+          const {  title,  feature_image, excerpt, slug, feature_image_alt, id } = slugService(post);
   
           return { 
             title, 
+            thumbnail: feature_image,
+            thumb_alt: feature_image_alt,
             description: excerpt || title,
             url: slug,
             id
