@@ -11,10 +11,10 @@ const service = (
     req.get(url)
     .set('Content-Type', "application/json")
     .end((err, apiRes) => {
-
+      console.log('lunar', apiRes)
       if(err){
         reject({
-          message: `Erro requisição calendário nacional`,
+          message: `Erro requisição calendário lunar`,
           data: err
         })
         return

@@ -11,6 +11,7 @@ const service = (
     req.get(url)
     .set('Content-Type', "application/json")
     .end((err, apiRes) => {
+      console.log('national', apiRes)
 
       if(err){
         reject({
