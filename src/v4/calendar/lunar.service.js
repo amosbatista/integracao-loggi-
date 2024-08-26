@@ -11,7 +11,6 @@ const service = (
     req.get(url)
     .set('Content-Type', "application/json")
     .end((err, apiRes) => {
-      console.log('lunar', apiRes)
       if(err){
         reject({
           message: `Erro requisição calendário lunar`,
@@ -20,7 +19,7 @@ const service = (
         return
       }
 
-      resolve(apiRes.body)
+      resolve(JSON.parse(apiRes.text))
     })
   })
 }

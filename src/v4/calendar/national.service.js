@@ -11,7 +11,6 @@ const service = (
     req.get(url)
     .set('Content-Type', "application/json")
     .end((err, apiRes) => {
-      console.log('national', apiRes)
 
       if(err){
         reject({
@@ -21,7 +20,7 @@ const service = (
         return
       }
 
-      resolve(apiRes.body)
+      resolve(JSON.parse(apiRes.text))
     })
   })
 }
