@@ -1,12 +1,10 @@
-import national from "../calendar/calendars/national"
-import lunar from "../calendar/calendars/moon"
-import Service from '../calendar/calendar.service'
+import nationalService from "../calendar/national.service"
+import lunarService from "../calendar/lunar.service"
 
-export default () => {
-  const service = Service();
-
+export default async () => {
+  
   return {
-    national: service.getTheNextDateInsideCalendar(national),
-    lunar: service.getTheNextDateInsideCalendar(lunar)
+    national: await nationalService(),
+    lunar: await lunarService()
   }
 }

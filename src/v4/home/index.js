@@ -70,7 +70,7 @@ export default ({ config, db }) => {
       throw err;
     });
 
-    const calendarObject = calendarService();
+    const calendarObject = await calendarService();
 
     const aforismos = await aforismosHomeService(defaultRequest, AFORISMOS_LIMIT).catch(err => {
       res.statusCode =  STATUS_SERVER_ERROR
