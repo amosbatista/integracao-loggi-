@@ -2,5 +2,6 @@
 /logs
 /npm-debug.log
 /node_modules
+/.serverless
 .DS_Store
 .env
