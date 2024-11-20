@@ -7,16 +7,17 @@ const cacheMiddleware = () => {
     
 		api.get('/', async (req: any, res: any, next) => {
       const TIMEOUT_HOURS = 12
-      const service = CacheService(moment)
+      const service = CacheService(undefined, moment)
       
       if (req.headers['cache-control'] === 'no-cache') {  
         res.setHeader('cache-control', `no-cache`)
+        res.setHeader('foo', `amos-no-cache`)
         next();
         return;
       }
-
+      res.setHeader('foo', `amos-with-cache`)
       const key = `__request__${req.originalUrl || req.url}`
-      const cached = service.get(key);
+      const cached = await service.get(key);
 
       res.haveCache = cached ? true : false;
       res.sendNewResp = res.send;      

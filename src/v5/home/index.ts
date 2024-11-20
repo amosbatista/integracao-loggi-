@@ -11,11 +11,12 @@ import aforismosHomeService from '../aforismos/aforismos-list-home.service'
 import categoryAutoralService from '../autoral/category.sevice'
 import pickAutoralNoThumbService from '../autoral/pick.service'
 import pickAutoralTopService from '../autoral/pickTop2.service'
+import cacheMiddleware from '../cache/cache.middleware';
 
 const home = () => {
 
 	let api = Router();
-  
+  api.use('/', cacheMiddleware())
 	api.get('/', async (_req, res) => {
 
     const CATEGORIES_LIMIT = 3;

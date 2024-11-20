@@ -1,18 +1,38 @@
-const NodeCache = require( 'node-cache' );
 import moment from 'moment';
+import Redis from 'ioredis'
 
-export default (cacheLib = new NodeCache(), dateLib = moment ) => ({  
-  get: (key: any) => {
-    const cached = cacheLib.get(key)
+export default (cacheLib = new Redis({
+  port: 6379,          // Redis port
+  host: '3.88.204.2',   // Redis host
+  family: 4,           // 4 (IPv4) or 6 (IPv6)
+  password: '',
+  db: 0
+}), dateLib = moment ) => ({  
+  get: async (key: string) => {
+    const cachedPure = await cacheLib.get(key)
 
+    if (!cachedPure) {
+      return null
+    }
+
+    const cached = JSON.parse(cachedPure)
+
+    const ttl = cached.ttl - (dateLib().diff(dateLib(cached.createdAt), 'seconds'));
+
+    if(ttl <= 0) {
+      await cacheLib.del(key)
+    }
     return cached ? {
       stored: JSON.parse(cached.stored),
       createdAt: cached.createdAt,
-      ttl: cached.ttl - (dateLib().diff(dateLib(cached.createdAt), 'seconds')),
+      ttl
     } : 
     null
   },
-  set: (key: any, toStore: any, hours: any) => {
+  clear: async (key: string) => {
+    await cacheLib.del(key)
+  },
+  set: async (key: string, toStore: string, hours: number) => {
     const timeOutInSeconds = hours * 60 * 60;
     const toCache = {
       stored: toStore,
@@ -20,10 +40,9 @@ export default (cacheLib = new NodeCache(), dateLib = moment ) => ({
       ttl: timeOutInSeconds
     };
     
-    const result = cacheLib.set(
+    const result = await cacheLib.set(
       key, 
-      toCache,
-      timeOutInSeconds);
+      JSON.stringify(toCache));
 
     return result ? toCache : null
   }
