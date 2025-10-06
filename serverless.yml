@@ -5,6 +5,7 @@ provider:
 functions:
   app:
     handler: dist/app.handler
+    timeout: 3
     events:
       - http: ANY /
       - http: ANY /{proxy+}

@@ -3,10 +3,11 @@ import Redis from 'ioredis'
 
 export default (cacheLib = new Redis({
   port: 6379,          // Redis port
-  host: '3.88.204.2',   // Redis host
+  host: 'server.sunday6pm.net',   // Redis host
   family: 4,           // 4 (IPv4) or 6 (IPv6)
   password: '',
-  db: 0
+  db: 0,
+  connectTimeout: 2000
 }), dateLib = moment ) => ({  
   get: async (key: string) => {
     const cachedPure = await cacheLib.get(key)

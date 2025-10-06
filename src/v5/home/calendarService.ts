@@ -1,6 +1,7 @@
 import nationalService from "../calendar/national.service"
 import lunarService from "../calendar/lunar.service"
 import judaicService from "../calendar/judaic.service"
+import zodiacService from '../calendar/zodiac.service'
 
 export default () => {
   
@@ -9,7 +10,8 @@ export default () => {
     return Promise.all([
       nationalService(),
       lunarService(),
-      judaicService()
+      judaicService(),
+      zodiacService()
     ]).then()
     .catch(error => {
       reject(error)
@@ -17,7 +19,8 @@ export default () => {
       resolve({
         national: resolveList ? resolveList[0] : {},
         lunar: resolveList ? resolveList[1] : {},
-        judaic: resolveList ? resolveList[2] : {}
+        judaic: resolveList ? resolveList[2] : {},
+        zodiac: resolveList ? resolveList[3] : {},
       })
     })
   });
