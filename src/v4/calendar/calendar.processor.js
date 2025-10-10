@@ -1,6 +1,6 @@
 const moment = require("moment");
 
-const service = (dateLib = moment) => {
+const CalendarProcessor = (dateLib = moment) => {
   const dateFormat = 'YYYY-MM-DD';
   const hoursInADay = 24;
   const hoursInAWeek = hoursInADay * 7;
@@ -17,6 +17,14 @@ const service = (dateLib = moment) => {
 
     getHoursRemaingToToday(date) {
       const diffFormat = 'hours';
+
+      return this.setDateToLib(date).diff(
+        this.getToday(), diffFormat
+      )
+    },
+
+    getDaysRemaingToToday(date) {
+      const diffFormat = 'days';
 
       return this.setDateToLib(date).diff(
         this.getToday(), diffFormat
@@ -104,8 +112,8 @@ const service = (dateLib = moment) => {
 
     getTheNextDateInsideCalendar(calendar) {
       const ordered = calendar.sort((itemA, itemB) => {
-        const itemADiff = this.getHoursRemaingToToday(itemA.date)
-        const itemBDiff = this.getHoursRemaingToToday(itemB.date)
+        const itemADiff = this.getDaysRemaingToToday(itemA.date)
+        const itemBDiff = this.getDaysRemaingToToday(itemB.date)
       
         const AMinorB = -1;
         const AEqualB = 0;
@@ -132,4 +140,4 @@ const service = (dateLib = moment) => {
   }
 };
 
-export default service;
+export default CalendarProcessor;
