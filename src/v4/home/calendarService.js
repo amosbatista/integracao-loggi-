@@ -2,6 +2,7 @@ import nationalService from "../calendar/national.service"
 import lunarService from "../calendar/lunar.service"
 import CalendarProcessor from "../calendar/calendar.processor";
 import catholicService from '../calendar/catholic.service'
+import hoursService from '../calendar/hours.service';
 
 export default () => {
   
@@ -12,19 +13,28 @@ export default () => {
     const catholicCalendar = await catholicService();
     const catholic = processor.getTheNextDateInsideCalendar(catholicCalendar)
 
-    return Promise.all([
-      nationalService(),
-      lunarService()
-    ]).then()
-    .catch(error => {
-      reject(error)
-    }).then(resolveList => {
-      resolve({
-        national: resolveList[0],
-        lunar:  resolveList[1],
-        catholic
-      })
-    })
+    const planHours = await hoursService();
+    const weekDay = processor.getToday().isoWeekday();
+    const hourNow = processor.getToday().hour();
+
+    console.log('Weekday', weekDay)
+    console.log('Hour Now', hourNow)
+
+    const planetHour = planHours.find ( hourObj => ( hourObj.weekDay === weekDay && hourObj.hour === hourNow ) )
+
+
+    const national = await nationalService();
+    const lunar = await lunarService();
+
+    const calendarResolve = {
+      national,
+      lunar,
+      catholic,
+      planetHour
+    }
+    
+    resolve(calendarResolve)
+    
   });
   
 }
